@@ -24,3 +24,7 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - Precise collision detection for texts and characters
 - Utility functions
 - [Input position](https://abagames.github.io/crisp-game-lib/ref_document/variables/input.pos.html)
+
+## Known issues
+
+- Texts and characters are drawn without transparency (Is there any way to draw an image to TFT_eSprite with the transparent color?)
