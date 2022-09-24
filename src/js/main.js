@@ -38,5 +38,5 @@ window.Module = {
 };
 
 const scriptElement = document.createElement("script");
-scriptElement.setAttribute("src", "./wasm/game.js");
+scriptElement.setAttribute("src", "./wasm/cglp.js");
 document.head.appendChild(scriptElement);
