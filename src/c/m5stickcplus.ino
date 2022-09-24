@@ -126,7 +126,7 @@ void initCanvas()
 void setup()
 {
   M5.begin();
-  M5.Axp.ScreenBreath(15);
+  M5.Axp.ScreenBreath(8);
   M5.Lcd.setSwapBytes(true);
   M5.Lcd.fillScreen(0xdddd);
   initGame();
