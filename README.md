@@ -10,13 +10,13 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 
 [Emscripten](https://emscripten.org/) also makes it possible to run [games written in C](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/game.c) on the browser. ([DEMO](https://abagames.github.io/crisp-game-lib-portable/build/))
 
-## Build for M5StickC PLUS
+## Build for MStickC PLUS
 
 Compile [m5stickcplus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/m5stickcplus.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino)
 
 ## Build for browsers
 
-1. Run 'dev' npm script to start the dev server and watch [js files](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/js)
+1. Run `dev` npm script to start the dev server and watch [js files](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/js)
 
 1. Run `dev_c` npm script to watch [c files](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/c) and build [wasm files](https://github.com/abagames/crisp-game-lib-portable/tree/main/public/wasm)
 
