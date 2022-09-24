@@ -1,0 +1,31 @@
+{
+  "name": "crisp-game-lib-portable",
+  "version": "1.0.0",
+  "description": "Minimal C-lang library for creating classic arcade-like mini-games running on devices and browsers",
+  "watch": {
+    "_compile_c": {
+      "patterns": [
+        "src/c",
+        "src/js"
+      ],
+      "extensions": "c,h,js"
+    }
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "//": "Call emsdk_env.bat or emsdk_env.sh if needed",
+    "dev_c": "emsdk_env.bat && npm-watch _compile_c",
+    "_compile_c": "emcc ./src/c/cglp.c ./src/c/textPattern.c ./src/c/game.c -O2 -s WASM=1 -sEXPORTED_RUNTIME_METHODS=ccall --js-library ./src/js/library.js -o ./public/wasm/game.js"
+  },
+  "author": "abagames",
+  "license": "MIT",
+  "devDependencies": {
+    "npm-watch": "^0.11.0",
+    "vite": "^3.1.0"
+  },
+  "dependencies": {
+    "crisp-game-lib": "^1.1.0"
+  }
+}
