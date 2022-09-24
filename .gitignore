@@ -1,5 +1,4 @@
 node_modules/
-.vscode/settings.json
-.vscode/c_cpp_properties.json
+.vscode/
 package-lock.json
 build/m5stickcplus
