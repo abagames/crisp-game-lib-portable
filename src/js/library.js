@@ -8,8 +8,15 @@ mergeInto(LibraryManager.library, {
   md_character: function (l, x, y) {
     char(String.fromCharCode(l), x, y);
   },
-  md_playTone: function (freq, duration) {},
-  md_stopTone: function () {},
+  md_playTone: function (freq, duration, when) {
+    playTone(freq, duration, when);
+  },
+  md_stopTone: function () {
+    stopTone();
+  },
+  md_getAudioTime: function () {
+    return getAudioTime();
+  },
 
   md_setTexts: function (grid, count) {},
   md_setCharacters: function (grid, count) {

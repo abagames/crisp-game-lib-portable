@@ -9,6 +9,7 @@
 
 #include "cglp.h"
 
-EXTERNC char textPatterns[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1];
+EXTERNC char textPatterns[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT]
+                         [CHARACTER_WIDTH + 1];
 
 #endif

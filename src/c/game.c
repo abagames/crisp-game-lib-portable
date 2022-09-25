@@ -239,6 +239,7 @@ void update()
         input.isJustPressed &&
         (p->isOnFloor || (p->underFoot != NULL && p->underFoot->isJumped)))
     {
+      play(0);
       p->vel.x = 0;
       p->vel.y = -1.5;
       p->isOnFloor = false;

@@ -1,5 +1,6 @@
-#include "cglp.h"
 #include "textPattern.h"
+
+#include "cglp.h"
 
 char textPatterns[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1] = {
     {
