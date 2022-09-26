@@ -10,12 +10,15 @@
 
 #include "cglp.h"
 #include "machineDependent.h"
+#include "random.h"
 #include "sound.h"
 #include "textPattern.h"
 
 Input input;
 int ticks;
 float tempo = 120;
+Options options;
+Random gameRandom;
 
 // Collision
 typedef struct {
@@ -25,8 +28,6 @@ typedef struct {
   Vector pos;
   Vector size;
 } HitBox;
-
-Options options;
 
 #define MAX_HIT_BOX_COUNT 256
 HitBox hitBoxes[MAX_HIT_BOX_COUNT];
@@ -96,6 +97,7 @@ void initGame() {
   md_setCharacters(characters, charactersCount);
   setTextHitBoxes();
   setCharacterHitBoxes();
+  setRandomSeedWithTime(&gameRandom);
   options.viewSize.x = 100;
   options.viewSize.y = 100;
   initSound();
@@ -314,5 +316,9 @@ void toggleSound() {
     enableSound();
   }
 }
+
+float rnd(float low, float high) { return getRandom(&gameRandom, low, high); }
+
+int rndi(int low, int high) { return getIntRandom(&gameRandom, low, high); }
 
 void consoleLog(char *msg) { md_consoleLog(msg); }

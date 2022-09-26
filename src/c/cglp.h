@@ -78,6 +78,8 @@ EXTERNC void play(int type);
 EXTERNC void enableSound();
 EXTERNC void disableSound();
 EXTERNC void toggleSound();
+EXTERNC float rnd(float high, float low);
+EXTERNC int rndi(int high, int low);
 EXTERNC void consoleLog(char *msg);
 
 EXTERNC void setInput(bool isPressed, bool isJustPressed, bool isJustReleased);

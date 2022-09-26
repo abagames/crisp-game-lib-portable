@@ -13,7 +13,7 @@ uint32_t nextRandom(Random *random) {
 }
 
 float getRandom(Random *random, float low, float high) {
-  return (float)(nextRandom(random) / 0xfffffffful) * (high - low) + low;
+  return (float)nextRandom(random) / (float)UINT32_MAX * (high - low) + low;
 }
 
 int getIntRandom(Random *random, int low, int high) {
@@ -27,7 +27,7 @@ int getPlusOrMinusRandom(Random *random) {
   return getIntRandom(random, 0, 2) * 2 - 1;
 }
 
-void setSeed(Random *random, uint32_t w) {
+void setRandomSeed(Random *random, uint32_t w) {
   int loopCount = 32;
   random->w = 123456789ul;
   random->y = 362436069ul;
@@ -37,4 +37,6 @@ void setSeed(Random *random, uint32_t w) {
     nextRandom(random);
   }
 }
-void setSeedWithTime(Random *random) { setSeed(random, (unsigned)time(NULL)); }
+void setRandomSeedWithTime(Random *random) {
+  setRandomSeed(random, (unsigned)time(NULL));
+}

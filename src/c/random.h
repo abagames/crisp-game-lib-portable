@@ -20,7 +20,7 @@ EXTERNC uint32_t nextRandom(Random *random);
 EXTERNC float getRandom(Random *random, float low, float high);
 EXTERNC int getIntRandom(Random *random, int low, int high);
 EXTERNC int getPlusOrMinusRandom(Random *random);
-EXTERNC void setSeed(Random *random, uint32_t w);
-EXTERNC void setSeedWithTime(Random *random);
+EXTERNC void setRandomSeed(Random *random, uint32_t w);
+EXTERNC void setRandomSeedWithTime(Random *random);
 
 #endif

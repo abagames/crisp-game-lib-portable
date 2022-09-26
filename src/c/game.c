@@ -65,16 +65,6 @@ DownedPlayer downedPlayers[PLAYER_COUNT];
 
 Barrel barrel;
 
-void initRand() { srand((unsigned)time(NULL)); }
-
-float rnd(float from, float to) {
-  return rand() / (double)RAND_MAX * (to - from) + from;
-}
-
-int rndi(float from, float to) {
-  return floor(rand() / (double)RAND_MAX * (to - from) + from);
-}
-
 void initPlayers() {
   for (int i = 0; i < PLAYER_COUNT; i++) {
     players[i].isAlive = false;
@@ -127,7 +117,6 @@ float calcDistance(Vector p1, Vector p2) {
 
 void update() {
   if (!ticks) {
-    initRand();
     initPlayers();
     barrel.isAlive = false;
   }
