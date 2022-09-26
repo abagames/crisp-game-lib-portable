@@ -9,6 +9,8 @@
 
 #include <stdbool.h>
 
+#define FPS 60
+
 #define COLOR_COUNT 8
 #define TRANSPARENT -1
 #define WHITE 0
@@ -16,6 +18,17 @@
 
 #define CHARACTER_WIDTH 6
 #define CHARACTER_HEIGHT 6
+
+#define SOUND_EFFECT_TYPE_COUNT 9
+#define COIN 0
+#define LASER 1
+#define EXPLOSION 2
+#define POWER_UP 3
+#define HIT 4
+#define JUMP 5
+#define SELECT 6
+#define RANDOM 7
+#define CLICK 8
 
 #define TEXT_PATTERN_COUNT 94
 #define MAX_CHARACTER_PATTERN_COUNT 26

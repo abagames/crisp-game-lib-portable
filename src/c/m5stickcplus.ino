@@ -177,7 +177,7 @@ void setup() {
   initCanvas();
   initSound();
   hw_timer_t *frameTimer = NULL;
-  frameTimer = timerBegin(0, getApbFrequency() / 60 / 1000, true);
+  frameTimer = timerBegin(0, getApbFrequency() / FPS / 1000, true);
   timerAttachInterrupt(frameTimer, &onFrameTimer, true);
   timerAlarmWrite(frameTimer, 1000, true);
   timerAlarmEnable(frameTimer);
