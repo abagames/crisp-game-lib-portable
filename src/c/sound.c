@@ -10,7 +10,6 @@
 #define QUANTIZED_TONE_PER_NOTE 2
 #define QUANTIZED_DURATION (60.0f / tempo / QUANTIZED_TONE_PER_NOTE)
 
-float nextTime;
 bool isSoundEnabled = true;
 
 typedef struct {
@@ -19,10 +18,16 @@ typedef struct {
   float when;
 } Note;
 
+Random soundRandom;
+
+float _rnd(float low, float high) { return getRandom(&soundRandom, low, high); }
+
+int _rndi(int low, int high) { return getIntRandom(&soundRandom, low, high); }
+
 #define MAX_SOUND_EFFECT_NOTE_LENGTH 32
 #define BASE_NOTE_DURATION (60.0f / tempo / 32)
-Note soundEffects[SOUND_EFFECT_TYPE_COUNT][MAX_SOUND_EFFECT_NOTE_LENGTH];
-Random soundRandom;
+Note soundEffects[SOUND_EFFECT_TYPE_COUNT][MAX_SOUND_EFFECT_NOTE_LENGTH + 1];
+float soundEffectPlayedTimes[SOUND_EFFECT_TYPE_COUNT];
 
 float midiNoteToFreq(int midiNote) {
   return 440 * pow(2, (float)(midiNote - 69) / 12);
@@ -36,7 +41,7 @@ void addNotes(Note *ns, int count, int when, int from, int to,
   float ao = (float)(amplitudeTo - amplitudeFrom) / (count - 1);
   for (int i = 0; i < count; i++) {
     Note *n = &ns[i];
-    n->freq = midiNoteToFreq((int)(mn + getRandom(&soundRandom, -an, an)));
+    n->freq = midiNoteToFreq((int)(mn + _rnd(-an, an)));
     n->duration = BASE_NOTE_DURATION;
     n->when = when * BASE_NOTE_DURATION;
     mn += mo;
@@ -48,14 +53,14 @@ void addNotes(Note *ns, int count, int when, int from, int to,
 void coin(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 4, 8);
-  ns[i].freq = midiNoteToFreq(getIntRandom(&soundRandom, 70, 80));
+  int d = _rndi(4, 8);
+  ns[i].freq = midiNoteToFreq(_rndi(70, 80));
   ns[i].when = w * BASE_NOTE_DURATION;
   ns[i].duration = d * BASE_NOTE_DURATION;
   i++;
   w += d;
-  d = getIntRandom(&soundRandom, 7, 15);
-  ns[i].freq = midiNoteToFreq(getIntRandom(&soundRandom, 85, 95));
+  d = _rndi(7, 15);
+  ns[i].freq = midiNoteToFreq(_rndi(85, 95));
   ns[i].when = w * BASE_NOTE_DURATION;
   ns[i].duration = d * BASE_NOTE_DURATION;
   i++;
@@ -65,10 +70,8 @@ void coin(Note *ns) {
 void laser(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 9, 19);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 75, 95),
-           getIntRandom(&soundRandom, 45, 65), getIntRandom(&soundRandom, 5, 9),
-           0);
+  int d = _rndi(9, 19);
+  addNotes(&ns[i], d, w, _rndi(75, 95), _rndi(45, 65), _rndi(5, 9), 0);
   i += d;
   ns[i].freq = -1;
 }
@@ -76,18 +79,14 @@ void laser(Note *ns) {
 void explosion(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 5, 12);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 70, 90),
-           getIntRandom(&soundRandom, 50, 60),
-           getIntRandom(&soundRandom, 5, 15),
-           getIntRandom(&soundRandom, 15, 25));
+  int d = _rndi(5, 12);
+  addNotes(&ns[i], d, w, _rndi(70, 90), _rndi(50, 60), _rndi(5, 15),
+           _rndi(15, 25));
   i++;
   w += d;
-  d = getIntRandom(&soundRandom, 12, 20);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 50, 70),
-           getIntRandom(&soundRandom, 30, 50),
-           getIntRandom(&soundRandom, 15, 25),
-           getIntRandom(&soundRandom, 5, 15));
+  d = _rndi(12, 20);
+  addNotes(&ns[i], d, w, _rndi(50, 70), _rndi(30, 50), _rndi(15, 25),
+           _rndi(5, 15));
   i += d;
   ns[i].freq = -1;
 }
@@ -95,24 +94,20 @@ void explosion(Note *ns) {
 void powerUp(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 2, 5);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 75, 85),
-           getIntRandom(&soundRandom, 65, 75), 0, 0);
+  int d = _rndi(2, 5);
+  addNotes(&ns[i], d, w, _rndi(75, 85), _rndi(65, 75), 0, 0);
   i += d;
   w += d;
-  d = getIntRandom(&soundRandom, 6, 9);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 65, 75),
-           getIntRandom(&soundRandom, 85, 95), 0, 0);
+  d = _rndi(6, 9);
+  addNotes(&ns[i], d, w, _rndi(65, 75), _rndi(85, 95), 0, 0);
   i += d;
   w += d;
-  d = getIntRandom(&soundRandom, 3, 6);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 85, 95),
-           getIntRandom(&soundRandom, 75, 85), 0, 0);
+  d = _rndi(3, 6);
+  addNotes(&ns[i], d, w, _rndi(85, 95), _rndi(75, 85), 0, 0);
   i += d;
   w += d;
-  d = getIntRandom(&soundRandom, 6, 9);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 75, 85),
-           getIntRandom(&soundRandom, 95, 105), 0, 0);
+  d = _rndi(6, 9);
+  addNotes(&ns[i], d, w, _rndi(75, 85), _rndi(95, 105), 0, 0);
 
   i += d;
   ns[i].freq = -1;
@@ -121,11 +116,9 @@ void powerUp(Note *ns) {
 void hit(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 5, 9);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 70, 80),
-           getIntRandom(&soundRandom, 60, 70),
-           getIntRandom(&soundRandom, 0, 10),
-           getIntRandom(&soundRandom, 0, 10));
+  int d = _rndi(5, 9);
+  addNotes(&ns[i], d, w, _rndi(70, 80), _rndi(60, 70), _rndi(0, 10),
+           _rndi(0, 10));
   i += d;
   ns[i].freq = -1;
 }
@@ -133,15 +126,14 @@ void hit(Note *ns) {
 void jump(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 2, 5);
-  ns[i].freq = midiNoteToFreq(getIntRandom(&soundRandom, 70, 80));
+  int d = _rndi(2, 5);
+  ns[i].freq = midiNoteToFreq(_rndi(70, 80));
   ns[i].when = w * BASE_NOTE_DURATION;
   ns[i].duration = d * BASE_NOTE_DURATION;
   i++;
   w += d;
-  d = getIntRandom(&soundRandom, 9, 19);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 55, 70),
-           getIntRandom(&soundRandom, 80, 95), 0, 0);
+  d = _rndi(9, 19);
+  addNotes(&ns[i], d, w, _rndi(55, 70), _rndi(80, 95), 0, 0);
   i += d;
   ns[i].freq = -1;
 }
@@ -149,15 +141,15 @@ void jump(Note *ns) {
 void select(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 2, 4);
-  int f = getIntRandom(&soundRandom, 60, 90);
+  int d = _rndi(2, 4);
+  int f = _rndi(60, 90);
   ns[i].freq = midiNoteToFreq(f);
   ns[i].when = w * BASE_NOTE_DURATION;
   ns[i].duration = ceil(d * 0.7) * BASE_NOTE_DURATION;
   i++;
   w += d;
-  d = getIntRandom(&soundRandom, 4, 9);
-  f += getIntRandom(&soundRandom, -2, 5);
+  d = _rndi(4, 9);
+  f += _rndi(-2, 5);
   ns[i].freq = midiNoteToFreq(f);
   ns[i].when = w * BASE_NOTE_DURATION;
   ns[i].duration = d * BASE_NOTE_DURATION;
@@ -168,18 +160,14 @@ void select(Note *ns) {
 void randomSe(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 3, 15);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 30, 99),
-           getIntRandom(&soundRandom, 30, 99),
-           getIntRandom(&soundRandom, 0, 20),
-           getIntRandom(&soundRandom, 0, 20));
+  int d = _rndi(3, 15);
+  addNotes(&ns[i], d, w, _rndi(30, 99), _rndi(30, 99), _rndi(0, 20),
+           _rndi(0, 20));
   i += d;
   w += d;
-  d = getIntRandom(&soundRandom, 3, 15);
-  addNotes(&ns[i], d, w, getIntRandom(&soundRandom, 30, 99),
-           getIntRandom(&soundRandom, 30, 99),
-           getIntRandom(&soundRandom, 0, 20),
-           getIntRandom(&soundRandom, 0, 20));
+  d = _rndi(3, 15);
+  addNotes(&ns[i], d, w, _rndi(30, 99), _rndi(30, 99), _rndi(0, 20),
+           _rndi(0, 20));
   i += d;
   ns[i].freq = -1;
 }
@@ -187,14 +175,14 @@ void randomSe(Note *ns) {
 void click(Note *ns) {
   int i = 0;
   int w = 0;
-  int d = getIntRandom(&soundRandom, 2, 6);
-  ns[i].freq = midiNoteToFreq(getIntRandom(&soundRandom, 65, 80));
+  int d = _rndi(2, 6);
+  ns[i].freq = midiNoteToFreq(_rndi(65, 80));
   ns[i].when = w * BASE_NOTE_DURATION;
   ns[i].duration = ceil(d / 2) * BASE_NOTE_DURATION;
   i++;
   w += d;
-  d = getIntRandom(&soundRandom, 2, 6);
-  ns[i].freq = midiNoteToFreq(getIntRandom(&soundRandom, 70, 85));
+  d = _rndi(2, 6);
+  ns[i].freq = midiNoteToFreq(_rndi(70, 85));
   ns[i].when = w * BASE_NOTE_DURATION;
   ns[i].duration = ceil(d / 2) * BASE_NOTE_DURATION;
   i++;
@@ -211,32 +199,6 @@ void generateSoundEffect() {
   select(soundEffects[SELECT]);
   randomSe(soundEffects[RANDOM]);
   click(soundEffects[CLICK]);
-}
-
-float soundEffectPlayedTimes[SOUND_EFFECT_TYPE_COUNT];
-
-void initSound() {
-  nextTime = md_getAudioTime() + 1;
-  setRandomSeedWithTime(&soundRandom);
-  generateSoundEffect();
-  for (int i = 0; i < SOUND_EFFECT_TYPE_COUNT; i++) {
-    soundEffectPlayedTimes[i] = 0;
-  }
-}
-
-void updateSound() {
-  if (!isSoundEnabled) {
-    return;
-  }
-  float ct = md_getAudioTime();
-  if (ct > nextTime) {
-    nextTime = ct;
-  }
-  if (nextTime < ct + 1.0f / FPS * 2) {
-    nextTime += 60.0f / tempo;
-    md_playTone(900, BASE_NOTE_DURATION, nextTime);
-    md_playTone(700, BASE_NOTE_DURATION, nextTime + BASE_NOTE_DURATION);
-  }
 }
 
 void playSoundEffect(int type) {
@@ -256,4 +218,159 @@ void playSoundEffect(int type) {
     md_playTone(ns->freq, ns->duration, qt + ns->when);
   }
   soundEffectPlayedTimes[type] = qt;
+}
+
+#define MAX_BGM_NOTE_LENGTH 64
+Note bgm[MAX_BGM_NOTE_LENGTH + 1];
+int bgmNoteLength = 32;
+float bgmDuration;
+int bgmIndex;
+int bgmTime;
+
+typedef struct {
+  int midiNote;
+  bool isMinor;
+} Chord;
+
+Chord chords[][4] = {{
+                         {.midiNote = 0, .isMinor = false},
+                         {.midiNote = 0, .isMinor = false},
+                         {.midiNote = 4, .isMinor = true},
+                         {.midiNote = 9, .isMinor = true},
+                     },
+                     {
+                         {.midiNote = 5, .isMinor = false},
+                         {.midiNote = 5, .isMinor = false},
+                         {.midiNote = 2, .isMinor = true},
+                         {.midiNote = 2, .isMinor = true},
+                     },
+                     {
+                         {.midiNote = 7, .isMinor = false},
+                         {.midiNote = 7, .isMinor = false},
+                         {.midiNote = 11, .isMinor = true},
+                         {.midiNote = 11, .isMinor = true},
+                     }};
+
+int nextChordsIndex[][3] = {
+    {0, 1, 2},
+    {1, 2, 0},
+    {2, 0, 0},
+};
+
+int keys[7] = {0, 2, 3, 5, 7, 9, 10};
+int progression[2][4] = {{0, 4, 7, 10}, {0, 3, 7, 10}};
+
+void generateChordProgression(int midiNotes[][4], int len) {
+  int key = keys[_rndi(0, 7)];
+  int octave = 3;
+  int chordChangeInterval = 4;
+  Chord chord;
+  int chordIndex;
+  for (int i = 0; i < len; i++) {
+    if (i % chordChangeInterval == 0) {
+      if (i == 0) {
+        chordIndex = _rndi(0, 2);
+        chord = chords[chordIndex][_rndi(0, 4)];
+      } else if (_rnd(0, 1) < 0.8 - ((i / chordChangeInterval) % 2 * 0.5)) {
+        chordIndex = nextChordsIndex[chordIndex][_rndi(0, 3)];
+        chord = chords[chordIndex][_rndi(0, 4)];
+      }
+    }
+    int pi = chord.isMinor ? 1 : 0;
+    for (int j = 0; j < 4; j++) {
+      midiNotes[i][j] = octave * 12 + 12 + chord.midiNote + progression[pi][j];
+    }
+  }
+}
+
+void reversePattern(bool pattern[], int interval, int len, int freq) {
+  bool pt[interval];
+  for (int i = 0; i < interval; i++) {
+    pt[i] = false;
+  }
+  for (int i = 0; i < freq; i++) {
+    pt[_rndi(0, interval)] = true;
+  }
+  for (int i = 0; i < len; i++) {
+    if (pt[i % interval]) {
+      pattern[i] = !pattern[i];
+    }
+  }
+}
+
+void createRandomPattern(bool pattern[], int len, int freq) {
+  int interval = 4;
+  for (int i = 0; i < len; i++) {
+    pattern[i] = false;
+  }
+  while (interval < len) {
+    reversePattern(pattern, interval, len, freq);
+    interval *= 2;
+  }
+}
+
+void generateBgm() {
+  int noteLength = bgmNoteLength;
+  int chordMidiNotes[noteLength][4];
+  generateChordProgression(chordMidiNotes, noteLength);
+  bool pattern[noteLength];
+  createRandomPattern(pattern, noteLength, 2);
+  bool continuingPattern[noteLength];
+  for (int i = 0; i < noteLength; i++) {
+    continuingPattern[i] = _rnd(0, 1) < 0.8;
+  }
+  float duration = bgmDuration;
+  float when = -duration;
+  bool hasPrevNote = false;
+  int bgmNoteIndex = 0;
+  for (int i = 0; i < noteLength; i++) {
+    when += duration;
+    if (!pattern[i]) {
+      hasPrevNote = false;
+      continue;
+    }
+    if (continuingPattern[i] && hasPrevNote) {
+      bgm[bgmNoteIndex - 1].duration += duration;
+      continue;
+    }
+    hasPrevNote = true;
+    int mn = chordMidiNotes[i][_rndi(0, 4)];
+    bgm[bgmNoteIndex].freq = midiNoteToFreq(mn);
+    bgm[bgmNoteIndex].when = when;
+    bgm[bgmNoteIndex].duration = duration;
+    bgmNoteIndex++;
+  }
+  bgm[bgmNoteIndex].freq = -1;
+}
+
+void initSound() {
+  setRandomSeedWithTime(&soundRandom);
+  bgmIndex = 0;
+  bgmDuration = BASE_NOTE_DURATION * 8;
+  generateSoundEffect();
+  for (int i = 0; i < SOUND_EFFECT_TYPE_COUNT; i++) {
+    soundEffectPlayedTimes[i] = 0;
+  }
+  generateBgm();
+  float ct = md_getAudioTime();
+  bgmTime = ceil(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
+}
+
+void updateSound() {
+  if (!isSoundEnabled) {
+    return;
+  }
+  float ct = md_getAudioTime();
+  Note *bn = &bgm[bgmIndex];
+  float bt = bgmTime + bn->when;
+  if (ct > bt) {
+    bgmTime = ceil(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
+  } else if (bt < ct + 1.0f / FPS * 2) {
+    md_playTone(bn->freq, bn->duration * 0.8, bt);
+    bgmIndex++;
+    if (bgm[bgmIndex].freq == -1) {
+      bgmIndex = 0;
+      bgmTime += bgmNoteLength * bgmDuration;
+    }
+  }
 }
