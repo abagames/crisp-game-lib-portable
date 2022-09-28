@@ -7,8 +7,12 @@
 #include "machineDependent.h"
 #include "random.h"
 
-#define QUANTIZED_TONE_PER_NOTE 2
-#define QUANTIZED_DURATION (60.0f / tempo / QUANTIZED_TONE_PER_NOTE)
+Random soundRandom;
+float _rnd(float low, float high) { return getRandom(&soundRandom, low, high); }
+int _rndi(int low, int high) { return getIntRandom(&soundRandom, low, high); }
+
+#define BASE_NOTE_DURATION (60.0f / tempo / 32)
+#define QUANTIZED_DURATION (60.0f / tempo / 2)
 
 bool isSoundEnabled = true;
 
@@ -18,14 +22,7 @@ typedef struct {
   float when;
 } Note;
 
-Random soundRandom;
-
-float _rnd(float low, float high) { return getRandom(&soundRandom, low, high); }
-
-int _rndi(int low, int high) { return getIntRandom(&soundRandom, low, high); }
-
 #define MAX_SOUND_EFFECT_NOTE_LENGTH 32
-#define BASE_NOTE_DURATION (60.0f / tempo / 32)
 Note soundEffects[SOUND_EFFECT_TYPE_COUNT][MAX_SOUND_EFFECT_NOTE_LENGTH + 1];
 float soundEffectPlayedTimes[SOUND_EFFECT_TYPE_COUNT];
 
@@ -258,7 +255,7 @@ int nextChordsIndex[][3] = {
 };
 
 int keys[7] = {0, 2, 3, 5, 7, 9, 10};
-int progression[2][4] = {{0, 4, 7, 10}, {0, 3, 7, 10}};
+int progression[2][4] = {{0, 4, 7, 11}, {0, 3, 7, 10}};
 
 void generateChordProgression(int midiNotes[][4], int len) {
   int key = keys[_rndi(0, 7)];
@@ -364,9 +361,10 @@ void updateSound() {
   Note *bn = &bgm[bgmIndex];
   float bt = bgmTime + bn->when;
   if (ct > bt) {
+    bgmIndex = 0;
     bgmTime = ceil(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
   } else if (bt < ct + 1.0f / FPS * 2) {
-    md_playTone(bn->freq, bn->duration * 0.8, bt);
+    md_playTone(bn->freq, bn->duration, bt);
     bgmIndex++;
     if (bgm[bgmIndex].freq == -1) {
       bgmIndex = 0;
