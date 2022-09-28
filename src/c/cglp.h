@@ -63,11 +63,12 @@ typedef struct {
   Vector viewSize;
 } Options;
 
-EXTERNC Options options;
-EXTERNC float tempo;
 EXTERNC int ticks;
-EXTERNC Input input;
+EXTERNC float difficulty;
 EXTERNC float thickness;
+EXTERNC float tempo;
+EXTERNC Input input;
+EXTERNC Options options;
 EXTERNC Collision rect(float x, float y, float w, float h);
 EXTERNC Collision line(float x1, float y1, float x2, float y2);
 EXTERNC Collision arc(float centerX, float centerY, float radius,

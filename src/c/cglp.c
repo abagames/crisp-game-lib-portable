@@ -14,10 +14,13 @@
 #include "sound.h"
 #include "textPattern.h"
 
-Input input;
 int ticks;
+float difficulty;
+float thickness = 3;
 float tempo = 120;
+Input input;
 Options options;
+
 Random gameRandom;
 
 // Collision
@@ -104,11 +107,10 @@ void initGame() {
   ticks = 0;
 }
 
-void initFrame() { hitBoxesIndex = 0; }
-
 EMSCRIPTEN_KEEPALIVE
 void updateFrame() {
-  initFrame();
+  hitBoxesIndex = 0;
+  difficulty = (float)ticks / 60 / FPS + 1;
   update();
   updateSound();
   ticks++;
@@ -171,8 +173,6 @@ Collision rect(float x, float y, float w, float h) {
   endAddingRects();
   return hitCollision;
 }
-
-float thickness = 3;
 
 void drawLine(float x, float y, float ox, float oy, Collision *hitCollision) {
   int t = floor(thickness);

@@ -129,7 +129,7 @@ void update() {
     barrel.angle = rnd(0, M_PI * 2);
     barrel.isAlive = true;
   }
-  barrel.pos.x -= barrel.vx;  // * difficulty
+  barrel.pos.x -= barrel.vx * difficulty;
   thickness = 3 + barrel.r * 0.1;
   arc(barrel.pos.x, barrel.pos.y, barrel.r, barrel.angle,
       barrel.angle + M_PI * 2);
@@ -202,8 +202,8 @@ void update() {
       p->pos.y -= 6;
       p->vel.x = p->vel.y = 0;
     } else {
-      p->pos.x += p->vel.x;  // * difficulty
-      p->pos.y += p->vel.y;  // * difficulty
+      p->pos.x += p->vel.x * difficulty;
+      p->pos.y += p->vel.y * difficulty;
       p->vel.x *= 0.95;
       if ((p->pos.x < 7 && p->vel.x < 0) || (p->pos.x >= 77 && p->vel.x > 0)) {
         p->vel.x *= -0.5;

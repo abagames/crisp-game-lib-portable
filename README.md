@@ -23,7 +23,7 @@ Compile [m5stickcplus.ino](https://github.com/abagames/crisp-game-lib-portable/b
 ## Unimplemented features
 
 - ~~Procedurally generated musics and [sound effects](https://abagames.github.io/crisp-game-lib/ref_document/functions/play.html)~~
-- [Difficulty](https://abagames.github.io/crisp-game-lib/ref_document/variables/difficulty.html)
+- ~~[Difficulty](https://abagames.github.io/crisp-game-lib/ref_document/variables/difficulty.html)~~
 - [Score](https://abagames.github.io/crisp-game-lib/ref_document/functions/addScore.html)
 - [Game over](https://abagames.github.io/crisp-game-lib/ref_document/functions/end.html), title screen and replay
 - [Particle](https://abagames.github.io/crisp-game-lib/ref_document/functions/particle.html)
