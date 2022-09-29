@@ -1,4 +1,5 @@
 import "crisp-game-lib";
+
 function update() {
   Module.ccall(
     "setInput",
@@ -55,9 +56,7 @@ window.playTone = (freq, duration, when) => {
   oscillator.connect(gain); 
 }
 
-window.stopTone = () => {
-  oscillator.stop();
-}
+window.stopTone = () => {}
 
 window.getAudioTime = () => {
   return audioContext.currentTime;
