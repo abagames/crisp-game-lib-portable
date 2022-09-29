@@ -311,7 +311,7 @@ void generateBgm() {
   int chordMidiNotes[noteLength][4];
   generateChordProgression(chordMidiNotes, noteLength);
   bool pattern[noteLength];
-  createRandomPattern(pattern, noteLength, 2);
+  createRandomPattern(pattern, noteLength, 1);
   bool continuingPattern[noteLength];
   for (int i = 0; i < noteLength; i++) {
     continuingPattern[i] = _rnd(0, 1) < 0.8;
