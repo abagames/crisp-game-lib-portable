@@ -64,7 +64,7 @@ void md_stopTone() {
 
 float md_getAudioTime() { return soundTime; }
 
-void md_consoleLog(char *msg) { M5.Lcd.print(msg); }
+void md_consoleLog(char *msg) { Serial.println(msg); }
 
 void md_setTexts(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
                  int count) {
