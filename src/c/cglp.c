@@ -6,6 +6,7 @@
 
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "cglp.h"
@@ -93,36 +94,7 @@ void setCharacterHitBoxes() {
   }
 }
 
-// Initialize
-EMSCRIPTEN_KEEPALIVE
-void initGame() {
-  md_setTexts(textPatterns, TEXT_PATTERN_COUNT);
-  md_setCharacters(characters, charactersCount);
-  setTextHitBoxes();
-  setCharacterHitBoxes();
-  setRandomSeedWithTime(&gameRandom);
-  options.viewSize.x = 100;
-  options.viewSize.y = 100;
-  initSound();
-  ticks = 0;
-}
-
-EMSCRIPTEN_KEEPALIVE
-void updateFrame() {
-  hitBoxesIndex = 0;
-  difficulty = (float)ticks / 60 / FPS + 1;
-  update();
-  updateSound();
-  ticks++;
-}
-
-EMSCRIPTEN_KEEPALIVE
-void setInput(bool isPressed, bool isJustPressed, bool isJustReleased) {
-  input.isPressed = isPressed;
-  input.isJustPressed = isJustPressed;
-  input.isJustReleased = isJustReleased;
-}
-
+// Drawing
 #define MAX_DRAWING_HIT_BOXES_COUNT 64
 HitBox drawingHitBoxes[MAX_DRAWING_HIT_BOXES_COUNT];
 int drawingHitBoxesIndex;
@@ -254,28 +226,32 @@ Collision arc(float centerX, float centerY, float radius, float angleFrom,
   return hitCollision;
 }
 
-Collision text(char *msg, int x, int y) {
+Collision drawText(char *msg, int x, int y, bool hasCollision) {
   Collision hitCollision;
   initCollision(&hitCollision);
   int ml = strlen(msg);
   for (int i = 0; i < ml; i++) {
     if (msg[i] >= '!' && msg[i] <= '~') {
-      HitBox *thb = &textHitBoxes[msg[i] - '!'];
-      HitBox hb;
-      hb.textIndex = msg[i];
-      hb.rectIndex = hb.characterIndex = -1;
-      hb.pos.x = floor(x + thb->pos.x);
-      hb.pos.y = floor(y + thb->pos.y);
-      hb.size.x = thb->size.x;
-      hb.size.y = thb->size.y;
-      checkHitBox(&hitCollision, hb);
-      addHitBox(hb);
+      if (hasCollision) {
+        HitBox *thb = &textHitBoxes[msg[i] - '!'];
+        HitBox hb;
+        hb.textIndex = msg[i];
+        hb.rectIndex = hb.characterIndex = -1;
+        hb.pos.x = floor(x + thb->pos.x);
+        hb.pos.y = floor(y + thb->pos.y);
+        hb.size.x = thb->size.x;
+        hb.size.y = thb->size.y;
+        checkHitBox(&hitCollision, hb);
+        addHitBox(hb);
+      }
       md_text(msg[i], x, y);
     }
     x += 6;
   }
   return hitCollision;
 }
+
+Collision text(char *msg, int x, int y) { return drawText(msg, x, y, true); }
 
 Collision character(char *msg, float x, float y) {
   Collision hitCollision;
@@ -300,6 +276,7 @@ Collision character(char *msg, float x, float y) {
   return hitCollision;
 }
 
+// Sound
 void play(int type) { playSoundEffect(type); }
 
 void enableSound() { isSoundEnabled = true; }
@@ -317,8 +294,95 @@ void toggleSound() {
   }
 }
 
+// Score
+float score;
+
+typedef struct {
+  char str[9];
+  Vector pos;
+  float vy;
+  int ticks;
+} ScoreBoard;
+
+#define MAX_SCORE_BOARD_COUNT 16
+ScoreBoard scoreBoards[MAX_SCORE_BOARD_COUNT];
+int scoreBoardsIndex;
+
+void initScore() {
+  score = 0;
+  for (int i = 0; i < MAX_SCORE_BOARD_COUNT; i++) {
+    scoreBoards[i].ticks = 0;
+  }
+  scoreBoardsIndex = 0;
+}
+
+void updateScoreBoards() {
+  for (int i = 0; i < MAX_SCORE_BOARD_COUNT; i++) {
+    ScoreBoard *sb = &scoreBoards[i];
+    if (sb->ticks > 0) {
+      drawText(sb->str, sb->pos.x, sb->pos.y, false);
+      sb->pos.y += sb->vy;
+      sb->vy *= 0.9;
+      sb->ticks--;
+    }
+  }
+}
+
+void addScore(float value, float x, float y) {
+  score += value;
+  ScoreBoard *sb = &scoreBoards[scoreBoardsIndex];
+  sprintf(sb->str, "+%d", (int)value);
+  int l = strlen(sb->str);
+  sb->pos.x = x - l * CHARACTER_WIDTH / 2;
+  sb->pos.y = y - CHARACTER_HEIGHT / 2;
+  sb->vy = -2;
+  sb->ticks = 30;
+  scoreBoardsIndex++;
+  if (scoreBoardsIndex >= MAX_SCORE_BOARD_COUNT) {
+    scoreBoardsIndex = 0;
+  }
+}
+
+void drawScore() {
+  char sc[9];
+  sprintf(sc, "%d", (int)score);
+  drawText(sc, 3, 3, false);
+}
+
+// Utilities
 float rnd(float low, float high) { return getRandom(&gameRandom, low, high); }
-
 int rndi(int low, int high) { return getIntRandom(&gameRandom, low, high); }
-
 void consoleLog(char *msg) { md_consoleLog(msg); }
+
+// Initialize
+EMSCRIPTEN_KEEPALIVE
+void initGame() {
+  md_setTexts(textPatterns, TEXT_PATTERN_COUNT);
+  md_setCharacters(characters, charactersCount);
+  setTextHitBoxes();
+  setCharacterHitBoxes();
+  setRandomSeedWithTime(&gameRandom);
+  initScore();
+  initSound();
+  options.viewSize.x = 100;
+  options.viewSize.y = 100;
+  ticks = 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void updateFrame() {
+  hitBoxesIndex = 0;
+  difficulty = (float)ticks / 60 / FPS + 1;
+  updateScoreBoards();
+  update();
+  updateSound();
+  drawScore();
+  ticks++;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void setInput(bool isPressed, bool isJustPressed, bool isJustReleased) {
+  input.isPressed = isPressed;
+  input.isJustPressed = isJustPressed;
+  input.isJustReleased = isJustReleased;
+}

@@ -90,6 +90,7 @@ void addPlayer() {
 }
 
 void addPlayers() {
+  play(POWER_UP);
   for (int i = 0; i < PLAYER_COUNT; i++) {
     addPlayer();
   }
@@ -274,5 +275,12 @@ void update() {
   }
   if (barrel.pos.x < -barrel.r) {
     barrel.isAlive = false;
+    int playerCount = 0;
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+      if (players[i].isAlive) {
+        playerCount++;
+      }
+    }
+    addScore(playerCount, 10, 50);
   }
 }

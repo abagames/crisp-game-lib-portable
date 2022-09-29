@@ -64,6 +64,7 @@ typedef struct {
 } Options;
 
 EXTERNC int ticks;
+EXTERNC float score;
 EXTERNC float difficulty;
 EXTERNC float thickness;
 EXTERNC float tempo;
@@ -79,6 +80,7 @@ EXTERNC void play(int type);
 EXTERNC void enableSound();
 EXTERNC void disableSound();
 EXTERNC void toggleSound();
+EXTERNC void addScore(float value, float x, float y);
 EXTERNC float rnd(float high, float low);
 EXTERNC int rndi(int high, int low);
 EXTERNC void consoleLog(char *msg);
