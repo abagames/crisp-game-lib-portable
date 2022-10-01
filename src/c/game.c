@@ -32,6 +32,22 @@ CS = {{
       }};
 int charactersCount = 3;
 
+#define FOR_EACH(array, index) \
+  for (int index = 0; index < sizeof(array) / sizeof(array[0]); index++)
+#define ASSIGN_ARRAY_ITEM(array, index, type, item) type *item = &array[index]
+#define SKIP_IS_NOT_ALIVE(item) \
+  if (!item->isAlive) continue
+#define TIMES(count, index) for (int index = 0; index < count; index++)
+#define COUNT_IS_ALIVE(array, counter)                           \
+  int counter = 0;                                               \
+  do {                                                           \
+    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) { \
+      if (array[i].isAlive) {                                    \
+        counter++;                                               \
+      }                                                          \
+    }                                                            \
+  } while (0)
+
 typedef struct _Player {
   Vector pos;
   Vector vel;
@@ -65,15 +81,15 @@ DownedPlayer downedPlayers[PLAYER_COUNT];
 Barrel barrel;
 
 void initPlayers() {
-  for (int i = 0; i < PLAYER_COUNT; i++) {
+  FOR_EACH(players, i) {
     players[i].isAlive = false;
     downedPlayers[i].isAlive = false;
   }
 }
 
 void addPlayer() {
-  for (int i = 0; i < PLAYER_COUNT; i++) {
-    Player *pl = &players[i];
+  FOR_EACH(players, i) {
+    ASSIGN_ARRAY_ITEM(players, i, Player, pl);
     if (!pl->isAlive) {
       pl->pos.x = rnd(10, 40);
       pl->pos.y = rnd(-9, 9);
@@ -91,14 +107,12 @@ void addPlayer() {
 
 void addPlayers() {
   play(POWER_UP);
-  for (int i = 0; i < PLAYER_COUNT; i++) {
-    addPlayer();
-  }
+  FOR_EACH(players, i) { addPlayer(); }
 }
 
 void addDownedPlayer(Vector pos, float vx, float vy) {
-  for (int i = 0; i < PLAYER_COUNT; i++) {
-    DownedPlayer *dp = &downedPlayers[i];
+  FOR_EACH(downedPlayers, i) {
+    ASSIGN_ARRAY_ITEM(downedPlayers, i, DownedPlayer, dp);
     if (!dp->isAlive) {
       dp->pos = pos;
       dp->vel.x = vx;
@@ -137,18 +151,14 @@ void update() {
   barrel.angle -= barrel.vx / barrel.r;
   rect(0, 93, 100, 7);
   int addingPlayerCount = 0;
-  for (int i = 0; i < PLAYER_COUNT; i++) {
-    Player *p = &players[i];
-    if (!p->isAlive) {
-      continue;
-    }
+  FOR_EACH(players, i) {
+    ASSIGN_ARRAY_ITEM(players, i, Player, p);
+    SKIP_IS_NOT_ALIVE(p);
     p->ticks++;
     if (p->underFoot == NULL) {
-      for (int j = 0; j < PLAYER_COUNT; j++) {
-        Player *ap = &players[j];
-        if (!ap->isAlive) {
-          continue;
-        }
+      FOR_EACH(players, j) {
+        ASSIGN_ARRAY_ITEM(players, j, Player, ap);
+        SKIP_IS_NOT_ALIVE(ap);
         if (i != j && p->isOnFloor && calcDistance(p->pos, ap->pos) < 4) {
           play(SELECT);
           Player *bp = p;
@@ -252,21 +262,18 @@ void update() {
       continue;
     }
   }
-  for (int i = 0; i < addingPlayerCount; i++) {
-    addPlayer();
-  }
-  for (int i = 0; i < PLAYER_COUNT; i++) {
-    Player *p = &players[i];
-    if (p->isAlive && p->isJumping) {
+  TIMES(addingPlayerCount, i) { addPlayer(); }
+  FOR_EACH(players, i) {
+    ASSIGN_ARRAY_ITEM(players, i, Player, p);
+    SKIP_IS_NOT_ALIVE(p);
+    if (p->isJumping) {
       p->isJumped = true;
       p->isJumping = false;
     }
   }
-  for (int i = 0; i < PLAYER_COUNT; i++) {
-    DownedPlayer *p = &downedPlayers[i];
-    if (!p->isAlive) {
-      continue;
-    }
+  FOR_EACH(downedPlayers, i) {
+    ASSIGN_ARRAY_ITEM(downedPlayers, i, DownedPlayer, p);
+    SKIP_IS_NOT_ALIVE(p);
     p->pos.x += p->vel.x;
     p->pos.y += p->vel.y;
     p->vel.y += 0.2;
@@ -275,12 +282,7 @@ void update() {
   }
   if (barrel.pos.x < -barrel.r) {
     barrel.isAlive = false;
-    int playerCount = 0;
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-      if (players[i].isAlive) {
-        playerCount++;
-      }
-    }
+    COUNT_IS_ALIVE(players, playerCount);
     addScore(playerCount, 10, 50);
   }
 }
