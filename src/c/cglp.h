@@ -83,7 +83,7 @@ EXTERNC void toggleSound();
 EXTERNC void addScore(float value, float x, float y);
 EXTERNC float rnd(float high, float low);
 EXTERNC int rndi(int high, int low);
-EXTERNC void consoleLog(char *msg);
+EXTERNC void consoleLog(char *format, ...);
 
 EXTERNC void setInput(bool isPressed, bool isJustPressed, bool isJustReleased);
 EXTERNC void initGame();

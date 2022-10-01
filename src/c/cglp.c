@@ -5,6 +5,7 @@
 #endif
 
 #include <math.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -352,7 +353,13 @@ void drawScore() {
 // Utilities
 float rnd(float low, float high) { return getRandom(&gameRandom, low, high); }
 int rndi(int low, int high) { return getIntRandom(&gameRandom, low, high); }
-void consoleLog(char *msg) { md_consoleLog(msg); }
+void consoleLog(char *format, ...) {
+  char cc[99];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(cc, 98, format, args);
+  md_consoleLog(cc);
+}
 
 // Initialize
 EMSCRIPTEN_KEEPALIVE
