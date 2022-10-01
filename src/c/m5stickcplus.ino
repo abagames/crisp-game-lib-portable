@@ -1,15 +1,29 @@
+#define LGFX_AUTODETECT
+#define LGFX_USE_V1
+
+#include <LGFX_AUTODETECT.hpp>
+#include <LovyanGFX.hpp>
+
+#define BUTTON_A_PIN 37
+#define BUTTON_B_PIN 39
+
+#define _M5DISPLAY_H_
+class M5Display {};
 #include <M5StickCPlus.h>
 
 #include "cglp.h"
 #include "machineDependent.h"
+#include "utility/ST7735_Defines.h"
 
-TFT_eSprite canvas = TFT_eSprite(&M5.Lcd);
+static LGFX lcd;
+static LGFX_Sprite canvas(&lcd);
 int canvasX;
 int canvasY;
 uint16_t textImageData[TEXT_PATTERN_COUNT][CHARACTER_WIDTH * CHARACTER_HEIGHT];
+LGFX_Sprite *textSprites[TEXT_PATTERN_COUNT];
 uint16_t characterImageData[MAX_CHARACTER_PATTERN_COUNT]
                            [CHARACTER_WIDTH * CHARACTER_HEIGHT];
-// TFT_eSprite *characterSprites[MAX_CHARACTER_PATTERN_COUNT];
+LGFX_Sprite *characterSprites[MAX_CHARACTER_PATTERN_COUNT];
 
 typedef struct {
   float freq;
@@ -41,16 +55,13 @@ void md_rect(float x, float y, float w, float h) {
 }
 
 void md_text(char l, float x, float y) {
-  canvas.pushImage((int)(x - CHARACTER_WIDTH / 2),
-                   (int)(y - CHARACTER_HEIGHT / 2), CHARACTER_WIDTH,
-                   CHARACTER_HEIGHT, textImageData[l - '!']);
+  textSprites[l - '!']->pushSprite((int)(x - CHARACTER_WIDTH / 2),
+                                   (int)(y - CHARACTER_HEIGHT / 2), 0xffff);
 }
 
 void md_character(char l, float x, float y) {
-  canvas.pushImage((int)(x - CHARACTER_WIDTH / 2),
-                   (int)(y - CHARACTER_HEIGHT / 2), CHARACTER_WIDTH,
-                   CHARACTER_HEIGHT, characterImageData[l - 'a']);
-  // characterSprites[l - 'a']->pushToSprite(&canvas, x, y, 0xffff);
+  characterSprites[l - 'a']->pushSprite(
+      (int)(x - CHARACTER_WIDTH / 2), (int)(y - CHARACTER_HEIGHT / 2), 0xffff);
 }
 
 void md_playTone(float freq, float duration, float when) {
@@ -73,10 +84,14 @@ void md_setTexts(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
     for (int y = 0; y < CHARACTER_HEIGHT; y++) {
       for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        textImageData[i][cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
+        imageData[cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
         cp++;
       }
     }
+    textSprites[i] = new LGFX_Sprite(&canvas);
+    textSprites[i]->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
+    textSprites[i]->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
+                              imageData);
   }
 }
 
@@ -88,37 +103,48 @@ void md_setCharacters(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
     for (int y = 0; y < CHARACTER_HEIGHT; y++) {
       for (int x = 0; x < CHARACTER_WIDTH; x++) {
         // RGB565 endian reversed
-        characterImageData[i][cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
-        // imageData[cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
+        imageData[cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
         cp++;
       }
     }
-    // characterSprites[i] = new TFT_eSprite(&M5.Lcd);
-    // characterSprites[i]->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
-    // imageData);
+    characterSprites[i] = new LGFX_Sprite(&canvas);
+    characterSprites[i]->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
+    characterSprites[i]->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
+                                   imageData);
   }
 }
 
 void initCanvas() {
   canvas.createSprite(options.viewSize.x, options.viewSize.y);
-  canvasX = (M5.Lcd.width() - options.viewSize.x) / 2;
-  canvasY = (M5.Lcd.height() - options.viewSize.y) / 2;
-  canvas.setSwapBytes(false);
+  canvasX = (lcd.width() - options.viewSize.x) / 2;
+  canvasY = (lcd.height() - options.viewSize.y) / 2;
+  canvas.setSwapBytes(true);
 }
 
 TaskHandle_t frameTaskHandle;
+bool btnAIsPressed = true;
+bool btnAWasPressed = false;
+bool btnAWasReleased = false;
+bool btnBIsPressed = true;
+bool btnBWasPressed = false;
 
 void updateFromTask() {
-  M5.update();
-  setInput(M5.BtnA.isPressed(), M5.BtnA.wasPressed(), M5.BtnA.wasReleased());
-  if (M5.BtnB.wasPressed()) {
+  bool ba = lgfx::gpio_in(BUTTON_A_PIN);
+  btnAWasPressed = !btnAIsPressed && ba;
+  btnAWasReleased = btnAIsPressed && !ba;
+  btnAIsPressed = ba;
+  setInput(btnAIsPressed, btnAWasPressed, btnAWasReleased);
+  bool bb = lgfx::gpio_in(BUTTON_B_PIN);
+  btnBWasPressed = !btnBIsPressed && bb;
+  btnBIsPressed = bb;
+  if (btnBWasPressed) {
     toggleSound();
   }
   canvas.fillSprite(WHITE);
   updateFrame();
-  M5.Lcd.startWrite();
+  lcd.startWrite();
   canvas.pushSprite(canvasX, canvasY);
-  M5.Lcd.endWrite();
+  lcd.endWrite();
 }
 
 void updateFrameTask(void *pvParameters) {
@@ -170,12 +196,15 @@ void IRAM_ATTR onSoundTimer() {
 
 void setup() {
   M5.begin();
-  M5.Axp.ScreenBreath(8);
-  M5.Lcd.setSwapBytes(true);
-  M5.Lcd.fillScreen(0xdddd);
+  lcd.init();
+  lcd.setRotation(0);
+  lcd.setBrightness(128);
+  lcd.setSwapBytes(true);
+  lcd.fillScreen(0xdddd);
   initGame();
   initCanvas();
   initSound();
+  disableSound();
   hw_timer_t *frameTimer = NULL;
   frameTimer = timerBegin(0, getApbFrequency() / FPS / 1000, true);
   timerAttachInterrupt(frameTimer, &onFrameTimer, true);
