@@ -3,10 +3,10 @@ mergeInto(LibraryManager.library, {
     rect(x, y, w, h);
   },
   md_text: function (l, x, y) {
-    text(String.fromCharCode(l), x, y);
+    text(l, x, y);
   },
   md_character: function (l, x, y) {
-    char(String.fromCharCode(l), x, y);
+    char(l, x, y);
   },
   md_playTone: function (freq, duration, when) {
     playTone(freq, duration, when);
@@ -18,7 +18,9 @@ mergeInto(LibraryManager.library, {
     return getAudioTime();
   },
 
-  md_setTexts: function (grid, count) {},
+  md_setTexts: function (grid, count) {
+    setTexts(grid, count);
+  },
   md_setCharacters: function (grid, count) {
     setCharacters(grid, count);
   },

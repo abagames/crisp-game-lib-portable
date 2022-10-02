@@ -1,75 +1,51 @@
-import "crisp-game-lib";
+import * as view from "./view";
+import * as letter from "./letter";
+import * as input from "./input";
+import * as audio from "./audio";
 
 function update() {
+  input.update();
   Module.ccall(
     "setInput",
     "void",
     ["boolean", "boolean", "boolean"],
     [input.isPressed, input.isJustPressed, input.isJustReleased]
   );
+  view.clear();
   Module.ccall("updateFrame", "void", [], []);
 }
 
-let characters = [];
+const targetFps = 68;
+const deltaTime = 1000 / targetFps;
+let nextFrameTime = 0;
+
+function animationLoop() {
+  requestAnimationFrame(animationLoop);
+  const now = window.performance.now();
+  if (now < nextFrameTime - targetFps / 12) {
+    return;
+  }
+  nextFrameTime += deltaTime;
+  if (nextFrameTime < now || nextFrameTime > now + deltaTime * 2) {
+    nextFrameTime = now + deltaTime;
+  }
+  update();
+}
 
 function onRuntimeInitialized() {
-  initAudio();
+  letter.init();
+  input.init();
+  audio.init();
+  view.init(100, 100);
   Module.ccall("initGame", "void", [], []);
-  init({ update, characters, options: { isSoundEnabled: false, isShowingScore: false} });
-}
-
-window.setCharacters = (gridPointer, count) => {
-  let p = gridPointer;
-  characters = [];
-  for (let i = 0; i < count; i++) {
-    let cs = "\n";
-    for (let y = 0; y < 6; y++) {
-      for (let x = 0; x < 6; x++) {
-        cs += String.fromCharCode(Module.HEAPU8[p + x]);
-      }
-      p += 7;
-      cs += "\n";
-    }
-    characters.push(cs);
-  }
-};
-
-let audioContext;
-let gain;
-
-function initAudio() {
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  window.addEventListener("mousedown", resumeAudio);
-  window.addEventListener("touchstart", resumeAudio);
-  window.addEventListener("keydown", resumeAudio);
-  gain = audioContext.createGain();
-  gain.gain.value = 0.05;
-  gain.connect(audioContext.destination);
-}
-
-window.playTone = (freq, duration, when) => {
-  const oscillator = audioContext.createOscillator();
-  oscillator.type = "square";
-  oscillator.frequency.value = freq;
-  oscillator.start(when);
-  oscillator.stop(when + duration);
-  oscillator.connect(gain); 
-}
-
-window.stopTone = () => {}
-
-window.getAudioTime = () => {
-  return audioContext.currentTime;
-}
-
-function resumeAudio() {
-  audioContext.resume();
+  animationLoop();
 }
 
 window.Module = {
   onRuntimeInitialized,
 };
 
+// Load wasm
 const scriptElement = document.createElement("script");
 scriptElement.setAttribute("src", "./wasm/cglp.js");
 document.head.appendChild(scriptElement);

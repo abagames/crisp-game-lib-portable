@@ -27,12 +27,13 @@ Compile [m5stickcplus.ino](https://github.com/abagames/crisp-game-lib-portable/b
 - ~~Procedurally generated musics and [sound effects](https://abagames.github.io/crisp-game-lib/ref_document/functions/play.html)~~
 - ~~[Difficulty](https://abagames.github.io/crisp-game-lib/ref_document/variables/difficulty.html)~~
 - ~~[Score](https://abagames.github.io/crisp-game-lib/ref_document/functions/addScore.html)~~
-- [Game over](https://abagames.github.io/crisp-game-lib/ref_document/functions/end.html), title screen and replay
+- [Game over](https://abagames.github.io/crisp-game-lib/ref_document/functions/end.html) and title screen
 - [Particle](https://abagames.github.io/crisp-game-lib/ref_document/functions/particle.html)
 - [Color](https://abagames.github.io/crisp-game-lib/ref_document/functions/color.html)
 - [Bar](https://abagames.github.io/crisp-game-lib/ref_document/functions/bar.html) and [box](https://abagames.github.io/crisp-game-lib/ref_document/functions/box.html)
-- [Letter options](https://abagames.github.io/crisp-game-lib/ref_document/types/LetterOptions.html)
-- [Game options](https://abagames.github.io/crisp-game-lib/ref_document/types/Options.html)
 - Precise collision detection for texts and characters
+- Replay
 - Utility functions
+- [Game options](https://abagames.github.io/crisp-game-lib/ref_document/types/Options.html)
+- [Letter options](https://abagames.github.io/crisp-game-lib/ref_document/types/LetterOptions.html)
 - [Input position](https://abagames.github.io/crisp-game-lib/ref_document/variables/input.pos.html)
