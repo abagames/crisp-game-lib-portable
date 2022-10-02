@@ -420,7 +420,7 @@ void updateTitle() {
   drawText(title, (options.viewSize.x - strlen(title) * CHARACTER_WIDTH) / 2,
            options.viewSize.y * 0.25, false);
   if (ticks > 30) {
-    TIMES(descriptionLineCount, i) {
+    for (int i = 0; i < descriptionLineCount; i++) {
       drawText(descriptions[i], descriptionX,
                options.viewSize.y * 0.55 + i * CHARACTER_HEIGHT, false);
     }
@@ -436,17 +436,17 @@ void initGameOver() {
   isPlayingBgm = false;
   prevScore = (int)score;
   gameOverTicks = 0;
+  drawText(gameOverText,
+           (options.viewSize.x - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
+           options.viewSize.y * 0.5, false);
 }
 
 void updateGameOver() {
   if (gameOverTicks > 20 && input.isJustPressed) {
     initInGame();
-  } else if (gameOverTicks > 120) {
+  } else if (gameOverTicks > 300) {
     initTitle();
   }
-  drawText(gameOverText,
-           (options.viewSize.x - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
-           options.viewSize.y * 0.5, false);
   gameOverTicks++;
 }
 
@@ -472,10 +472,12 @@ EMSCRIPTEN_KEEPALIVE
 void updateFrame() {
   hitBoxesIndex = 0;
   difficulty = (float)ticks / 60 / FPS + 1;
-  updateScoreBoards();
   if (state == STATE_TITLE) {
+    md_clearView();
     updateTitle();
   } else if (state == STATE_IN_GAME) {
+    md_clearView();
+    updateScoreBoards();
     update();
   } else if (state == STATE_GAME_OVER) {
     updateGameOver();

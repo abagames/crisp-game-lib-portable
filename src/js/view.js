@@ -53,6 +53,10 @@ export function clear() {
   context.fillStyle = "#000";
 }
 
+window.clearView = () => {
+  clear();
+};
+
 export function fillRect(x, y, width, height) {
   context.fillRect(
     Math.floor(x),

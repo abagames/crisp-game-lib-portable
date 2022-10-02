@@ -11,7 +11,6 @@ function update() {
     ["boolean", "boolean", "boolean"],
     [input.isPressed, input.isJustPressed, input.isJustReleased]
   );
-  view.clear();
   Module.ccall("updateFrame", "void", [], []);
 }
 

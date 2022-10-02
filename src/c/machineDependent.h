@@ -12,6 +12,7 @@
 EXTERNC void md_rect(float x, float y, float w, float h);
 EXTERNC void md_text(char l, float x, float y);
 EXTERNC void md_character(char l, float x, float y);
+EXTERNC void md_clearView();
 EXTERNC void md_playTone(float freq, float duration, float when);
 EXTERNC void md_stopTone();
 EXTERNC float md_getAudioTime();

@@ -69,6 +69,8 @@ void md_character(char l, float x, float y) {
       (int)(x - CHARACTER_WIDTH / 2), (int)(y - CHARACTER_HEIGHT / 2), 0xffff);
 }
 
+void md_clearView() { canvas.fillSprite(WHITE); }
+
 void md_playTone(float freq, float duration, float when) {
   addSoundTone(freq, duration, when);
 }
@@ -145,7 +147,6 @@ void updateFromTask() {
   if (btnBWasPressed) {
     toggleSound();
   }
-  canvas.fillSprite(WHITE);
   updateFrame();
   lcd.startWrite();
   canvas.pushSprite(canvasX, canvasY);
