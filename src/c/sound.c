@@ -15,6 +15,7 @@ int _rndi(int low, int high) { return getIntRandom(&soundRandom, low, high); }
 #define QUANTIZED_DURATION (60.0f / tempo / 2)
 
 bool isSoundEnabled = true;
+bool isPlayingBgm = false;
 
 typedef struct {
   float freq;
@@ -341,7 +342,7 @@ void generateBgm() {
 }
 
 void initSound() {
-  setRandomSeedWithTime(&soundRandom);
+  setRandomSeed(&soundRandom, 0);
   bgmIndex = 0;
   bgmDuration = BASE_NOTE_DURATION * 8;
   generateSoundEffect();
@@ -354,7 +355,7 @@ void initSound() {
 }
 
 void updateSound() {
-  if (!isSoundEnabled) {
+  if (!isSoundEnabled || !isPlayingBgm) {
     return;
   }
   float ct = md_getAudioTime();

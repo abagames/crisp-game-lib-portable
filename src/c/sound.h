@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 EXTERNC bool isSoundEnabled;
+EXTERNC bool isPlayingBgm;
 EXTERNC void initSound();
 EXTERNC void updateSound();
 EXTERNC void playSoundEffect(int type);

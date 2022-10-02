@@ -16,13 +16,17 @@
 #include "sound.h"
 #include "textPattern.h"
 
+#define STATE_TITLE 0
+#define STATE_IN_GAME 1
+#define STATE_GAME_OVER 2
+
 int ticks;
 float difficulty;
 float thickness = 3;
 float tempo = 120;
+int state;
 Input input;
 Options options;
-
 Random gameRandom;
 
 // Collision
@@ -297,6 +301,8 @@ void toggleSound() {
 
 // Score
 float score;
+int prevScore;
+int hiScore;
 
 typedef struct {
   char str[9];
@@ -309,8 +315,9 @@ typedef struct {
 ScoreBoard scoreBoards[MAX_SCORE_BOARD_COUNT];
 int scoreBoardsIndex;
 
-void initScore() {
-  score = 0;
+void initScore() { score = prevScore = hiScore = 0; }
+
+void initScoreBoards() {
   for (int i = 0; i < MAX_SCORE_BOARD_COUNT; i++) {
     scoreBoards[i].ticks = 0;
   }
@@ -345,9 +352,12 @@ void addScore(float value, float x, float y) {
 }
 
 void drawScore() {
-  char sc[9];
-  sprintf(sc, "%d", (int)score);
+  char sc[16];
+  int s = state == STATE_IN_GAME ? (int)score : prevScore;
+  snprintf(sc, 15, "%d", s);
   drawText(sc, 3, 3, false);
+  snprintf(sc, 15, "HI %d", hiScore);
+  drawText(sc, options.viewSize.x - strlen(sc) * 6 + 2, 3, false);
 }
 
 // Utilities
@@ -361,6 +371,87 @@ void consoleLog(char *format, ...) {
   md_consoleLog(cc);
 }
 
+// In game
+void initInGame() {
+  state = STATE_IN_GAME;
+  if (prevScore > hiScore) {
+    hiScore = prevScore;
+  }
+  score = 0;
+  initScoreBoards();
+  isPlayingBgm = true;
+  ticks = -1;
+}
+
+// Title
+#define MAX_DESCRIPTION_LINE_COUNT 5
+char descriptions[MAX_DESCRIPTION_LINE_COUNT][32];
+int descriptionLineCount;
+int descriptionX;
+
+void parseDescription() {
+  descriptionLineCount = 0;
+  int dl = 0;
+  char *line = strtok(description, "\n");
+  while (line != NULL) {
+    strncpy(descriptions[descriptionLineCount], line, 31);
+    int ll = strlen(line);
+    if (ll > dl) {
+      dl = ll;
+    }
+    descriptionLineCount++;
+    if (descriptionLineCount >= MAX_DESCRIPTION_LINE_COUNT) {
+      break;
+    }
+    line = strtok(NULL, "\n");
+  };
+  descriptionX = (options.viewSize.x - dl * CHARACTER_WIDTH) / 2;
+}
+
+void initTitle() {
+  state = STATE_TITLE;
+  ticks = -1;
+}
+
+void updateTitle() {
+  if (input.isJustPressed) {
+    initInGame();
+  }
+  drawText(title, (options.viewSize.x - strlen(title) * CHARACTER_WIDTH) / 2,
+           options.viewSize.y * 0.25, false);
+  if (ticks > 30) {
+    TIMES(descriptionLineCount, i) {
+      drawText(descriptions[i], descriptionX,
+               options.viewSize.y * 0.55 + i * CHARACTER_HEIGHT, false);
+    }
+  }
+}
+
+// Game over
+int gameOverTicks;
+char *gameOverText = "GAME OVER";
+
+void initGameOver() {
+  state = STATE_GAME_OVER;
+  isPlayingBgm = false;
+  prevScore = (int)score;
+  gameOverTicks = 0;
+}
+
+void updateGameOver() {
+  if (gameOverTicks > 20 && input.isJustPressed) {
+    initInGame();
+  } else if (gameOverTicks > 120) {
+    initTitle();
+  }
+  drawText(gameOverText,
+           (options.viewSize.x - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
+           options.viewSize.y * 0.5, false);
+  gameOverTicks++;
+}
+
+void end() { initGameOver(); }
+
 // Initialize
 EMSCRIPTEN_KEEPALIVE
 void initGame() {
@@ -373,7 +464,8 @@ void initGame() {
   initSound();
   options.viewSize.x = 100;
   options.viewSize.y = 100;
-  ticks = 0;
+  parseDescription();
+  initTitle();
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -381,7 +473,13 @@ void updateFrame() {
   hitBoxesIndex = 0;
   difficulty = (float)ticks / 60 / FPS + 1;
   updateScoreBoards();
-  update();
+  if (state == STATE_TITLE) {
+    updateTitle();
+  } else if (state == STATE_IN_GAME) {
+    update();
+  } else if (state == STATE_GAME_OVER) {
+    updateGameOver();
+  }
   updateSound();
   drawScore();
   ticks++;

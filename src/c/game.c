@@ -4,6 +4,9 @@
 
 #include "cglp.h"
 
+char *title = "SURVIVOR";
+char *description = "[Tap] Jump";
+
 #define CS char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 
 CS = {{
@@ -31,22 +34,6 @@ CS = {{
           "llllll",
       }};
 int charactersCount = 3;
-
-#define FOR_EACH(array, index) \
-  for (int index = 0; index < sizeof(array) / sizeof(array[0]); index++)
-#define ASSIGN_ARRAY_ITEM(array, index, type, item) type *item = &array[index]
-#define SKIP_IS_NOT_ALIVE(item) \
-  if (!item->isAlive) continue
-#define TIMES(count, index) for (int index = 0; index < count; index++)
-#define COUNT_IS_ALIVE(array, counter)                           \
-  int counter = 0;                                               \
-  do {                                                           \
-    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) { \
-      if (array[i].isAlive) {                                    \
-        counter++;                                               \
-      }                                                          \
-    }                                                            \
-  } while (0)
 
 typedef struct _Player {
   Vector pos;
@@ -280,9 +267,13 @@ void update() {
     character("c", p->pos.x, p->pos.y);
     p->isAlive = p->pos.y < 105;
   }
+  COUNT_IS_ALIVE(players, playerCount);
+  if (playerCount == 0) {
+    play(RANDOM);
+    end();
+  }
   if (barrel.pos.x < -barrel.r) {
     barrel.isAlive = false;
-    COUNT_IS_ALIVE(players, playerCount);
     addScore(playerCount, 10, 50);
   }
 }

@@ -77,20 +77,40 @@ EXTERNC Collision arc(float centerX, float centerY, float radius,
 EXTERNC Collision text(char *msg, int x, int y);
 EXTERNC Collision character(char *msg, float x, float y);
 EXTERNC void play(int type);
-EXTERNC void enableSound();
-EXTERNC void disableSound();
-EXTERNC void toggleSound();
 EXTERNC void addScore(float value, float x, float y);
 EXTERNC float rnd(float high, float low);
 EXTERNC int rndi(int high, int low);
+EXTERNC void end();
+
 EXTERNC void consoleLog(char *format, ...);
+EXTERNC void enableSound();
+EXTERNC void disableSound();
+EXTERNC void toggleSound();
 
 EXTERNC void setInput(bool isPressed, bool isJustPressed, bool isJustReleased);
 EXTERNC void initGame();
 EXTERNC void updateFrame();
 
+EXTERNC char *title;
+EXTERNC char *description;
 EXTERNC char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1];
 EXTERNC int charactersCount;
 EXTERNC void update();
+
+#define FOR_EACH(array, index) \
+  for (int index = 0; index < sizeof(array) / sizeof(array[0]); index++)
+#define ASSIGN_ARRAY_ITEM(array, index, type, item) type *item = &array[index]
+#define SKIP_IS_NOT_ALIVE(item) \
+  if (!item->isAlive) continue
+#define TIMES(count, index) for (int index = 0; index < count; index++)
+#define COUNT_IS_ALIVE(array, counter)                           \
+  int counter = 0;                                               \
+  do {                                                           \
+    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) { \
+      if (array[i].isAlive) {                                    \
+        counter++;                                               \
+      }                                                          \
+    }                                                            \
+  } while (0)
 
 #endif
