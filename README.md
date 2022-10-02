@@ -1,8 +1,6 @@
 # crisp-game-lib-portable
 
-Minimal C-lang library for creating classic arcade-like mini-games running on devices and browsers (Experimental).
-
-To make the [crisp-game-lib](https://github.com/abagames/crisp-game-lib) work on small devices, the library is implemented in C.
+Minimal C-lang library for creating classic arcade-like mini-games running on devices and browsers (Experimental). Re-implemented version of [crisp-game-lib](https://github.com/abagames/crisp-game-lib) for smaller devices.
 
 The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.com/products/m5stickc-plus-esp32-pico-mini-iot-development-kit).
 
@@ -12,9 +10,11 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 
 ## Build for M5StickC PLUS
 
-You have to install [LovyanGFX library](https://github.com/lovyan03/LovyanGFX).
+1. You have to install [LovyanGFX library](https://github.com/lovyan03/LovyanGFX).
 
-Compile [m5stickcplus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/m5stickcplus.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino).
+1. Compile [m5stickcplus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/m5stickcplus.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino).
+
+1. To enable / disable sounds, press the button B.
 
 ## Build for browsers
 
