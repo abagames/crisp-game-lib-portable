@@ -10,6 +10,7 @@
 #define _M5DISPLAY_H_
 class M5Display {};
 #include <M5StickCPlus.h>
+#include <float.h>
 
 #include "cglp.h"
 #include "machineDependent.h"
@@ -31,22 +32,26 @@ typedef struct {
   float when;
 } SoundTone;
 
+#define TONE_PER_NOTE 32
 #define SOUND_TONE_COUNT 64
 SoundTone soundTones[SOUND_TONE_COUNT];
 int soundToneIndex = 0;
-int addingSoundToneIndex = 0;
-#define TONE_PER_NOTE 32
-
 float soundTime = 0;
 
+void initSoundTones() {
+  for (int i = 0; i < SOUND_TONE_COUNT; i++) {
+    soundTones[i].when = FLT_MAX;
+  }
+}
+
 void addSoundTone(float freq, float duration, float when) {
-  SoundTone *st = &soundTones[addingSoundToneIndex];
+  SoundTone *st = &soundTones[soundToneIndex];
   st->freq = freq;
   st->duration = duration;
   st->when = when;
-  addingSoundToneIndex++;
-  if (addingSoundToneIndex >= SOUND_TONE_COUNT) {
-    addingSoundToneIndex = 0;
+  soundToneIndex++;
+  if (soundToneIndex >= SOUND_TONE_COUNT) {
+    soundToneIndex = 0;
   }
 }
 
@@ -69,7 +74,7 @@ void md_playTone(float freq, float duration, float when) {
 }
 
 void md_stopTone() {
-  soundToneIndex = addingSoundToneIndex = 0;
+  initSoundTones();
   M5.Beep.mute();
 }
 
@@ -161,25 +166,23 @@ void IRAM_ATTR onFrameTimer() {
 TaskHandle_t soundTaskHandle;
 
 void updateFromSoundTask() {
+  M5.Beep.update();
   soundTime += 60 / tempo / TONE_PER_NOTE;
-  int i = soundToneIndex;
   float lastWhen = 0;
-  while (i != addingSoundToneIndex) {
+  int ti = -1;
+  for (int i = 0; i < SOUND_TONE_COUNT; i++) {
     SoundTone *st = &soundTones[i];
     if (st->when <= soundTime) {
       if (st->when > lastWhen) {
-        M5.Beep.tone((uint16_t)st->freq, (uint32_t)(st->duration * 1000));
+        ti = i;
         lastWhen = st->when;
-      }
-      soundToneIndex++;
-      if (soundToneIndex >= SOUND_TONE_COUNT) {
-        soundToneIndex = 0;
+        st->when = FLT_MAX;
       }
     }
-    i++;
-    if (i >= SOUND_TONE_COUNT) {
-      i = 0;
-    }
+  }
+  if (ti >= 0) {
+    SoundTone *st = &soundTones[ti];
+    M5.Beep.tone((uint16_t)st->freq, (uint32_t)(st->duration * 1000));
   }
 }
 
@@ -201,9 +204,9 @@ void setup() {
   lcd.setBrightness(128);
   lcd.setSwapBytes(true);
   lcd.fillScreen(0xdddd);
+  initSoundTones();
   initGame();
   initCanvas();
-  initSound();
   disableSound();
   hw_timer_t *frameTimer = NULL;
   frameTimer = timerBegin(0, getApbFrequency() / FPS / 1000, true);
@@ -214,7 +217,7 @@ void setup() {
                        &frameTaskHandle, APP_CPU_NUM);
   hw_timer_t *soundTimer = NULL;
   soundTimer = timerBegin(
-      1, getApbFrequency() * (60.0f / tempo / TONE_PER_NOTE / 1000), true);
+      1, getApbFrequency() * (60.0f / tempo / TONE_PER_NOTE) / 1000, true);
   timerAttachInterrupt(soundTimer, &onSoundTimer, true);
   timerAlarmWrite(soundTimer, 1000, true);
   timerAlarmEnable(soundTimer);
