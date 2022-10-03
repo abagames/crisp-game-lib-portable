@@ -17,7 +17,7 @@
     "preview": "vite preview",
     "//": "Call emsdk_env.bat or emsdk_env.sh if needed",
     "dev_c": "emsdk_env.bat && npm-watch _compile_c",
-    "_compile_c": "emcc ./src/c/cglp.c ./src/c/textPattern.c ./src/c/sound.c ./src/c/random.c ./src/c/game.c -O2 -s WASM=1 -sEXPORTED_RUNTIME_METHODS=ccall --js-library ./src/js/library.js -o ./public/wasm/cglp.js"
+    "_compile_c": "emcc ./src/c/cglp.c ./src/c/sound.c ./src/c/particle.c ./src/c/random.c ./src/c/vector.c ./src/c/textPattern.c ./src/c/game.c -O2 -s WASM=1 -sEXPORTED_RUNTIME_METHODS=ccall --js-library ./src/js/library.js -o ./public/wasm/cglp.js"
   },
   "author": "abagames",
   "license": "MIT",

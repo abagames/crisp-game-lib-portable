@@ -9,6 +9,8 @@
 
 #include <stdbool.h>
 
+#include "vector.h"
+
 #define FPS 60
 
 #define COLOR_COUNT 8
@@ -33,11 +35,6 @@
 #define TEXT_PATTERN_COUNT 94
 #define MAX_CHARACTER_PATTERN_COUNT 26
 #define ASCII_CHARACTER_COUNT 127
-
-typedef struct {
-  float x;
-  float y;
-} Vector;
 
 typedef struct {
   bool black;
@@ -81,11 +78,16 @@ EXTERNC void addScore(float value, float x, float y);
 EXTERNC float rnd(float high, float low);
 EXTERNC int rndi(int high, int low);
 EXTERNC void end();
+EXTERNC void particle(float x, float y, float count, float speed, float angle,
+                      float angleWidth);
 
 EXTERNC void consoleLog(char *format, ...);
 EXTERNC void enableSound();
 EXTERNC void disableSound();
 EXTERNC void toggleSound();
+
+EXTERNC float clamp(float v, float low, float high);
+EXTERNC float wrap(float v, float low, float high);
 
 EXTERNC void setInput(bool isPressed, bool isJustPressed, bool isJustReleased);
 EXTERNC void initGame();

@@ -78,8 +78,7 @@ void addPlayer() {
   FOR_EACH(players, i) {
     ASSIGN_ARRAY_ITEM(players, i, Player, pl);
     if (!pl->isAlive) {
-      pl->pos.x = rnd(10, 40);
-      pl->pos.y = rnd(-9, 9);
+      vectorSet(&pl->pos, rnd(10, 40), rnd(-9, 9));
       pl->isOnFloor = false;
       pl->isJumping = false;
       pl->isJumped = false;
@@ -102,18 +101,11 @@ void addDownedPlayer(Vector pos, float vx, float vy) {
     ASSIGN_ARRAY_ITEM(downedPlayers, i, DownedPlayer, dp);
     if (!dp->isAlive) {
       dp->pos = pos;
-      dp->vel.x = vx;
-      dp->vel.y = vy;
+      vectorSet(&dp->vel, vx, vy);
       dp->isAlive = true;
       break;
     }
   }
-}
-
-float calcDistance(Vector p1, Vector p2) {
-  float ox = p1.x - p2.x;
-  float oy = p1.y - p2.y;
-  return sqrt(ox * ox + oy * oy);
 }
 
 void update() {
@@ -124,8 +116,7 @@ void update() {
   if (!barrel.isAlive) {
     addPlayers();
     float r = rnd(5, 25);
-    barrel.pos.x = 120 + r;
-    barrel.pos.y = 93 - r;
+    vectorSet(&barrel.pos, 120 + r, 93 - r);
     barrel.vx = rnd(1, 2) / sqrt(r * 0.3 + 1);
     barrel.r = r;
     barrel.angle = rnd(0, M_PI * 2);
@@ -136,6 +127,8 @@ void update() {
   arc(barrel.pos.x, barrel.pos.y, barrel.r, barrel.angle,
       barrel.angle + M_PI * 2);
   barrel.angle -= barrel.vx / barrel.r;
+  particle(barrel.pos.x, barrel.pos.y + barrel.r, barrel.r * 0.05,
+           barrel.vx * 5, -0.1, 0.2);
   rect(0, 93, 100, 7);
   int addingPlayerCount = 0;
   FOR_EACH(players, i) {
@@ -146,7 +139,8 @@ void update() {
       FOR_EACH(players, j) {
         ASSIGN_ARRAY_ITEM(players, j, Player, ap);
         SKIP_IS_NOT_ALIVE(ap);
-        if (i != j && p->isOnFloor && calcDistance(p->pos, ap->pos) < 4) {
+        if (i != j && p->isOnFloor &&
+            distanceTo(&p->pos, ap->pos.x, ap->pos.y) < 4) {
           play(SELECT);
           Player *bp = p;
           for (int k = 0; k < 99; k++) {
@@ -186,8 +180,8 @@ void update() {
     if (input.isJustPressed &&
         (p->isOnFloor || (p->underFoot != NULL && p->underFoot->isJumped))) {
       play(JUMP);
-      p->vel.x = 0;
-      p->vel.y = -1.5;
+      vectorSet(&p->vel, 0, -1.5);
+      particle(p->pos.x, p->pos.y, 10, 2, M_PI_2, 0.5);
       p->isOnFloor = false;
       p->isJumping = true;
       if (p->underFoot != NULL) {
@@ -198,10 +192,9 @@ void update() {
     if (p->underFoot != NULL) {
       p->pos = p->underFoot->pos;
       p->pos.y -= 6;
-      p->vel.x = p->vel.y = 0;
+      vectorSet(&p->vel, 0, 0);
     } else {
-      p->pos.x += p->vel.x * difficulty;
-      p->pos.y += p->vel.y * difficulty;
+      vectorAdd(&(p->pos), p->vel.x * difficulty, p->vel.y * difficulty);
       p->vel.x *= 0.95;
       if ((p->pos.x < 7 && p->vel.x < 0) || (p->pos.x >= 77 && p->vel.x > 0)) {
         p->vel.x *= -0.5;

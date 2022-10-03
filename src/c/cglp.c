@@ -12,6 +12,7 @@
 
 #include "cglp.h"
 #include "machineDependent.h"
+#include "particle.h"
 #include "random.h"
 #include "sound.h"
 #include "textPattern.h"
@@ -231,6 +232,7 @@ Collision arc(float centerX, float centerY, float radius, float angleFrom,
   return hitCollision;
 }
 
+// Text and character
 Collision drawText(char *msg, int x, int y, bool hasCollision) {
   Collision hitCollision;
   initCollision(&hitCollision);
@@ -360,6 +362,11 @@ void drawScore() {
   drawText(sc, options.viewSize.x - strlen(sc) * 6 + 2, 3, false);
 }
 
+void particle(float x, float y, float count, float speed, float angle,
+              float angleWidth) {
+  addParticle(x, y, count, speed, angle, angleWidth);
+}
+
 // Utilities
 float rnd(float low, float high) { return getRandom(&gameRandom, low, high); }
 int rndi(int low, int high) { return getIntRandom(&gameRandom, low, high); }
@@ -369,6 +376,22 @@ void consoleLog(char *format, ...) {
   va_start(args, format);
   vsnprintf(cc, 98, format, args);
   md_consoleLog(cc);
+}
+
+float clamp(float v, float low, float high) { return fmax(low, fmin(v, high)); }
+
+float wrap(float v, float low, float high) {
+  float w = high - low;
+  float o = v - low;
+  if (o >= 0) {
+    return fmod(o, w) + low;
+  } else {
+    float wv = w + fmod(o, w) + low;
+    if (wv >= high) {
+      wv -= w;
+    }
+    return wv;
+  }
 }
 
 // In game
@@ -461,6 +484,7 @@ void initGame() {
   setCharacterHitBoxes();
   setRandomSeedWithTime(&gameRandom);
   initScore();
+  initParticle();
   initSound();
   options.viewSize.x = 100;
   options.viewSize.y = 100;
@@ -477,8 +501,9 @@ void updateFrame() {
     updateTitle();
   } else if (state == STATE_IN_GAME) {
     md_clearView();
-    updateScoreBoards();
     update();
+    updateParticles();
+    updateScoreBoards();
   } else if (state == STATE_GAME_OVER) {
     updateGameOver();
   }
