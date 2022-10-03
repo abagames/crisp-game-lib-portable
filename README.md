@@ -6,7 +6,7 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 
 <a href="./docs/screenshot.gif"><img src="./docs/screenshot.gif" width="25%"></a>
 
-[Emscripten](https://emscripten.org/) also makes it possible to run [games written in C](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/game.c) on the browser. ([DEMO](https://abagames.github.io/crisp-game-lib-portable/build/))
+[Emscripten](https://emscripten.org/) also makes it possible to run [games written in C](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/game.c) on the browser. ([DEMO](https://abagames.github.io/crisp-game-lib-portable/build/survivor/))
 
 ## Build for M5StickC PLUS
 
