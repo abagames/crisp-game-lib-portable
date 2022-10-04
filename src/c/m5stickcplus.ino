@@ -122,9 +122,9 @@ void md_setCharacters(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
 }
 
 void initCanvas() {
-  canvas.createSprite(options.viewSize.x, options.viewSize.y);
-  canvasX = (lcd.width() - options.viewSize.x) / 2;
-  canvasY = (lcd.height() - options.viewSize.y) / 2;
+  canvas.createSprite(options.viewSizeX, options.viewSizeY);
+  canvasX = (lcd.width() - options.viewSizeX) / 2;
+  canvasY = (lcd.height() - options.viewSizeY) / 2;
   canvas.setSwapBytes(true);
 }
 
@@ -136,12 +136,12 @@ bool btnBIsPressed = true;
 bool btnBWasPressed = false;
 
 void updateFromTask() {
-  bool ba = lgfx::gpio_in(BUTTON_A_PIN);
+  bool ba = !lgfx::gpio_in(BUTTON_A_PIN);
   btnAWasPressed = !btnAIsPressed && ba;
   btnAWasReleased = btnAIsPressed && !ba;
   btnAIsPressed = ba;
   setInput(btnAIsPressed, btnAWasPressed, btnAWasReleased);
-  bool bb = lgfx::gpio_in(BUTTON_B_PIN);
+  bool bb = !lgfx ::gpio_in(BUTTON_B_PIN);
   btnBWasPressed = !btnBIsPressed && bb;
   btnBIsPressed = bb;
   if (btnBWasPressed) {

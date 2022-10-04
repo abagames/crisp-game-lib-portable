@@ -57,18 +57,22 @@ typedef struct {
 } Input;
 
 typedef struct {
-  Vector viewSize;
+  int viewSizeX;
+  int viewSizeY;
+  int soundSeed;
 } Options;
 
 EXTERNC int ticks;
 EXTERNC float score;
 EXTERNC float difficulty;
 EXTERNC float thickness;
+EXTERNC float barCenterPosRatio;
 EXTERNC float tempo;
 EXTERNC Input input;
-EXTERNC Options options;
 EXTERNC Collision rect(float x, float y, float w, float h);
+EXTERNC Collision box(float x, float y, float w, float h);
 EXTERNC Collision line(float x1, float y1, float x2, float y2);
+EXTERNC Collision bar(float x, float y, float length, float angle);
 EXTERNC Collision arc(float centerX, float centerY, float radius,
                       float angleFrom, float angleTo);
 EXTERNC Collision text(char *msg, int x, int y);
@@ -97,6 +101,7 @@ EXTERNC char *title;
 EXTERNC char *description;
 EXTERNC char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1];
 EXTERNC int charactersCount;
+EXTERNC Options options;
 EXTERNC void update();
 
 #define FOR_EACH(array, index) \
@@ -112,6 +117,12 @@ EXTERNC void update();
       if (array[i].isAlive) {                                    \
         counter++;                                               \
       }                                                          \
+    }                                                            \
+  } while (0)
+#define INIT_UNALIVED_ARRAY(array)                               \
+  do {                                                           \
+    for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) { \
+      array[i].isAlive = false;                                  \
     }                                                            \
   } while (0)
 

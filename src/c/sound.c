@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "cglp.h"
 #include "machineDependent.h"
@@ -341,8 +342,23 @@ void generateBgm() {
   bgm[bgmNoteIndex].freq = -1;
 }
 
+int getHashFromString(char *str) {
+  int hash = 0;
+  int len = strlen(str);
+  for (int i = 0; i < len; i++) {
+    int chr = str[i];
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash;
+}
+
 void initSound() {
-  setRandomSeed(&soundRandom, 0);
+  char randomSeedStr[99];
+  strncpy(randomSeedStr, title, 98);
+  strncat(randomSeedStr, description, 98);
+  int seed = getHashFromString(randomSeedStr) + options.soundSeed;
+  setRandomSeed(&soundRandom, seed);
   bgmIndex = 0;
   bgmDuration = BASE_NOTE_DURATION * 8;
   generateSoundEffect();

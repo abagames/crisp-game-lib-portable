@@ -16,6 +16,7 @@
 #include "random.h"
 #include "sound.h"
 #include "textPattern.h"
+#include "vector.h"
 
 #define STATE_TITLE 0
 #define STATE_IN_GAME 1
@@ -24,10 +25,10 @@
 int ticks;
 float difficulty;
 float thickness = 3;
+float barCenterPosRatio = 0.5;
 float tempo = 120;
 int state;
 Input input;
-Options options;
 Random gameRandom;
 
 // Collision
@@ -152,6 +153,15 @@ Collision rect(float x, float y, float w, float h) {
   return hitCollision;
 }
 
+Collision box(float x, float y, float w, float h) {
+  Collision hitCollision;
+  initCollision(&hitCollision);
+  beginAddingRects();
+  addRect(true, x, y, w, h, &hitCollision);
+  endAddingRects();
+  return hitCollision;
+}
+
 void drawLine(float x, float y, float ox, float oy, Collision *hitCollision) {
   int t = floor(thickness);
   if (t < 3) {
@@ -181,6 +191,19 @@ Collision line(float x1, float y1, float x2, float y2) {
   initCollision(&hitCollision);
   beginAddingRects();
   drawLine(x1, y1, x2 - x1, y2 - y1, &hitCollision);
+  endAddingRects();
+  return hitCollision;
+}
+
+Collision bar(float x, float y, float length, float angle) {
+  Collision hitCollision;
+  initCollision(&hitCollision);
+  Vector l;
+  rotate(vectorSet(&l, length, 0), angle);
+  Vector p;
+  vectorSet(&p, x - l.x * barCenterPosRatio, y - l.y * barCenterPosRatio);
+  beginAddingRects();
+  drawLine(p.x, p.y, l.x, l.y, &hitCollision);
   endAddingRects();
   return hitCollision;
 }
@@ -359,7 +382,7 @@ void drawScore() {
   snprintf(sc, 15, "%d", s);
   drawText(sc, 3, 3, false);
   snprintf(sc, 15, "HI %d", hiScore);
-  drawText(sc, options.viewSize.x - strlen(sc) * 6 + 2, 3, false);
+  drawText(sc, options.viewSizeX - strlen(sc) * 6 + 2, 3, false);
 }
 
 void particle(float x, float y, float count, float speed, float angle,
@@ -428,7 +451,7 @@ void parseDescription() {
     }
     line = strtok(NULL, "\n");
   };
-  descriptionX = (options.viewSize.x - dl * CHARACTER_WIDTH) / 2;
+  descriptionX = (options.viewSizeX - dl * CHARACTER_WIDTH) / 2;
 }
 
 void initTitle() {
@@ -440,12 +463,12 @@ void updateTitle() {
   if (input.isJustPressed) {
     initInGame();
   }
-  drawText(title, (options.viewSize.x - strlen(title) * CHARACTER_WIDTH) / 2,
-           options.viewSize.y * 0.25, false);
+  drawText(title, (options.viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
+           options.viewSizeY * 0.25, false);
   if (ticks > 30) {
     for (int i = 0; i < descriptionLineCount; i++) {
       drawText(descriptions[i], descriptionX,
-               options.viewSize.y * 0.55 + i * CHARACTER_HEIGHT, false);
+               options.viewSizeY * 0.55 + i * CHARACTER_HEIGHT, false);
     }
   }
 }
@@ -460,8 +483,8 @@ void initGameOver() {
   prevScore = (int)score;
   gameOverTicks = 0;
   drawText(gameOverText,
-           (options.viewSize.x - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
-           options.viewSize.y * 0.5, false);
+           (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
+           options.viewSizeY * 0.5, false);
 }
 
 void updateGameOver() {
@@ -486,8 +509,6 @@ void initGame() {
   initScore();
   initParticle();
   initSound();
-  options.viewSize.x = 100;
-  options.viewSize.y = 100;
   parseDescription();
   initTitle();
 }
