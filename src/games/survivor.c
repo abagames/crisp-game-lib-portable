@@ -8,7 +8,6 @@ char *title = "SURVIVOR";
 char *description = "[Tap] Jump";
 
 #define CS char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
-
 CS = {{
           "llllll",
           "ll l l",
@@ -34,6 +33,8 @@ CS = {{
           "llllll",
       }};
 int charactersCount = 3;
+
+Options options = {.viewSizeX = 100, .viewSizeY = 100, .soundSeed = 0};
 
 typedef struct _Player {
   Vector pos;

@@ -5,7 +5,7 @@ const { defineConfig } = require("vite");
 const config = {
   base: "./",
   build: {
-    outDir: "docs/build/survivor/",
+    outDir: "docs/build/pinclimb/",
   },
   plugins: [wasmHmr()],
 };

@@ -6,7 +6,10 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 
 <a href="./docs/screenshot.gif"><img src="./docs/screenshot.gif" width="25%"></a>
 
-[Emscripten](https://emscripten.org/) also makes it possible to run [games written in C](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/survivor.c) on the browser. ([DEMO](https://abagames.github.io/crisp-game-lib-portable/build/survivor/))
+[Emscripten](https://emscripten.org/) also makes it possible to run [games written in C](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/games/survivor.c) on the browser.
+
+- [SURVIVOR](https://abagames.github.io/crisp-game-lib-portable/build/survivor/)
+- [PIN CLIMB](https://abagames.github.io/crisp-game-lib-portable/build/pinclimb/)
 
 ## Build for M5StickC PLUS
 
@@ -28,9 +31,9 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - ~~[Difficulty](https://abagames.github.io/crisp-game-lib/ref_document/variables/difficulty.html)~~
 - ~~[Score](https://abagames.github.io/crisp-game-lib/ref_document/functions/addScore.html)~~
 - ~~[Game over](https://abagames.github.io/crisp-game-lib/ref_document/functions/end.html) and title screen~~
-- [Particle](https://abagames.github.io/crisp-game-lib/ref_document/functions/particle.html)
+- ~~[Particle](https://abagames.github.io/crisp-game-lib/ref_document/functions/particle.html)~~
+- ~~[Bar](https://abagames.github.io/crisp-game-lib/ref_document/functions/bar.html) and [box](https://abagames.github.io/crisp-game-lib/ref_document/functions/box.html)~~
 - [Color](https://abagames.github.io/crisp-game-lib/ref_document/functions/color.html)
-- [Bar](https://abagames.github.io/crisp-game-lib/ref_document/functions/bar.html) and [box](https://abagames.github.io/crisp-game-lib/ref_document/functions/box.html)
 - Precise collision detection for texts and characters
 - Replay
 - Utility functions
