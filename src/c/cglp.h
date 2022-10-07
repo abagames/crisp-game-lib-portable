@@ -13,10 +13,23 @@
 
 #define FPS 60
 
-#define COLOR_COUNT 8
+#define COLOR_COUNT 15
 #define TRANSPARENT -1
 #define WHITE 0
+#define RED 1
+#define GREEN 2
+#define YELLOW 3
+#define BLUE 4
+#define PURPLE 5
+#define CYAN 6
 #define BLACK 7
+#define LIGHT_RED 8
+#define LIGHT_GREEN 9
+#define LIGHT_YELLOW 10
+#define LIGHT_BLUE 11
+#define LIGHT_PURPLE 12
+#define LIGHT_CYAN 13
+#define LIGHT_BLACK 14
 
 #define CHARACTER_WIDTH 6
 #define CHARACTER_HEIGHT 6
@@ -62,6 +75,12 @@ typedef struct {
   int soundSeed;
 } Options;
 
+typedef struct {
+  float r;
+  float g;
+  float b;
+} ColorRgb;
+
 EXTERNC int ticks;
 EXTERNC float score;
 EXTERNC float difficulty;
@@ -69,6 +88,7 @@ EXTERNC float thickness;
 EXTERNC float barCenterPosRatio;
 EXTERNC float tempo;
 EXTERNC Input input;
+EXTERNC ColorRgb colorRgbs[COLOR_COUNT];
 EXTERNC Collision rect(float x, float y, float w, float h);
 EXTERNC Collision box(float x, float y, float w, float h);
 EXTERNC Collision line(float x1, float y1, float x2, float y2);
@@ -77,6 +97,7 @@ EXTERNC Collision arc(float centerX, float centerY, float radius,
                       float angleFrom, float angleTo);
 EXTERNC Collision text(char *msg, int x, int y);
 EXTERNC Collision character(char *msg, float x, float y);
+EXTERNC void color(int index);
 EXTERNC void play(int type);
 EXTERNC void addScore(float value, float x, float y);
 EXTERNC float rnd(float high, float low);

@@ -14,7 +14,6 @@ class M5Display {};
 
 #include "cglp.h"
 #include "machineDependent.h"
-#include "utility/ST7735_Defines.h"
 
 static LGFX lcd;
 static LGFX_Sprite canvas(&lcd);
@@ -55,8 +54,14 @@ void addSoundTone(float freq, float duration, float when) {
   }
 }
 
+uint16_t currentColor;
+
+void md_color(float r, float g, float b) {
+  currentColor = lcd.color565(r * 255, g * 255, b * 255);
+}
+
 void md_rect(float x, float y, float w, float h) {
-  canvas.fillRect((int)x, (int)y, (int)w, (int)h, BLACK);
+  canvas.fillRect((int)x, (int)y, (int)w, (int)h, currentColor);
 }
 
 void md_text(char l, float x, float y) {
@@ -69,7 +74,12 @@ void md_character(char l, float x, float y) {
       (int)(x - CHARACTER_WIDTH / 2), (int)(y - CHARACTER_HEIGHT / 2), 0xffff);
 }
 
-void md_clearView() { canvas.fillSprite(WHITE); }
+void md_clearView(float r, float g, float b) {
+  uint16_t cc = currentColor;
+  md_color(r, g, b);
+  canvas.fillSprite(currentColor);
+  currentColor = cc;
+}
 
 void md_playTone(float freq, float duration, float when) {
   addSoundTone(freq, duration, when);
@@ -109,7 +119,6 @@ void md_setCharacters(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
     for (int y = 0; y < CHARACTER_HEIGHT; y++) {
       for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        // RGB565 endian reversed
         imageData[cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
         cp++;
       }
@@ -125,7 +134,6 @@ void initCanvas() {
   canvas.createSprite(options.viewSizeX, options.viewSizeY);
   canvasX = (lcd.width() - options.viewSizeX) / 2;
   canvasY = (lcd.height() - options.viewSizeY) / 2;
-  canvas.setSwapBytes(true);
 }
 
 TaskHandle_t frameTaskHandle;
@@ -203,8 +211,7 @@ void setup() {
   lcd.init();
   lcd.setRotation(0);
   lcd.setBrightness(128);
-  lcd.setSwapBytes(true);
-  lcd.fillScreen(0xdddd);
+  lcd.fillScreen(lcd.color565(0xdd, 0xdd, 0xdd));
   initSoundTones();
   initGame();
   initCanvas();

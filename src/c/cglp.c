@@ -27,8 +27,9 @@ float difficulty;
 float thickness = 3;
 float barCenterPosRatio = 0.5;
 float tempo = 120;
-int state;
 Input input;
+int currentColorIndex;
+int state;
 Random gameRandom;
 
 // Collision
@@ -115,18 +116,21 @@ void addRect(bool isAlignCenter, float x, float y, float w, float h,
     y -= h / 2;
   }
   HitBox hb;
-  hb.rectIndex = BLACK;
+  hb.rectIndex = currentColorIndex;
   hb.textIndex = hb.characterIndex = -1;
   hb.pos.x = floor(x);
   hb.pos.y = floor(y);
   hb.size.x = floor(w);
   hb.size.y = floor(h);
   checkHitBox(hitCollision, hb);
-  if (drawingHitBoxesIndex < MAX_DRAWING_HIT_BOXES_COUNT) {
+  if (currentColorIndex > TRANSPARENT &&
+      drawingHitBoxesIndex < MAX_DRAWING_HIT_BOXES_COUNT) {
     drawingHitBoxes[drawingHitBoxesIndex] = hb;
     drawingHitBoxesIndex++;
   }
-  md_rect(x, y, w, h);
+  if (currentColorIndex > TRANSPARENT) {
+    md_rect(x, y, w, h);
+  }
 }
 
 void addHitBox(HitBox hb) {
@@ -304,6 +308,64 @@ Collision character(char *msg, float x, float y) {
     x += 6;
   }
   return hitCollision;
+}
+
+// Color
+ColorRgb colorRgbs[COLOR_COUNT];
+
+void color(int index) {
+  currentColorIndex = index;
+  if (index > TRANSPARENT) {
+    md_color(colorRgbs[index].r, colorRgbs[index].g, colorRgbs[index].b);
+  }
+}
+
+ColorRgb whiteRgb;
+
+ColorRgb getRgb(int index, bool isDarkColor) {
+  int rgbValues[] = {
+      0xeeeeee, 0xe91e63, 0x4caf50, 0xffc107,
+      0x3f51b5, 0x9c27b0, 0x03a9f4, 0x616161,
+  };
+  int i = index >= LIGHT_RED ? index - LIGHT_RED + RED : index;
+  if (isDarkColor) {
+    if (i == 0) {
+      i = 7;
+    } else if (i == 7) {
+      i = 0;
+    }
+  }
+  int v = rgbValues[i];
+  ColorRgb cr;
+  cr.r = (float)((v & 0xff0000) >> 16) / 255;
+  cr.g = (float)((v & 0xff00) >> 8) / 255;
+  cr.b = (float)(v & 0xff) / 255;
+  if (index >= LIGHT_RED) {
+    cr.r = isDarkColor ? cr.r * 0.5 : whiteRgb.r - (whiteRgb.r - cr.r) * 0.5;
+    cr.g = isDarkColor ? cr.g * 0.5 : whiteRgb.g - (whiteRgb.g - cr.g) * 0.5;
+    cr.b = isDarkColor ? cr.b * 0.5 : whiteRgb.b - (whiteRgb.b - cr.b) * 0.5;
+  }
+  if (index == WHITE) {
+    whiteRgb = cr;
+  }
+  return cr;
+}
+
+void initColor() {
+  bool isDarkColor = false;
+  for (int i = 0; i < COLOR_COUNT; i++) {
+    colorRgbs[i] = getRgb(i, isDarkColor);
+  }
+  if (isDarkColor) {
+    colorRgbs[WHITE].r = colorRgbs[BLUE].r * 0.15;
+    colorRgbs[WHITE].g = colorRgbs[BLUE].g * 0.15;
+    colorRgbs[WHITE].b = colorRgbs[BLUE].b * 0.15;
+  }
+  color(BLACK);
+}
+
+void clearView() {
+  md_clearView(colorRgbs[WHITE].r, colorRgbs[WHITE].g, colorRgbs[WHITE].b);
 }
 
 // Sound
@@ -506,6 +568,7 @@ void initGame() {
   setTextHitBoxes();
   setCharacterHitBoxes();
   setRandomSeedWithTime(&gameRandom);
+  initColor();
   initScore();
   initParticle();
   initSound();
@@ -518,10 +581,10 @@ void updateFrame() {
   hitBoxesIndex = 0;
   difficulty = (float)ticks / 60 / FPS + 1;
   if (state == STATE_TITLE) {
-    md_clearView();
+    clearView();
     updateTitle();
   } else if (state == STATE_IN_GAME) {
-    md_clearView();
+    clearView();
     update();
     updateParticles();
     updateScoreBoards();

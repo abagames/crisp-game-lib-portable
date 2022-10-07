@@ -8,8 +8,11 @@ mergeInto(LibraryManager.library, {
   md_character: function (l, x, y) {
     char(l, x, y);
   },
-  md_clearView: function () {
-    clearView();
+  md_color: function (r, g, b) {
+    setColor(r, g, b);
+  },
+  md_clearView: function (r, g, b) {
+    clearView(r, g, b);
   },
   md_playTone: function (freq, duration, when) {
     playTone(freq, duration, when);

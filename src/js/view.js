@@ -47,17 +47,32 @@ image-rendering: pixelated;
   setSize();
 }
 
-export function clear() {
-  context.fillStyle = "#fff";
+let currentColorFillStyle;
+
+export function clear(r, g, b) {
+  const cc = currentColorFillStyle;
+  setColor(r, g, b);
+  context.fillStyle = currentColorFillStyle;
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "#000";
+  currentColorFillStyle = cc;
 }
 
-window.clearView = () => {
-  clear();
+window.clearView = (r, g, b) => {
+  clear(r, g, b);
+};
+
+function intToHex(v) {
+  return Math.floor(v * 255)
+    .toString(16)
+    .padStart(2, "0");
+}
+
+window.setColor = (r, g, b) => {
+  currentColorFillStyle = `#${intToHex(r)}${intToHex(g)}${intToHex(b)}`;
 };
 
 export function fillRect(x, y, width, height) {
+  context.fillStyle = currentColorFillStyle;
   context.fillRect(
     Math.floor(x),
     Math.floor(y),
