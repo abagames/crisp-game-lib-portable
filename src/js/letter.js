@@ -56,7 +56,7 @@ function createLetterImage(pointer) {
   for (let y = 0; y < letterSize; y++) {
     for (let x = 0; x < letterSize; x++, p++) {
       const c = Module.HEAPU8[p];
-      if (c === "l".charCodeAt(0)) {
+      if (c == 7) {
         letterContext.fillRect(x, y, 1, 1);
       }
     }

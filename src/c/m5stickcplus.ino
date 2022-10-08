@@ -54,6 +54,7 @@ void addSoundTone(float freq, float duration, float when) {
   }
 }
 
+#define TRANSPARENT_COLOR 0xffff
 uint16_t currentColor;
 
 void md_color(float r, float g, float b) {
@@ -66,12 +67,14 @@ void md_rect(float x, float y, float w, float h) {
 
 void md_text(char l, float x, float y) {
   textSprites[l - '!']->pushSprite((int)(x - CHARACTER_WIDTH / 2),
-                                   (int)(y - CHARACTER_HEIGHT / 2), 0xffff);
+                                   (int)(y - CHARACTER_HEIGHT / 2),
+                                   TRANSPARENT_COLOR);
 }
 
 void md_character(char l, float x, float y) {
-  characterSprites[l - 'a']->pushSprite(
-      (int)(x - CHARACTER_WIDTH / 2), (int)(y - CHARACTER_HEIGHT / 2), 0xffff);
+  characterSprites[l - 'a']->pushSprite((int)(x - CHARACTER_WIDTH / 2),
+                                        (int)(y - CHARACTER_HEIGHT / 2),
+                                        TRANSPARENT_COLOR);
 }
 
 void md_clearView(float r, float g, float b) {
@@ -101,7 +104,7 @@ void md_setTexts(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
     for (int y = 0; y < CHARACTER_HEIGHT; y++) {
       for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        imageData[cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
+        imageData[cp] = grid[i][y][x] == BLACK ? 0 : TRANSPARENT_COLOR;
         cp++;
       }
     }
@@ -119,7 +122,7 @@ void md_setCharacters(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
     for (int y = 0; y < CHARACTER_HEIGHT; y++) {
       for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        imageData[cp] = grid[i][y][x] == 108 ? 0 : 0xffff;
+        imageData[cp] = grid[i][y][x] == BLACK ? 0 : TRANSPARENT_COLOR;
         cp++;
       }
     }
