@@ -75,12 +75,6 @@ typedef struct {
   int soundSeed;
 } Options;
 
-typedef struct {
-  unsigned char r;
-  unsigned char g;
-  unsigned char b;
-} ColorRgb;
-
 EXTERNC int ticks;
 EXTERNC float score;
 EXTERNC float difficulty;
@@ -88,7 +82,6 @@ EXTERNC float thickness;
 EXTERNC float barCenterPosRatio;
 EXTERNC float tempo;
 EXTERNC Input input;
-EXTERNC ColorRgb colorRgbs[COLOR_COUNT];
 EXTERNC Collision rect(float x, float y, float w, float h);
 EXTERNC Collision box(float x, float y, float w, float h);
 EXTERNC Collision line(float x1, float y1, float x2, float y2);
@@ -113,6 +106,15 @@ EXTERNC void toggleSound();
 
 EXTERNC float clamp(float v, float low, float high);
 EXTERNC float wrap(float v, float low, float high);
+
+typedef struct {
+  unsigned char r;
+  unsigned char g;
+  unsigned char b;
+} ColorRgb;
+
+EXTERNC int currentColorIndex;
+EXTERNC ColorRgb colorRgbs[COLOR_COUNT];
 
 EXTERNC void setInput(bool isPressed, bool isJustPressed, bool isJustReleased);
 EXTERNC void initGame();

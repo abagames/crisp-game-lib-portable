@@ -54,16 +54,12 @@ void addSoundTone(float freq, float duration, float when) {
   }
 }
 
+void md_rect(float x, float y, float w, float h, unsigned char r,
+             unsigned char g, unsigned char b) {
+  canvas.fillRect((int)x, (int)y, (int)w, (int)h, lcd.color565(r, g, b));
+}
+
 #define TRANSPARENT_COLOR 0
-uint16_t currentColor;
-
-void md_color(unsigned char r, unsigned char g, unsigned char b) {
-  currentColor = lcd.color565(r, g, b);
-}
-
-void md_rect(float x, float y, float w, float h) {
-  canvas.fillRect((int)x, (int)y, (int)w, (int)h, currentColor);
-}
 
 void md_text(char l, float x, float y) {
   textSprites[l - '!']->pushSprite((int)(x - CHARACTER_WIDTH / 2),
@@ -78,10 +74,7 @@ void md_character(char l, float x, float y) {
 }
 
 void md_clearView(unsigned char r, unsigned char g, unsigned char b) {
-  uint16_t cc = currentColor;
-  md_color(r, g, b);
-  canvas.fillSprite(currentColor);
-  currentColor = cc;
+  canvas.fillSprite(lcd.color565(r, g, b));
 }
 
 void md_playTone(float freq, float duration, float when) {

@@ -1,15 +1,12 @@
 mergeInto(LibraryManager.library, {
-  md_rect: function (x, y, w, h) {
-    rect(x, y, w, h);
+  md_rect: function (x, y, w, h, r, g, b) {
+    rect(x, y, w, h, r, g, b);
   },
   md_text: function (l, x, y) {
     text(l, x, y);
   },
   md_character: function (l, x, y) {
     char(l, x, y);
-  },
-  md_color: function (r, g, b) {
-    setColor(r, g, b);
   },
   md_clearView: function (r, g, b) {
     clearView(r, g, b);

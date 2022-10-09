@@ -9,6 +9,7 @@ typedef struct {
   Vector pos;
   Vector vel;
   int ticks;
+  int colorIndex;
 } Particle;
 
 #define MAX_PARTICLE_COUNT 64
@@ -25,6 +26,9 @@ void initParticle() {
 
 void addParticle(float x, float y, float count, float speed, float angle,
                  float angleWidth) {
+  if (currentColorIndex == TRANSPARENT) {
+    return;
+  }
   if (count < 1) {
     if (getRandom(&particleRandom, 0, 1) > count) {
       return;
@@ -40,6 +44,7 @@ void addParticle(float x, float y, float count, float speed, float angle,
            a);
     p->ticks =
         clamp(getRandom(&particleRandom, 10, 20) + sqrt(fabsf(speed)), 10, 60);
+    p->colorIndex = currentColorIndex;
     particleIndex++;
     if (particleIndex >= MAX_PARTICLE_COUNT) {
       particleIndex = 0;
@@ -55,7 +60,8 @@ void updateParticles() {
     }
     vectorAdd(&p->pos, p->vel.x, p->vel.y);
     vectorMul(&p->vel, 0.98);
-    md_rect(p->pos.x, p->pos.y, 1, 1);
+    ColorRgb *rgb = &colorRgbs[p->colorIndex];
+    md_rect(p->pos.x, p->pos.y, 1, 1, rgb->r, rgb->g, rgb->b);
     p->ticks--;
   }
 }

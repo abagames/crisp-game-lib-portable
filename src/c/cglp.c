@@ -130,7 +130,8 @@ void addRect(bool isAlignCenter, float x, float y, float w, float h,
     drawingHitBoxesIndex++;
   }
   if (currentColorIndex > TRANSPARENT) {
-    md_rect(x, y, w, h);
+    ColorRgb *rgb = &colorRgbs[currentColorIndex];
+    md_rect(x, y, w, h, rgb->r, rgb->g, rgb->b);
   }
 }
 
@@ -314,13 +315,7 @@ Collision character(char *msg, float x, float y) {
 // Color
 ColorRgb colorRgbs[COLOR_COUNT];
 
-void color(int index) {
-  currentColorIndex = index;
-  if (index > TRANSPARENT) {
-    ColorRgb *cr = &colorRgbs[index];
-    md_color(cr->r, cr->g, cr->b);
-  }
-}
+void color(int index) { currentColorIndex = index; }
 
 ColorRgb whiteRgb;
 
