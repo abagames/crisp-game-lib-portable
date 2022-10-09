@@ -9,7 +9,7 @@ window.setTexts = (gridPointer, count) => {
   textImages = [];
   for (let i = 0; i < count; i++) {
     textImages.push(createLetterImage(p));
-    p += (letterSize + 1) * letterSize;
+    p += letterSize * letterSize * 3;
   }
 };
 
@@ -18,7 +18,7 @@ window.setCharacters = (gridPointer, count) => {
   charImages = [];
   for (let i = 0; i < count; i++) {
     charImages.push(createLetterImage(p));
-    p += (letterSize + 1) * letterSize;
+    p += letterSize * letterSize * 3;
   }
 };
 
@@ -51,16 +51,17 @@ export function init() {
 
 function createLetterImage(pointer) {
   letterContext.clearRect(0, 0, letterSize, letterSize);
-  letterContext.fillStyle = "#000";
   let p = pointer;
   for (let y = 0; y < letterSize; y++) {
-    for (let x = 0; x < letterSize; x++, p++) {
-      const c = Module.HEAPU8[p];
-      if (c == 7) {
+    for (let x = 0; x < letterSize; x++, p += 3) {
+      const r = Module.HEAPU8[p];
+      const g = Module.HEAPU8[p + 1];
+      const b = Module.HEAPU8[p + 2];
+      if (r > 0 || g > 0 || b > 0) {
+        letterContext.fillStyle = view.rgbToColorStyle(r, g, b);
         letterContext.fillRect(x, y, 1, 1);
       }
     }
-    p++; // skip '\0'
   }
   const image = document.createElement("img");
   image.src = letterCanvas.toDataURL();

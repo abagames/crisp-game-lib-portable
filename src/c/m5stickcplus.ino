@@ -97,18 +97,26 @@ float md_getAudioTime() { return soundTime; }
 
 void md_consoleLog(char *msg) { Serial.println(msg); }
 
-void md_setTexts(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
+void createImageData(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
+                     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT]) {
+  int cp = 0;
+  for (int y = 0; y < CHARACTER_HEIGHT; y++) {
+    for (int x = 0; x < CHARACTER_WIDTH; x++) {
+      unsigned char r = grid[y][x][0];
+      unsigned char g = grid[y][x][1];
+      unsigned char b = grid[y][x][2];
+      imageData[cp] =
+          (r > 0 || g > 0 || b > 0) ? lcd.color565(r, g, b) : TRANSPARENT_COLOR;
+      cp++;
+    }
+  }
+}
+
+void md_setTexts(unsigned char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
                  int count) {
   for (int i = 0; i < count; i++) {
-    int cp = 0;
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
-    for (int y = 0; y < CHARACTER_HEIGHT; y++) {
-      for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        imageData[cp] =
-            grid[i][y][x] == BLACK ? lcd.color565(9, 9, 9) : TRANSPARENT_COLOR;
-        cp++;
-      }
-    }
+    createImageData(grid[i], imageData);
     textSprites[i] = new LGFX_Sprite(&canvas);
     textSprites[i]->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
     textSprites[i]->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
@@ -116,18 +124,11 @@ void md_setTexts(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
   }
 }
 
-void md_setCharacters(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
-                      int count) {
+void md_setCharacters(
+    unsigned char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3], int count) {
   for (int i = 0; i < count; i++) {
-    int cp = 0;
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
-    for (int y = 0; y < CHARACTER_HEIGHT; y++) {
-      for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        imageData[cp] =
-            grid[i][y][x] == BLACK ? lcd.color565(9, 9, 9) : TRANSPARENT_COLOR;
-        cp++;
-      }
-    }
+    createImageData(grid[i], imageData);
     characterSprites[i] = new LGFX_Sprite(&canvas);
     characterSprites[i]->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
     characterSprites[i]->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
@@ -218,9 +219,9 @@ void setup() {
   lcd.setBrightness(128);
   lcd.fillScreen(lcd.color565(0xdd, 0xdd, 0xdd));
   initSoundTones();
-  initGame();
-  initCanvas();
   disableSound();
+  initCanvas();
+  initGame();
   hw_timer_t *frameTimer = NULL;
   frameTimer = timerBegin(0, getApbFrequency() / FPS / 1000, true);
   timerAttachInterrupt(frameTimer, &onFrameTimer, true);

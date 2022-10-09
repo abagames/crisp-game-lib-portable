@@ -18,10 +18,10 @@ EXTERNC void md_playTone(float freq, float duration, float when);
 EXTERNC void md_stopTone();
 EXTERNC float md_getAudioTime();
 
-EXTERNC void md_setTexts(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
-                         int count);
+EXTERNC void md_setTexts(
+    unsigned char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3], int count);
 EXTERNC void md_setCharacters(
-    char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1], int count);
+    unsigned char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3], int count);
 
 EXTERNC void md_consoleLog(char *msg);
 

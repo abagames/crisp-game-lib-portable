@@ -311,21 +311,6 @@ Collision character(char *msg, float x, float y) {
   return hitCollision;
 }
 
-char *colorGridChars = "wrgybpclRGYBPCL";
-
-void getColorIndexGrid(
-    char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1], int count,
-    char colorIndexGrid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]) {
-  for (int i = 0; i < count; i++) {
-    for (int y = 0; y < CHARACTER_HEIGHT; y++) {
-      for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        char *ci = strchr(colorGridChars, grid[i][y][x]);
-        colorIndexGrid[i][y][x] = ci == NULL ? -1 : ci - colorGridChars;
-      }
-    }
-  }
-}
-
 // Color
 ColorRgb colorRgbs[COLOR_COUNT];
 
@@ -383,6 +368,29 @@ void initColor() {
 
 void clearView() {
   md_clearView(colorRgbs[WHITE].r, colorRgbs[WHITE].g, colorRgbs[WHITE].b);
+}
+
+char *colorGridChars = "wrgybpclRGYBPCL";
+
+void getColorGrid(
+    char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1], int count,
+    unsigned char colorGrid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3]) {
+  for (int i = 0; i < count; i++) {
+    for (int y = 0; y < CHARACTER_HEIGHT; y++) {
+      for (int x = 0; x < CHARACTER_WIDTH; x++) {
+        char *ci = strchr(colorGridChars, grid[i][y][x]);
+        if (ci == NULL) {
+          colorGrid[i][y][x][0] = colorGrid[i][y][x][1] =
+              colorGrid[i][y][x][2] = 0;
+        } else {
+          ColorRgb *rgb = &colorRgbs[ci - colorGridChars];
+          colorGrid[i][y][x][0] = rgb->r;
+          colorGrid[i][y][x][1] = rgb->g;
+          colorGrid[i][y][x][2] = rgb->b;
+        }
+      }
+    }
+  }
 }
 
 // Sound
@@ -584,22 +592,23 @@ void updateGameOver() {
 void end() { initGameOver(); }
 
 // Initialize
+unsigned char colorGrid[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH]
+                       [3];
+
 EMSCRIPTEN_KEEPALIVE
 void initGame() {
-  char tg[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1];
-  getColorIndexGrid(textPatterns, TEXT_PATTERN_COUNT, tg);
-  md_setTexts(tg, TEXT_PATTERN_COUNT);
-  setTextHitBoxes();
-  char cg[charactersCount][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1];
-  getColorIndexGrid(characters, charactersCount, cg);
-  md_setCharacters(cg, charactersCount);
-  setCharacterHitBoxes();
-  setRandomSeedWithTime(&gameRandom);
   initColor();
+  getColorGrid(textPatterns, TEXT_PATTERN_COUNT, colorGrid);
+  md_setTexts(colorGrid, TEXT_PATTERN_COUNT);
+  setTextHitBoxes();
+  getColorGrid(characters, charactersCount, colorGrid);
+  md_setCharacters(colorGrid, charactersCount);
+  setCharacterHitBoxes();
   initScore();
   initParticle();
   initSound();
   parseDescription();
+  setRandomSeedWithTime(&gameRandom);
   hasTitle = strlen(title) + strlen(description) > 0;
   if (hasTitle) {
     initTitle();

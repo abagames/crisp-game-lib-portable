@@ -62,7 +62,7 @@ window.setColor = (r, g, b) => {
   currentColorFillStyle = rgbToColorStyle(r, g, b);
 };
 
-function rgbToColorStyle(r, g, b) {
+export function rgbToColorStyle(r, g, b) {
   return `#${intToHex(r)}${intToHex(g)}${intToHex(b)}`;
 }
 
