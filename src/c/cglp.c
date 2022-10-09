@@ -30,6 +30,7 @@ float tempo = 120;
 Input input;
 int currentColorIndex;
 int state;
+bool hasTitle;
 Random gameRandom;
 
 // Collision
@@ -565,6 +566,12 @@ void initGameOver() {
 }
 
 void updateGameOver() {
+  if (!hasTitle) {
+    if (input.isJustPressed) {
+      initInGame();
+    }
+    return;
+  }
   if (gameOverTicks > 20 && input.isJustPressed) {
     initInGame();
   } else if (gameOverTicks > 300) {
@@ -592,7 +599,12 @@ void initGame() {
   initParticle();
   initSound();
   parseDescription();
-  initTitle();
+  hasTitle = strlen(title) + strlen(description) > 0;
+  if (hasTitle) {
+    initTitle();
+  } else {
+    initInGame();
+  }
 }
 
 EMSCRIPTEN_KEEPALIVE
