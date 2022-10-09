@@ -76,9 +76,9 @@ typedef struct {
 } Options;
 
 typedef struct {
-  float r;
-  float g;
-  float b;
+  unsigned char r;
+  unsigned char g;
+  unsigned char b;
 } ColorRgb;
 
 EXTERNC int ticks;

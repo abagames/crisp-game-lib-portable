@@ -50,26 +50,25 @@ image-rendering: pixelated;
 let currentColorFillStyle;
 
 export function clear(r, g, b) {
-  const cc = currentColorFillStyle;
-  setColor(r, g, b);
-  context.fillStyle = currentColorFillStyle;
+  context.fillStyle = rgbToColorStyle(r, g, b);
   context.fillRect(0, 0, canvas.width, canvas.height);
-  currentColorFillStyle = cc;
 }
 
 window.clearView = (r, g, b) => {
   clear(r, g, b);
 };
 
-function intToHex(v) {
-  return Math.floor(v * 255)
-    .toString(16)
-    .padStart(2, "0");
+window.setColor = (r, g, b) => {
+  currentColorFillStyle = rgbToColorStyle(r, g, b);
+};
+
+function rgbToColorStyle(r, g, b) {
+  return `#${intToHex(r)}${intToHex(g)}${intToHex(b)}`;
 }
 
-window.setColor = (r, g, b) => {
-  currentColorFillStyle = `#${intToHex(r)}${intToHex(g)}${intToHex(b)}`;
-};
+function intToHex(v) {
+  return v.toString(16).padStart(2, "0");
+}
 
 export function fillRect(x, y, width, height) {
   context.fillStyle = currentColorFillStyle;

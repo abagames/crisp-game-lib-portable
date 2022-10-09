@@ -54,11 +54,11 @@ void addSoundTone(float freq, float duration, float when) {
   }
 }
 
-#define TRANSPARENT_COLOR 0xffff
+#define TRANSPARENT_COLOR 0
 uint16_t currentColor;
 
-void md_color(float r, float g, float b) {
-  currentColor = lcd.color565(r * 255, g * 255, b * 255);
+void md_color(unsigned char r, unsigned char g, unsigned char b) {
+  currentColor = lcd.color565(r, g, b);
 }
 
 void md_rect(float x, float y, float w, float h) {
@@ -77,7 +77,7 @@ void md_character(char l, float x, float y) {
                                         TRANSPARENT_COLOR);
 }
 
-void md_clearView(float r, float g, float b) {
+void md_clearView(unsigned char r, unsigned char g, unsigned char b) {
   uint16_t cc = currentColor;
   md_color(r, g, b);
   canvas.fillSprite(currentColor);
@@ -104,7 +104,8 @@ void md_setTexts(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
     for (int y = 0; y < CHARACTER_HEIGHT; y++) {
       for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        imageData[cp] = grid[i][y][x] == BLACK ? 0 : TRANSPARENT_COLOR;
+        imageData[cp] =
+            grid[i][y][x] == BLACK ? lcd.color565(9, 9, 9) : TRANSPARENT_COLOR;
         cp++;
       }
     }
@@ -122,7 +123,8 @@ void md_setCharacters(char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
     for (int y = 0; y < CHARACTER_HEIGHT; y++) {
       for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        imageData[cp] = grid[i][y][x] == BLACK ? 0 : TRANSPARENT_COLOR;
+        imageData[cp] =
+            grid[i][y][x] == BLACK ? lcd.color565(9, 9, 9) : TRANSPARENT_COLOR;
         cp++;
       }
     }

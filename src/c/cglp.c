@@ -332,7 +332,8 @@ ColorRgb colorRgbs[COLOR_COUNT];
 void color(int index) {
   currentColorIndex = index;
   if (index > TRANSPARENT) {
-    md_color(colorRgbs[index].r, colorRgbs[index].g, colorRgbs[index].b);
+    ColorRgb *cr = &colorRgbs[index];
+    md_color(cr->r, cr->g, cr->b);
   }
 }
 
@@ -353,9 +354,9 @@ ColorRgb getRgb(int index, bool isDarkColor) {
   }
   int v = rgbValues[i];
   ColorRgb cr;
-  cr.r = (float)((v & 0xff0000) >> 16) / 255;
-  cr.g = (float)((v & 0xff00) >> 8) / 255;
-  cr.b = (float)(v & 0xff) / 255;
+  cr.r = (v & 0xff0000) >> 16;
+  cr.g = (v & 0xff00) >> 8;
+  cr.b = v & 0xff;
   if (index >= LIGHT_RED) {
     cr.r = isDarkColor ? cr.r * 0.5 : whiteRgb.r - (whiteRgb.r - cr.r) * 0.5;
     cr.g = isDarkColor ? cr.g * 0.5 : whiteRgb.g - (whiteRgb.g - cr.g) * 0.5;
