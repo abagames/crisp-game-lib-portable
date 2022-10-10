@@ -33,10 +33,10 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - ~~[Game over](https://abagames.github.io/crisp-game-lib/ref_document/functions/end.html) and title screen~~
 - ~~[Particle](https://abagames.github.io/crisp-game-lib/ref_document/functions/particle.html)~~
 - ~~[Bar](https://abagames.github.io/crisp-game-lib/ref_document/functions/bar.html) and [box](https://abagames.github.io/crisp-game-lib/ref_document/functions/box.html)~~
-- [Color](https://abagames.github.io/crisp-game-lib/ref_document/functions/color.html)
-- Precise collision detection for texts and characters
+- ~~[Color](https://abagames.github.io/crisp-game-lib/ref_document/functions/color.html)~~
+- ~~Precise collision detection for texts and characters~~
+- [Letter options](https://abagames.github.io/crisp-game-lib/ref_document/types/LetterOptions.html)
 - Replay
 - Utility functions
 - [Game options](https://abagames.github.io/crisp-game-lib/ref_document/types/Options.html)
-- [Letter options](https://abagames.github.io/crisp-game-lib/ref_document/types/LetterOptions.html)
 - [Input position](https://abagames.github.io/crisp-game-lib/ref_document/variables/input.pos.html)
