@@ -2,7 +2,7 @@ export let canvas;
 export let context;
 
 export function init(w, h) {
-  const _bodyBackground = "#ddd";
+  const _bodyBackground = "#e0e0e0";
   const bodyCss = `
 -webkit-touch-callout: none;
 -webkit-tap-highlight-color: ${_bodyBackground};
@@ -54,6 +54,10 @@ export function clear(r, g, b) {
 
 window.clearView = (r, g, b) => {
   clear(r, g, b);
+};
+
+window.clearScreen = (r, g, b) => {
+  document.body.style.background = rgbToColorStyle(r, g, b);
 };
 
 function intToHex(v) {

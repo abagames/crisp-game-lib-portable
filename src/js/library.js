@@ -8,6 +8,9 @@ mergeInto(LibraryManager.library, {
   md_clearView: function (r, g, b) {
     clearView(r, g, b);
   },
+  md_clearScreen: function (r, g, b) {
+    clearScreen(r, g, b);
+  },
   md_playTone: function (freq, duration, when) {
     playTone(freq, duration, when);
   },

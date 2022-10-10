@@ -680,6 +680,7 @@ void initGame() {
   initSound();
   parseDescription();
   setRandomSeedWithTime(&gameRandom);
+  md_clearScreen(0xe0, 0xe0, 0xe0);
   hasTitle = strlen(title) + strlen(description) > 0;
   if (hasTitle) {
     initTitle();

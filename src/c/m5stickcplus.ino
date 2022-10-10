@@ -110,6 +110,10 @@ void md_clearView(unsigned char r, unsigned char g, unsigned char b) {
   canvas.fillSprite(lcd.color565(r, g, b));
 }
 
+void md_clearScreen(unsigned char r, unsigned char g, unsigned char b) {
+  lcd.fillScreen(lcd.color565(r, g, b));
+}
+
 void md_playTone(float freq, float duration, float when) {
   addSoundTone(freq, duration, when);
 }
@@ -204,7 +208,6 @@ void setup() {
   lcd.init();
   lcd.setRotation(0);
   lcd.setBrightness(128);
-  lcd.fillScreen(lcd.color565(0xdd, 0xdd, 0xdd));
   initSoundTones();
   disableSound();
   initCanvas();
