@@ -98,6 +98,7 @@ void md_drawCharacter(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
     createCharacterImageData(grid);
     cp->sprite = new LGFX_Sprite(&canvas);
     cp->sprite->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
+    cp->sprite->setSwapBytes(true);
     cp->sprite->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
                           characterImageData);
     characterSpritesCount++;

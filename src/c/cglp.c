@@ -254,16 +254,17 @@ void initCharacterPattern() { characterPatternsCount = 0; }
 
 char *colorGridChars = "wrgybpclRGYBPCL";
 
-void setColorGrid(
-    char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
-    unsigned char colorGrid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3]) {
+void setColorGrid(char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
+                  unsigned char colorGrid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
+                  int colorIndex) {
   for (int y = 0; y < CHARACTER_HEIGHT; y++) {
     for (int x = 0; x < CHARACTER_WIDTH; x++) {
       char *ci = strchr(colorGridChars, grid[y][x]);
       if (ci == NULL) {
         colorGrid[y][x][0] = colorGrid[y][x][1] = colorGrid[y][x][2] = 0;
       } else {
-        ColorRgb *rgb = &colorRgbs[ci - colorGridChars];
+        ColorRgb *rgb = colorIndex == BLACK ? &colorRgbs[ci - colorGridChars]
+                                            : &colorRgbs[colorIndex];
         colorGrid[y][x][0] = rgb->r;
         colorGrid[y][x][1] = rgb->g;
         colorGrid[y][x][2] = rgb->b;
@@ -287,7 +288,7 @@ void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
     return;
   }
   char hashStr[99];
-  snprintf(hashStr, 98, "%d:%d", index, isText);
+  snprintf(hashStr, 98, "%d:%d:%d", index, isText, color);
   int hash = getHashFromString(hashStr);
   CharacterPattern *cp = NULL;
   for (int i = 0; i < characterPatternsCount; i++) {
@@ -304,7 +305,7 @@ void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
     cp = &characterPatterns[characterPatternsCount];
     cp->hash = hash;
     setColorGrid(isText ? textPatterns[index - '!'] : characters[index - 'a'],
-                 cp->grid);
+                 cp->grid, color);
     setCharacterHitBox(cp->grid, &cp->hitBox);
     characterPatternsCount++;
   }
@@ -467,12 +468,15 @@ void addScore(float value, float x, float y) {
 }
 
 void drawScore() {
+  int cc = color;
+  color = BLACK;
   char sc[16];
   int s = state == STATE_IN_GAME ? (int)score : prevScore;
   snprintf(sc, 15, "%d", s);
   drawCharacters(sc, 3, 3, false, true);
   snprintf(sc, 15, "HI %d", hiScore);
   drawCharacters(sc, options.viewSizeX - strlen(sc) * 6 + 2, 3, false, true);
+  color = cc;
 }
 
 void particle(float x, float y, float count, float speed, float angle,
@@ -564,6 +568,8 @@ void updateTitle() {
   if (input.isJustPressed) {
     initInGame();
   }
+  int cc = color;
+  color = BLACK;
   drawCharacters(title,
                  (options.viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
                  options.viewSizeY * 0.25, false, true);
@@ -574,6 +580,7 @@ void updateTitle() {
                      true);
     }
   }
+  color = cc;
 }
 
 // Game over
@@ -585,10 +592,13 @@ void initGameOver() {
   isPlayingBgm = false;
   prevScore = (int)score;
   gameOverTicks = 0;
+  int cc = color;
+  color = BLACK;
   drawCharacters(
       gameOverText,
       (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
       options.viewSizeY * 0.5, false, true);
+  color = cc;
 }
 
 void updateGameOver() {
