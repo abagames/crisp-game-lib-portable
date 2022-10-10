@@ -89,6 +89,7 @@ EXTERNC int color;
 EXTERNC float thickness;
 EXTERNC float barCenterPosRatio;
 EXTERNC CharacterOptions characterOptions;
+EXTERNC bool hasCollision;
 EXTERNC float tempo;
 EXTERNC Input input;
 EXTERNC Collision rect(float x, float y, float w, float h);

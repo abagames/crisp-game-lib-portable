@@ -26,9 +26,10 @@ int ticks;
 float score;
 float difficulty;
 int color;
-float thickness = 3;
-float barCenterPosRatio = 0.5;
+float thickness;
+float barCenterPosRatio;
 CharacterOptions characterOptions;
+bool hasCollision;
 float tempo = 120;
 Input input;
 int state;
@@ -96,18 +97,20 @@ void addRect(bool isAlignCenter, float x, float y, float w, float h,
     x -= w / 2;
     y -= h / 2;
   }
-  HitBox hb;
-  hb.rectIndex = color;
-  hb.textIndex = hb.characterIndex = -1;
-  hb.pos.x = floor(x);
-  hb.pos.y = floor(y);
-  hb.size.x = floor(w);
-  hb.size.y = floor(h);
-  checkHitBox(hitCollision, hb);
-  if (color > TRANSPARENT &&
-      drawingHitBoxesIndex < MAX_DRAWING_HIT_BOXES_COUNT) {
-    drawingHitBoxes[drawingHitBoxesIndex] = hb;
-    drawingHitBoxesIndex++;
+  if (hasCollision) {
+    HitBox hb;
+    hb.rectIndex = color;
+    hb.textIndex = hb.characterIndex = -1;
+    hb.pos.x = floor(x);
+    hb.pos.y = floor(y);
+    hb.size.x = floor(w);
+    hb.size.y = floor(h);
+    checkHitBox(hitCollision, hb);
+    if (color > TRANSPARENT &&
+        drawingHitBoxesIndex < MAX_DRAWING_HIT_BOXES_COUNT) {
+      drawingHitBoxes[drawingHitBoxesIndex] = hb;
+      drawingHitBoxesIndex++;
+    }
   }
   if (color > TRANSPARENT) {
     ColorRgb *rgb = &colorRgbs[color];
@@ -115,12 +118,17 @@ void addRect(bool isAlignCenter, float x, float y, float w, float h,
   }
 }
 
+bool isShownTooManyHitBoxesMessage = false;
+
 void addHitBox(HitBox hb) {
   if (hitBoxesIndex < MAX_HIT_BOX_COUNT) {
     hitBoxes[hitBoxesIndex] = hb;
     hitBoxesIndex++;
   } else {
-    consoleLog("too many hit boxes");
+    if (!isShownTooManyHitBoxesMessage) {
+      consoleLog("too many hit boxes");
+      isShownTooManyHitBoxesMessage = true;
+    }
   }
 }
 
@@ -318,7 +326,9 @@ void setColorGrid(char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
             clamp(rightBottom.y - leftTop.y + 1, 0, CHARACTER_HEIGHT));
 }
 
-void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
+bool isShownTooManyCharacterPatternsMessage = false;
+
+void drawCharacter(int index, float x, float y, bool _hasCollision, bool isText,
                    Collision *hitCollision) {
   if ((isText && (index < '!' || index > '~')) ||
       (!isText && (index < 'a' || index > 'z'))) {
@@ -338,7 +348,10 @@ void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
   }
   if (cp == NULL) {
     if (characterPatternsCount >= MAX_CACHED_CHARACTER_PATTERN_COUNT) {
-      consoleLog("too many charater patterns");
+      if (!isShownTooManyCharacterPatternsMessage) {
+        consoleLog("too many charater patterns");
+        isShownTooManyCharacterPatternsMessage = true;
+      }
       return;
     }
     cp = &characterPatterns[characterPatternsCount];
@@ -348,7 +361,7 @@ void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
     characterPatternsCount++;
   }
   md_drawCharacter(cp->grid, x, y, hash);
-  if (hasCollision) {
+  if (hasCollision && _hasCollision) {
     HitBox *thb = &cp->hitBox;
     HitBox hb;
     hb.textIndex = isText ? index : -1;
@@ -363,7 +376,7 @@ void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
   }
 }
 
-Collision drawCharacters(char *msg, float x, float y, bool hasCollision,
+Collision drawCharacters(char *msg, float x, float y, bool _hasCollision,
                          bool isText) {
   Collision hitCollision;
   initCollision(&hitCollision);
@@ -371,7 +384,7 @@ Collision drawCharacters(char *msg, float x, float y, bool hasCollision,
   x -= CHARACTER_WIDTH / 2;
   y -= CHARACTER_HEIGHT / 2;
   for (int i = 0; i < ml; i++) {
-    drawCharacter(msg[i], x, y, hasCollision, isText, &hitCollision);
+    drawCharacter(msg[i], x, y, _hasCollision, isText, &hitCollision);
     x += 6;
   }
   return hitCollision;
@@ -428,7 +441,6 @@ void initColor() {
     colorRgbs[WHITE].g = colorRgbs[BLUE].g / 6;
     colorRgbs[WHITE].b = colorRgbs[BLUE].b / 6;
   }
-  color = BLACK;
 }
 
 void clearView() {
@@ -438,12 +450,16 @@ void clearView() {
 int savedColor;
 CharacterOptions savedCharacterOptions;
 
-void saveCurrentColorAndCharacterOptions() {
-  savedColor = color;
-  savedCharacterOptions = characterOptions;
+void resetColorAndCharacterOptions() {
   color = BLACK;
   characterOptions.isMirrorX = characterOptions.isMirrorY = false;
   characterOptions.rotation = 0;
+}
+
+void saveCurrentColorAndCharacterOptions() {
+  savedColor = color;
+  savedCharacterOptions = characterOptions;
+  resetColorAndCharacterOptions();
 }
 
 void loadCurrentColorAndCharacterOptions() {
@@ -494,6 +510,7 @@ void initScoreBoards() {
 }
 
 void updateScoreBoards() {
+  saveCurrentColorAndCharacterOptions();
   for (int i = 0; i < MAX_SCORE_BOARD_COUNT; i++) {
     ScoreBoard *sb = &scoreBoards[i];
     if (sb->ticks > 0) {
@@ -503,6 +520,7 @@ void updateScoreBoards() {
       sb->ticks--;
     }
   }
+  loadCurrentColorAndCharacterOptions();
 }
 
 void addScore(float value, float x, float y) {
@@ -577,6 +595,13 @@ int getHashFromString(char *str) {
 }
 
 // In game
+void resetDrawState() {
+  resetColorAndCharacterOptions();
+  thickness = 3;
+  barCenterPosRatio = 0.5;
+  hasCollision = true;
+}
+
 void initInGame() {
   state = STATE_IN_GAME;
   if (prevScore > hiScore) {
@@ -584,6 +609,8 @@ void initInGame() {
   }
   score = 0;
   initScoreBoards();
+  initParticle();
+  resetDrawState();
   isPlayingBgm = true;
   ticks = -1;
 }
@@ -616,6 +643,7 @@ void parseDescription() {
 void initTitle() {
   state = STATE_TITLE;
   ticks = -1;
+  resetDrawState();
 }
 
 void updateTitle() {
@@ -640,16 +668,20 @@ void updateTitle() {
 int gameOverTicks;
 char *gameOverText = "GAME OVER";
 
+void drawGameOver() {
+  drawCharacters(
+      gameOverText,
+      (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
+      options.viewSizeY * 0.5, false, true);
+}
+
 void initGameOver() {
   state = STATE_GAME_OVER;
   isPlayingBgm = false;
   prevScore = (int)score;
   gameOverTicks = 0;
   saveCurrentColorAndCharacterOptions();
-  drawCharacters(
-      gameOverText,
-      (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
-      options.viewSizeY * 0.5, false, true);
+  drawGameOver();
   loadCurrentColorAndCharacterOptions();
 }
 
@@ -659,6 +691,11 @@ void updateGameOver() {
       initInGame();
     }
     return;
+  }
+  if (gameOverTicks == 20) {
+    saveCurrentColorAndCharacterOptions();
+    drawGameOver();
+    loadCurrentColorAndCharacterOptions();
   }
   if (gameOverTicks > 20 && input.isJustPressed) {
     initInGame();
@@ -683,6 +720,7 @@ void initGame() {
   setRandomSeedWithTime(&gameRandom);
   unsigned char cc = options.isDarkColor ? 0x10 : 0xe0;
   md_clearScreen(cc, cc, cc);
+  resetDrawState();
   hasTitle = strlen(title) + strlen(description) > 0;
   if (hasTitle) {
     initTitle();
