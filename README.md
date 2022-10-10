@@ -37,10 +37,10 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - ~~[Color](https://abagames.github.io/crisp-game-lib/ref_document/functions/color.html)~~
 - ~~Precise collision detection for texts and characters~~
 - ~~[Letter options](https://abagames.github.io/crisp-game-lib/ref_document/types/LetterOptions.html)~~
-  -- `scale` and `backgroundColor` options are not supported
+  - `scale` and `backgroundColor` options are not supported
 - ~~[Game options](https://abagames.github.io/crisp-game-lib/ref_document/types/Options.html)~~
-  -- Only `viewSize`, `soundSeed` and `isDarkColor` are supported
+  - Only `viewSize`, `soundSeed` and `isDarkColor` are supported
 - ~~Utility functions~~
-  -- Partially supported
+  - Partially supported
 - Replay
 - [Input position](https://abagames.github.io/crisp-game-lib/ref_document/variables/input.pos.html)
