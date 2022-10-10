@@ -77,6 +77,7 @@ typedef struct {
 
 EXTERNC int ticks;
 EXTERNC float score;
+EXTERNC int color;
 EXTERNC float difficulty;
 EXTERNC float thickness;
 EXTERNC float barCenterPosRatio;
@@ -90,7 +91,6 @@ EXTERNC Collision arc(float centerX, float centerY, float radius,
                       float angleFrom, float angleTo);
 EXTERNC Collision text(char *msg, float x, float y);
 EXTERNC Collision character(char *msg, float x, float y);
-EXTERNC void color(int index);
 EXTERNC void play(int type);
 EXTERNC void addScore(float value, float x, float y);
 EXTERNC float rnd(float high, float low);

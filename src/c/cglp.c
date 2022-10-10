@@ -24,11 +24,11 @@
 
 int ticks;
 float difficulty;
+int color;
 float thickness = 3;
 float barCenterPosRatio = 0.5;
 float tempo = 120;
 Input input;
-int currentColorIndex;
 int state;
 bool hasTitle;
 Random gameRandom;
@@ -95,20 +95,20 @@ void addRect(bool isAlignCenter, float x, float y, float w, float h,
     y -= h / 2;
   }
   HitBox hb;
-  hb.rectIndex = currentColorIndex;
+  hb.rectIndex = color;
   hb.textIndex = hb.characterIndex = -1;
   hb.pos.x = floor(x);
   hb.pos.y = floor(y);
   hb.size.x = floor(w);
   hb.size.y = floor(h);
   checkHitBox(hitCollision, hb);
-  if (currentColorIndex > TRANSPARENT &&
+  if (color > TRANSPARENT &&
       drawingHitBoxesIndex < MAX_DRAWING_HIT_BOXES_COUNT) {
     drawingHitBoxes[drawingHitBoxesIndex] = hb;
     drawingHitBoxesIndex++;
   }
-  if (currentColorIndex > TRANSPARENT) {
-    ColorRgb *rgb = &colorRgbs[currentColorIndex];
+  if (color > TRANSPARENT) {
+    ColorRgb *rgb = &colorRgbs[color];
     md_drawRect(x, y, w, h, rgb->r, rgb->g, rgb->b);
   }
 }
@@ -348,9 +348,6 @@ Collision character(char *msg, float x, float y) {
 
 // Color
 ColorRgb colorRgbs[COLOR_COUNT];
-
-void color(int index) { currentColorIndex = index; }
-
 ColorRgb whiteRgb;
 
 ColorRgb getRgb(int index, bool isDarkColor) {
@@ -392,7 +389,7 @@ void initColor() {
     colorRgbs[WHITE].g = colorRgbs[BLUE].g * 0.15;
     colorRgbs[WHITE].b = colorRgbs[BLUE].b * 0.15;
   }
-  color(BLACK);
+  color = BLACK;
 }
 
 void clearView() {

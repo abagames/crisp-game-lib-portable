@@ -26,7 +26,7 @@ void initParticle() {
 
 void addParticle(float x, float y, float count, float speed, float angle,
                  float angleWidth) {
-  if (currentColorIndex == TRANSPARENT) {
+  if (color == TRANSPARENT) {
     return;
   }
   if (count < 1) {
@@ -44,7 +44,7 @@ void addParticle(float x, float y, float count, float speed, float angle,
            a);
     p->ticks =
         clamp(getRandom(&particleRandom, 10, 20) + sqrt(fabsf(speed)), 10, 60);
-    p->colorIndex = currentColorIndex;
+    p->colorIndex = color;
     particleIndex++;
     if (particleIndex >= MAX_PARTICLE_COUNT) {
       particleIndex = 0;
