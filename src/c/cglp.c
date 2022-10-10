@@ -23,10 +23,12 @@
 #define STATE_GAME_OVER 2
 
 int ticks;
+float score;
 float difficulty;
 int color;
 float thickness = 3;
 float barCenterPosRatio = 0.5;
+CharacterOptions characterOptions;
 float tempo = 120;
 Input input;
 int state;
@@ -250,7 +252,11 @@ typedef struct {
 CharacterPattern characterPatterns[MAX_CACHED_CHARACTER_PATTERN_COUNT];
 int characterPatternsCount;
 
-void initCharacterPattern() { characterPatternsCount = 0; }
+void initCharacter() {
+  characterPatternsCount = 0;
+  characterOptions.isMirrorX = characterOptions.isMirrorY = false;
+  characterOptions.rotation = 0;
+}
 
 char *colorGridChars = "wrgybpclRGYBPCL";
 
@@ -263,7 +269,27 @@ void setColorGrid(char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
   vectorSet(&rightBottom, 0, 0);
   for (int y = 0; y < CHARACTER_HEIGHT; y++) {
     for (int x = 0; x < CHARACTER_WIDTH; x++) {
-      char *ci = strchr(colorGridChars, grid[y][x]);
+      int gx = x;
+      int gy = y;
+      if (characterOptions.isMirrorX) {
+        gx = CHARACTER_WIDTH - gx - 1;
+      }
+      if (characterOptions.isMirrorY) {
+        gy = CHARACTER_HEIGHT - gy - 1;
+      }
+      if (characterOptions.rotation == 1) {
+        int tx = gx;
+        gx = gy;
+        gy = CHARACTER_WIDTH - tx - 1;
+      } else if (characterOptions.rotation == 2) {
+        gx = CHARACTER_WIDTH - gx - 1;
+        gy = CHARACTER_HEIGHT - gy - 1;
+      } else if (characterOptions.rotation == 3) {
+        int tx = gx;
+        gx = CHARACTER_HEIGHT - gy - 1;
+        gy = tx;
+      }
+      char *ci = strchr(colorGridChars, grid[gy][gx]);
       if (ci == NULL) {
         colorGrid[y][x][0] = colorGrid[y][x][1] = colorGrid[y][x][2] = 0;
       } else {
@@ -299,7 +325,9 @@ void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
     return;
   }
   char hashStr[99];
-  snprintf(hashStr, 98, "%d:%d:%d", index, isText, color);
+  snprintf(hashStr, 98, "%d:%d:%d:%d:%d:%d", index, isText, color,
+           characterOptions.isMirrorX, characterOptions.isMirrorY,
+           characterOptions.rotation);
   int hash = getHashFromString(hashStr);
   CharacterPattern *cp = NULL;
   for (int i = 0; i < characterPatternsCount; i++) {
@@ -407,6 +435,22 @@ void clearView() {
   md_clearView(colorRgbs[WHITE].r, colorRgbs[WHITE].g, colorRgbs[WHITE].b);
 }
 
+int savedColor;
+CharacterOptions savedCharacterOptions;
+
+void saveCurrentColorAndCharacterOptions() {
+  savedColor = color;
+  savedCharacterOptions = characterOptions;
+  color = BLACK;
+  characterOptions.isMirrorX = characterOptions.isMirrorY = false;
+  characterOptions.rotation = 0;
+}
+
+void loadCurrentColorAndCharacterOptions() {
+  color = savedColor;
+  characterOptions = savedCharacterOptions;
+}
+
 // Sound
 void play(int type) { playSoundEffect(type); }
 
@@ -426,7 +470,6 @@ void toggleSound() {
 }
 
 // Score
-float score;
 int prevScore;
 int hiScore;
 
@@ -478,6 +521,7 @@ void addScore(float value, float x, float y) {
 }
 
 void drawScore() {
+  saveCurrentColorAndCharacterOptions();
   int cc = color;
   color = BLACK;
   char sc[16];
@@ -486,7 +530,7 @@ void drawScore() {
   drawCharacters(sc, 3, 3, false, true);
   snprintf(sc, 15, "HI %d", hiScore);
   drawCharacters(sc, options.viewSizeX - strlen(sc) * 6 + 2, 3, false, true);
-  color = cc;
+  loadCurrentColorAndCharacterOptions();
 }
 
 void particle(float x, float y, float count, float speed, float angle,
@@ -578,8 +622,7 @@ void updateTitle() {
   if (input.isJustPressed) {
     initInGame();
   }
-  int cc = color;
-  color = BLACK;
+  saveCurrentColorAndCharacterOptions();
   drawCharacters(title,
                  (options.viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
                  options.viewSizeY * 0.25, false, true);
@@ -590,7 +633,7 @@ void updateTitle() {
                      true);
     }
   }
-  color = cc;
+  loadCurrentColorAndCharacterOptions();
 }
 
 // Game over
@@ -602,13 +645,12 @@ void initGameOver() {
   isPlayingBgm = false;
   prevScore = (int)score;
   gameOverTicks = 0;
-  int cc = color;
-  color = BLACK;
+  saveCurrentColorAndCharacterOptions();
   drawCharacters(
       gameOverText,
       (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
       options.viewSizeY * 0.5, false, true);
-  color = cc;
+  loadCurrentColorAndCharacterOptions();
 }
 
 void updateGameOver() {
@@ -632,7 +674,7 @@ void end() { initGameOver(); }
 EMSCRIPTEN_KEEPALIVE
 void initGame() {
   initColor();
-  initCharacterPattern();
+  initCharacter();
   initScore();
   initParticle();
   initSound();

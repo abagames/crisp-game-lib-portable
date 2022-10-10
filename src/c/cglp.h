@@ -75,12 +75,19 @@ typedef struct {
   int soundSeed;
 } Options;
 
+typedef struct {
+  bool isMirrorX;
+  bool isMirrorY;
+  int rotation;
+} CharacterOptions;
+
 EXTERNC int ticks;
 EXTERNC float score;
-EXTERNC int color;
 EXTERNC float difficulty;
+EXTERNC int color;
 EXTERNC float thickness;
 EXTERNC float barCenterPosRatio;
+EXTERNC CharacterOptions characterOptions;
 EXTERNC float tempo;
 EXTERNC Input input;
 EXTERNC Collision rect(float x, float y, float w, float h);
