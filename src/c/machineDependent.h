@@ -19,6 +19,7 @@ EXTERNC void md_clearScreen(unsigned char r, unsigned char g, unsigned char b);
 EXTERNC void md_playTone(float freq, float duration, float when);
 EXTERNC void md_stopTone();
 EXTERNC float md_getAudioTime();
+EXTERNC void md_initView(int w, int h);
 EXTERNC void md_consoleLog(char *msg);
 
 #endif

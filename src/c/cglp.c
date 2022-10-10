@@ -673,6 +673,7 @@ void end() { initGameOver(); }
 // Initialize
 EMSCRIPTEN_KEEPALIVE
 void initGame() {
+  md_initView(options.viewSizeX, options.viewSizeY);
   initColor();
   initCharacter();
   initScore();

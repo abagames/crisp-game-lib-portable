@@ -127,10 +127,15 @@ float md_getAudioTime() { return soundTime; }
 
 void md_consoleLog(char *msg) { Serial.println(msg); }
 
-void initCanvas() {
-  canvas.createSprite(options.viewSizeX, options.viewSizeY);
-  canvasX = (lcd.width() - options.viewSizeX) / 2;
-  canvasY = (lcd.height() - options.viewSizeY) / 2;
+void md_initView(int w, int h) {
+  canvas.createSprite(w, h);
+  if (w > 135) {
+    lcd.setRotation(1);
+  } else {
+    lcd.setRotation(0);
+  }
+  canvasX = (lcd.width() - w) / 2;
+  canvasY = (lcd.height() - h) / 2;
 }
 
 TaskHandle_t frameTaskHandle;
@@ -210,7 +215,6 @@ void setup() {
   lcd.setBrightness(128);
   initSoundTones();
   disableSound();
-  initCanvas();
   initCharacterSprite();
   initGame();
   hw_timer_t *frameTimer = NULL;

@@ -20,6 +20,9 @@ mergeInto(LibraryManager.library, {
   md_getAudioTime: function () {
     return getAudioTime();
   },
+  md_initView: function (w, h) {
+    initView(w, h);
+  },
   md_consoleLog: function (msg) {
     console.log(UTF8ToString(msg));
   },

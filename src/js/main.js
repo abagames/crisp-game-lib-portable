@@ -35,10 +35,13 @@ function onRuntimeInitialized() {
   character.init();
   input.init();
   audio.init();
-  view.init(100, 100);
   Module.ccall("initGame", "void", [], []);
   animationLoop();
 }
+
+window.initView = (w, h) => {
+  view.init(w, h);
+};
 
 window.Module = {
   onRuntimeInitialized,
