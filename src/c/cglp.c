@@ -256,7 +256,11 @@ char *colorGridChars = "wrgybpclRGYBPCL";
 
 void setColorGrid(char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
                   unsigned char colorGrid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
-                  int colorIndex) {
+                  int colorIndex, HitBox *hb) {
+  Vector leftTop;
+  vectorSet(&leftTop, CHARACTER_WIDTH, CHARACTER_HEIGHT);
+  Vector rightBottom;
+  vectorSet(&rightBottom, 0, 0);
   for (int y = 0; y < CHARACTER_HEIGHT; y++) {
     for (int x = 0; x < CHARACTER_WIDTH; x++) {
       char *ci = strchr(colorGridChars, grid[y][x]);
@@ -268,17 +272,24 @@ void setColorGrid(char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
         colorGrid[y][x][0] = rgb->r;
         colorGrid[y][x][1] = rgb->g;
         colorGrid[y][x][2] = rgb->b;
+        if (x < leftTop.x) {
+          leftTop.x = x;
+        }
+        if (y < leftTop.y) {
+          leftTop.y = y;
+        }
+        if (x > rightBottom.x) {
+          rightBottom.x = x;
+        }
+        if (y > rightBottom.y) {
+          rightBottom.y = y;
+        }
       }
     }
   }
-}
-
-void setCharacterHitBox(
-    unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3], HitBox *hb) {
-  hb->pos.x = -CHARACTER_WIDTH / 2;
-  hb->pos.y = -CHARACTER_HEIGHT / 2;
-  hb->size.x = CHARACTER_WIDTH;
-  hb->size.y = CHARACTER_HEIGHT;
+  vectorSet(&hb->pos, leftTop.x, leftTop.y);
+  vectorSet(&hb->size, clamp(rightBottom.x - leftTop.x + 1, 0, CHARACTER_WIDTH),
+            clamp(rightBottom.y - leftTop.y + 1, 0, CHARACTER_HEIGHT));
 }
 
 void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
@@ -305,8 +316,7 @@ void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
     cp = &characterPatterns[characterPatternsCount];
     cp->hash = hash;
     setColorGrid(isText ? textPatterns[index - '!'] : characters[index - 'a'],
-                 cp->grid, color);
-    setCharacterHitBox(cp->grid, &cp->hitBox);
+                 cp->grid, color, &cp->hitBox);
     characterPatternsCount++;
   }
   md_drawCharacter(cp->grid, x, y, hash);
