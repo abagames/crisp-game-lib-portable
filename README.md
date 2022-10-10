@@ -10,6 +10,7 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 
 - [SURVIVOR](https://abagames.github.io/crisp-game-lib-portable/build/survivor/)
 - [PIN CLIMB](https://abagames.github.io/crisp-game-lib-portable/build/pinclimb/)
+- [THUNDER](https://abagames.github.io/crisp-game-lib-portable/build/thunder/)
 
 ## Build for M5StickC PLUS
 
@@ -35,8 +36,11 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - ~~[Bar](https://abagames.github.io/crisp-game-lib/ref_document/functions/bar.html) and [box](https://abagames.github.io/crisp-game-lib/ref_document/functions/box.html)~~
 - ~~[Color](https://abagames.github.io/crisp-game-lib/ref_document/functions/color.html)~~
 - ~~Precise collision detection for texts and characters~~
-- [Letter options](https://abagames.github.io/crisp-game-lib/ref_document/types/LetterOptions.html)
+- ~~[Letter options](https://abagames.github.io/crisp-game-lib/ref_document/types/LetterOptions.html)~~
+  -- `scale` and `backgroundColor` options are not supported
+- ~~[Game options](https://abagames.github.io/crisp-game-lib/ref_document/types/Options.html)~~
+  -- Only `viewSize`, `soundSeed` and `isDarkColor` are supported
+- ~~Utility functions~~
+  -- Partially supported
 - Replay
-- Utility functions
-- [Game options](https://abagames.github.io/crisp-game-lib/ref_document/types/Options.html)
 - [Input position](https://abagames.github.io/crisp-game-lib/ref_document/variables/input.pos.html)
