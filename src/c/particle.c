@@ -61,7 +61,7 @@ void updateParticles() {
     vectorAdd(&p->pos, p->vel.x, p->vel.y);
     vectorMul(&p->vel, 0.98);
     ColorRgb *rgb = &colorRgbs[p->colorIndex];
-    md_rect(p->pos.x, p->pos.y, 1, 1, rgb->r, rgb->g, rgb->b);
+    md_drawRect(p->pos.x, p->pos.y, 1, 1, rgb->r, rgb->g, rgb->b);
     p->ticks--;
   }
 }

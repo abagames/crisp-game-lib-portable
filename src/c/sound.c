@@ -342,17 +342,6 @@ void generateBgm() {
   bgm[bgmNoteIndex].freq = -1;
 }
 
-int getHashFromString(char *str) {
-  int hash = 0;
-  int len = strlen(str);
-  for (int i = 0; i < len; i++) {
-    int chr = str[i];
-    hash = (hash << 5) - hash + chr;
-    hash |= 0;
-  }
-  return hash;
-}
-
 void initSound() {
   char randomSeedStr[99];
   strncpy(randomSeedStr, title, 98);

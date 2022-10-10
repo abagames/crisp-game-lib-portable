@@ -19,11 +19,6 @@ static LGFX lcd;
 static LGFX_Sprite canvas(&lcd);
 int canvasX;
 int canvasY;
-uint16_t textImageData[TEXT_PATTERN_COUNT][CHARACTER_WIDTH * CHARACTER_HEIGHT];
-LGFX_Sprite *textSprites[TEXT_PATTERN_COUNT];
-uint16_t characterImageData[MAX_CHARACTER_PATTERN_COUNT]
-                           [CHARACTER_WIDTH * CHARACTER_HEIGHT];
-LGFX_Sprite *characterSprites[MAX_CHARACTER_PATTERN_COUNT];
 
 typedef struct {
   float freq;
@@ -54,23 +49,60 @@ void addSoundTone(float freq, float duration, float when) {
   }
 }
 
-void md_rect(float x, float y, float w, float h, unsigned char r,
-             unsigned char g, unsigned char b) {
+void md_drawRect(float x, float y, float w, float h, unsigned char r,
+                 unsigned char g, unsigned char b) {
   canvas.fillRect((int)x, (int)y, (int)w, (int)h, lcd.color565(r, g, b));
 }
 
 #define TRANSPARENT_COLOR 0
 
-void md_text(char l, float x, float y) {
-  textSprites[l - '!']->pushSprite((int)(x - CHARACTER_WIDTH / 2),
-                                   (int)(y - CHARACTER_HEIGHT / 2),
-                                   TRANSPARENT_COLOR);
+typedef struct {
+  LGFX_Sprite *sprite;
+  int hash;
+} CharaterSprite;
+
+CharaterSprite characterSprites[MAX_CACHED_CHARACTER_PATTERN_COUNT];
+int characterSpritesCount;
+
+void initCharacterSprite() { characterSpritesCount = 0; }
+
+uint16_t characterImageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
+
+void createCharacterImageData(
+    unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3]) {
+  int cp = 0;
+  for (int y = 0; y < CHARACTER_HEIGHT; y++) {
+    for (int x = 0; x < CHARACTER_WIDTH; x++) {
+      unsigned char r = grid[y][x][0];
+      unsigned char g = grid[y][x][1];
+      unsigned char b = grid[y][x][2];
+      characterImageData[cp] =
+          (r > 0 || g > 0 || b > 0) ? lcd.color565(r, g, b) : TRANSPARENT_COLOR;
+      cp++;
+    }
+  }
 }
 
-void md_character(char l, float x, float y) {
-  characterSprites[l - 'a']->pushSprite((int)(x - CHARACTER_WIDTH / 2),
-                                        (int)(y - CHARACTER_HEIGHT / 2),
-                                        TRANSPARENT_COLOR);
+void md_drawCharacter(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
+                      float x, float y, int hash) {
+  CharaterSprite *cp = NULL;
+  for (int i = 0; i < characterSpritesCount; i++) {
+    if (characterSprites[i].hash == hash) {
+      cp = &characterSprites[i];
+      break;
+    }
+  }
+  if (cp == NULL) {
+    cp = &characterSprites[characterSpritesCount];
+    cp->hash = hash;
+    createCharacterImageData(grid);
+    cp->sprite = new LGFX_Sprite(&canvas);
+    cp->sprite->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
+    cp->sprite->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
+                          characterImageData);
+    characterSpritesCount++;
+  }
+  cp->sprite->pushSprite((int)x, (int)y, TRANSPARENT_COLOR);
 }
 
 void md_clearView(unsigned char r, unsigned char g, unsigned char b) {
@@ -89,45 +121,6 @@ void md_stopTone() {
 float md_getAudioTime() { return soundTime; }
 
 void md_consoleLog(char *msg) { Serial.println(msg); }
-
-void createImageData(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
-                     uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT]) {
-  int cp = 0;
-  for (int y = 0; y < CHARACTER_HEIGHT; y++) {
-    for (int x = 0; x < CHARACTER_WIDTH; x++) {
-      unsigned char r = grid[y][x][0];
-      unsigned char g = grid[y][x][1];
-      unsigned char b = grid[y][x][2];
-      imageData[cp] =
-          (r > 0 || g > 0 || b > 0) ? lcd.color565(r, g, b) : TRANSPARENT_COLOR;
-      cp++;
-    }
-  }
-}
-
-void md_setTexts(unsigned char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
-                 int count) {
-  for (int i = 0; i < count; i++) {
-    uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
-    createImageData(grid[i], imageData);
-    textSprites[i] = new LGFX_Sprite(&canvas);
-    textSprites[i]->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
-    textSprites[i]->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
-                              imageData);
-  }
-}
-
-void md_setCharacters(
-    unsigned char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3], int count) {
-  for (int i = 0; i < count; i++) {
-    uint16_t imageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
-    createImageData(grid[i], imageData);
-    characterSprites[i] = new LGFX_Sprite(&canvas);
-    characterSprites[i]->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
-    characterSprites[i]->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
-                                   imageData);
-  }
-}
 
 void initCanvas() {
   canvas.createSprite(options.viewSizeX, options.viewSizeY);
@@ -214,6 +207,7 @@ void setup() {
   initSoundTones();
   disableSound();
   initCanvas();
+  initCharacterSprite();
   initGame();
   hw_timer_t *frameTimer = NULL;
   frameTimer = timerBegin(0, getApbFrequency() / FPS / 1000, true);

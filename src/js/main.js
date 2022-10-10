@@ -1,5 +1,5 @@
 import * as view from "./view";
-import * as letter from "./letter";
+import * as character from "./character";
 import * as input from "./input";
 import * as audio from "./audio";
 
@@ -32,7 +32,7 @@ function animationLoop() {
 }
 
 function onRuntimeInitialized() {
-  letter.init();
+  character.init();
   input.init();
   audio.init();
   view.init(100, 100);

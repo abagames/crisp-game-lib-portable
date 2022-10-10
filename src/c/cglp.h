@@ -88,7 +88,7 @@ EXTERNC Collision line(float x1, float y1, float x2, float y2);
 EXTERNC Collision bar(float x, float y, float length, float angle);
 EXTERNC Collision arc(float centerX, float centerY, float radius,
                       float angleFrom, float angleTo);
-EXTERNC Collision text(char *msg, int x, int y);
+EXTERNC Collision text(char *msg, float x, float y);
 EXTERNC Collision character(char *msg, float x, float y);
 EXTERNC void color(int index);
 EXTERNC void play(int type);
@@ -99,13 +99,12 @@ EXTERNC void end();
 EXTERNC void particle(float x, float y, float count, float speed, float angle,
                       float angleWidth);
 
+EXTERNC float clamp(float v, float low, float high);
+EXTERNC float wrap(float v, float low, float high);
 EXTERNC void consoleLog(char *format, ...);
 EXTERNC void enableSound();
 EXTERNC void disableSound();
 EXTERNC void toggleSound();
-
-EXTERNC float clamp(float v, float low, float high);
-EXTERNC float wrap(float v, float low, float high);
 
 typedef struct {
   unsigned char r;
@@ -115,6 +114,7 @@ typedef struct {
 
 EXTERNC int currentColorIndex;
 EXTERNC ColorRgb colorRgbs[COLOR_COUNT];
+EXTERNC int getHashFromString(char *str);
 
 EXTERNC void setInput(bool isPressed, bool isJustPressed, bool isJustReleased);
 EXTERNC void initGame();

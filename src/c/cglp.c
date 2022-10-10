@@ -45,8 +45,6 @@ typedef struct {
 #define MAX_HIT_BOX_COUNT 256
 HitBox hitBoxes[MAX_HIT_BOX_COUNT];
 int hitBoxesIndex;
-HitBox textHitBoxes[TEXT_PATTERN_COUNT];
-HitBox characterHitBoxes[MAX_CHARACTER_PATTERN_COUNT];
 
 void initCollision(Collision *collision) {
   for (int i = 0; i < COLOR_COUNT; i++) {
@@ -83,26 +81,6 @@ void checkHitBox(Collision *cl, HitBox hitBox) {
   }
 }
 
-void setTextCharacterHitBoxes(
-    HitBox *hb, char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]) {
-  hb->pos.x = -CHARACTER_WIDTH / 2;
-  hb->pos.y = -CHARACTER_HEIGHT / 2;
-  hb->size.x = CHARACTER_WIDTH;
-  hb->size.y = CHARACTER_HEIGHT;
-}
-
-void setTextHitBoxes() {
-  for (int i = 0; i < TEXT_PATTERN_COUNT; i++) {
-    setTextCharacterHitBoxes(&textHitBoxes[i], textPatterns[i]);
-  }
-}
-
-void setCharacterHitBoxes() {
-  for (int i = 0; i < charactersCount; i++) {
-    setTextCharacterHitBoxes(&characterHitBoxes[i], characters[i]);
-  }
-}
-
 // Drawing
 #define MAX_DRAWING_HIT_BOXES_COUNT 64
 HitBox drawingHitBoxes[MAX_DRAWING_HIT_BOXES_COUNT];
@@ -131,7 +109,7 @@ void addRect(bool isAlignCenter, float x, float y, float w, float h,
   }
   if (currentColorIndex > TRANSPARENT) {
     ColorRgb *rgb = &colorRgbs[currentColorIndex];
-    md_rect(x, y, w, h, rgb->r, rgb->g, rgb->b);
+    md_drawRect(x, y, w, h, rgb->r, rgb->g, rgb->b);
   }
 }
 
@@ -262,54 +240,110 @@ Collision arc(float centerX, float centerY, float radius, float angleFrom,
 }
 
 // Text and character
-Collision drawText(char *msg, int x, int y, bool hasCollision) {
+typedef struct {
+  unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3];
+  HitBox hitBox;
+  int hash;
+} CharacterPattern;
+
+#define MAX_CACHED_CHARACTER_PATTERN_COUNT 128
+CharacterPattern characterPatterns[MAX_CACHED_CHARACTER_PATTERN_COUNT];
+int characterPatternsCount;
+
+void initCharacterPattern() { characterPatternsCount = 0; }
+
+char *colorGridChars = "wrgybpclRGYBPCL";
+
+void setColorGrid(
+    char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
+    unsigned char colorGrid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3]) {
+  for (int y = 0; y < CHARACTER_HEIGHT; y++) {
+    for (int x = 0; x < CHARACTER_WIDTH; x++) {
+      char *ci = strchr(colorGridChars, grid[y][x]);
+      if (ci == NULL) {
+        colorGrid[y][x][0] = colorGrid[y][x][1] = colorGrid[y][x][2] = 0;
+      } else {
+        ColorRgb *rgb = &colorRgbs[ci - colorGridChars];
+        colorGrid[y][x][0] = rgb->r;
+        colorGrid[y][x][1] = rgb->g;
+        colorGrid[y][x][2] = rgb->b;
+      }
+    }
+  }
+}
+
+void setCharacterHitBox(
+    unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3], HitBox *hb) {
+  hb->pos.x = -CHARACTER_WIDTH / 2;
+  hb->pos.y = -CHARACTER_HEIGHT / 2;
+  hb->size.x = CHARACTER_WIDTH;
+  hb->size.y = CHARACTER_HEIGHT;
+}
+
+void drawCharacter(int index, float x, float y, bool hasCollision, bool isText,
+                   Collision *hitCollision) {
+  if ((isText && (index < '!' || index > '~')) ||
+      (!isText && (index < 'a' || index > 'z'))) {
+    return;
+  }
+  char hashStr[99];
+  snprintf(hashStr, 98, "%d:%d", index, isText);
+  int hash = getHashFromString(hashStr);
+  CharacterPattern *cp = NULL;
+  for (int i = 0; i < characterPatternsCount; i++) {
+    if (characterPatterns[i].hash == hash) {
+      cp = &characterPatterns[i];
+      break;
+    }
+  }
+  if (cp == NULL) {
+    if (characterPatternsCount >= MAX_CACHED_CHARACTER_PATTERN_COUNT) {
+      consoleLog("too many charater patterns");
+      return;
+    }
+    cp = &characterPatterns[characterPatternsCount];
+    cp->hash = hash;
+    setColorGrid(isText ? textPatterns[index - '!'] : characters[index - 'a'],
+                 cp->grid);
+    setCharacterHitBox(cp->grid, &cp->hitBox);
+    characterPatternsCount++;
+  }
+  md_drawCharacter(cp->grid, x, y, hash);
+  if (hasCollision) {
+    HitBox *thb = &cp->hitBox;
+    HitBox hb;
+    hb.textIndex = isText ? index : -1;
+    hb.characterIndex = !isText ? index : -1;
+    hb.rectIndex = -1;
+    hb.pos.x = floor(x + thb->pos.x);
+    hb.pos.y = floor(y + thb->pos.y);
+    hb.size.x = thb->size.x;
+    hb.size.y = thb->size.y;
+    checkHitBox(hitCollision, hb);
+    addHitBox(hb);
+  }
+}
+
+Collision drawCharacters(char *msg, float x, float y, bool hasCollision,
+                         bool isText) {
   Collision hitCollision;
   initCollision(&hitCollision);
   int ml = strlen(msg);
+  x -= CHARACTER_WIDTH / 2;
+  y -= CHARACTER_HEIGHT / 2;
   for (int i = 0; i < ml; i++) {
-    if (msg[i] >= '!' && msg[i] <= '~') {
-      if (hasCollision) {
-        HitBox *thb = &textHitBoxes[msg[i] - '!'];
-        HitBox hb;
-        hb.textIndex = msg[i];
-        hb.rectIndex = hb.characterIndex = -1;
-        hb.pos.x = floor(x + thb->pos.x);
-        hb.pos.y = floor(y + thb->pos.y);
-        hb.size.x = thb->size.x;
-        hb.size.y = thb->size.y;
-        checkHitBox(&hitCollision, hb);
-        addHitBox(hb);
-      }
-      md_text(msg[i], x, y);
-    }
+    drawCharacter(msg[i], x, y, hasCollision, isText, &hitCollision);
     x += 6;
   }
   return hitCollision;
 }
 
-Collision text(char *msg, int x, int y) { return drawText(msg, x, y, true); }
+Collision text(char *msg, float x, float y) {
+  return drawCharacters(msg, x, y, true, true);
+}
 
 Collision character(char *msg, float x, float y) {
-  Collision hitCollision;
-  initCollision(&hitCollision);
-  int ml = strlen(msg);
-  for (int i = 0; i < ml; i++) {
-    if (msg[i] >= 'a' && msg[i] <= 'z') {
-      HitBox *thb = &characterHitBoxes[msg[i] - 'a'];
-      HitBox hb;
-      hb.characterIndex = msg[i];
-      hb.rectIndex = hb.textIndex = -1;
-      hb.pos.x = floor(x + thb->pos.x);
-      hb.pos.y = floor(y + thb->pos.y);
-      hb.size.x = thb->size.x;
-      hb.size.y = thb->size.y;
-      checkHitBox(&hitCollision, hb);
-      addHitBox(hb);
-      md_character(msg[i], x, y);
-    }
-    x += 6;
-  }
-  return hitCollision;
+  return drawCharacters(msg, x, y, true, false);
 }
 
 // Color
@@ -365,29 +399,6 @@ void clearView() {
   md_clearView(colorRgbs[WHITE].r, colorRgbs[WHITE].g, colorRgbs[WHITE].b);
 }
 
-char *colorGridChars = "wrgybpclRGYBPCL";
-
-void getColorGrid(
-    char grid[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1], int count,
-    unsigned char colorGrid[][CHARACTER_HEIGHT][CHARACTER_WIDTH][3]) {
-  for (int i = 0; i < count; i++) {
-    for (int y = 0; y < CHARACTER_HEIGHT; y++) {
-      for (int x = 0; x < CHARACTER_WIDTH; x++) {
-        char *ci = strchr(colorGridChars, grid[i][y][x]);
-        if (ci == NULL) {
-          colorGrid[i][y][x][0] = colorGrid[i][y][x][1] =
-              colorGrid[i][y][x][2] = 0;
-        } else {
-          ColorRgb *rgb = &colorRgbs[ci - colorGridChars];
-          colorGrid[i][y][x][0] = rgb->r;
-          colorGrid[i][y][x][1] = rgb->g;
-          colorGrid[i][y][x][2] = rgb->b;
-        }
-      }
-    }
-  }
-}
-
 // Sound
 void play(int type) { playSoundEffect(type); }
 
@@ -435,7 +446,7 @@ void updateScoreBoards() {
   for (int i = 0; i < MAX_SCORE_BOARD_COUNT; i++) {
     ScoreBoard *sb = &scoreBoards[i];
     if (sb->ticks > 0) {
-      drawText(sb->str, sb->pos.x, sb->pos.y, false);
+      drawCharacters(sb->str, sb->pos.x, sb->pos.y, false, true);
       sb->pos.y += sb->vy;
       sb->vy *= 0.9;
       sb->ticks--;
@@ -462,9 +473,9 @@ void drawScore() {
   char sc[16];
   int s = state == STATE_IN_GAME ? (int)score : prevScore;
   snprintf(sc, 15, "%d", s);
-  drawText(sc, 3, 3, false);
+  drawCharacters(sc, 3, 3, false, true);
   snprintf(sc, 15, "HI %d", hiScore);
-  drawText(sc, options.viewSizeX - strlen(sc) * 6 + 2, 3, false);
+  drawCharacters(sc, options.viewSizeX - strlen(sc) * 6 + 2, 3, false, true);
 }
 
 void particle(float x, float y, float count, float speed, float angle,
@@ -497,6 +508,17 @@ float wrap(float v, float low, float high) {
     }
     return wv;
   }
+}
+
+int getHashFromString(char *str) {
+  int hash = 0;
+  int len = strlen(str);
+  for (int i = 0; i < len; i++) {
+    int chr = str[i];
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash;
 }
 
 // In game
@@ -545,12 +567,14 @@ void updateTitle() {
   if (input.isJustPressed) {
     initInGame();
   }
-  drawText(title, (options.viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
-           options.viewSizeY * 0.25, false);
+  drawCharacters(title,
+                 (options.viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
+                 options.viewSizeY * 0.25, false, true);
   if (ticks > 30) {
     for (int i = 0; i < descriptionLineCount; i++) {
-      drawText(descriptions[i], descriptionX,
-               options.viewSizeY * 0.55 + i * CHARACTER_HEIGHT, false);
+      drawCharacters(descriptions[i], descriptionX,
+                     options.viewSizeY * 0.55 + i * CHARACTER_HEIGHT, false,
+                     true);
     }
   }
 }
@@ -564,9 +588,10 @@ void initGameOver() {
   isPlayingBgm = false;
   prevScore = (int)score;
   gameOverTicks = 0;
-  drawText(gameOverText,
-           (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
-           options.viewSizeY * 0.5, false);
+  drawCharacters(
+      gameOverText,
+      (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
+      options.viewSizeY * 0.5, false, true);
 }
 
 void updateGameOver() {
@@ -587,18 +612,10 @@ void updateGameOver() {
 void end() { initGameOver(); }
 
 // Initialize
-unsigned char colorGrid[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH]
-                       [3];
-
 EMSCRIPTEN_KEEPALIVE
 void initGame() {
   initColor();
-  getColorGrid(textPatterns, TEXT_PATTERN_COUNT, colorGrid);
-  md_setTexts(colorGrid, TEXT_PATTERN_COUNT);
-  setTextHitBoxes();
-  getColorGrid(characters, charactersCount, colorGrid);
-  md_setCharacters(colorGrid, charactersCount);
-  setCharacterHitBoxes();
+  initCharacterPattern();
   initScore();
   initParticle();
   initSound();

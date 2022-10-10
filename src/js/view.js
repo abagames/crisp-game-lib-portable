@@ -74,6 +74,6 @@ export function fillRect(x, y, width, height, r, g, b) {
   );
 }
 
-window.rect = (x, y, w, h, r, g, b) => {
+window.drawRect = (x, y, w, h, r, g, b) => {
   fillRect(x, y, w, h, r, g, b);
 };
