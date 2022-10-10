@@ -11,7 +11,8 @@ char *description = "[Hold] Stretch";
 CS = {};
 int charactersCount = 0;
 
-Options options = {.viewSizeX = 100, .viewSizeY = 100, .soundSeed = 1};
+Options options = {
+    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 1, .isDarkColor = false};
 
 typedef struct {
   Vector pos;

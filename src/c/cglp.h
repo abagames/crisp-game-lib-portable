@@ -73,6 +73,7 @@ typedef struct {
   int viewSizeX;
   int viewSizeY;
   int soundSeed;
+  bool isDarkColor;
 } Options;
 
 typedef struct {

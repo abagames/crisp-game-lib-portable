@@ -419,14 +419,14 @@ ColorRgb getRgb(int index, bool isDarkColor) {
 }
 
 void initColor() {
-  bool isDarkColor = false;
+  bool isDarkColor = options.isDarkColor;
   for (int i = 0; i < COLOR_COUNT; i++) {
     colorRgbs[i] = getRgb(i, isDarkColor);
   }
   if (isDarkColor) {
-    colorRgbs[WHITE].r = colorRgbs[BLUE].r * 0.15;
-    colorRgbs[WHITE].g = colorRgbs[BLUE].g * 0.15;
-    colorRgbs[WHITE].b = colorRgbs[BLUE].b * 0.15;
+    colorRgbs[WHITE].r = colorRgbs[BLUE].r / 6;
+    colorRgbs[WHITE].g = colorRgbs[BLUE].g / 6;
+    colorRgbs[WHITE].b = colorRgbs[BLUE].b / 6;
   }
   color = BLACK;
 }
@@ -681,7 +681,8 @@ void initGame() {
   initSound();
   parseDescription();
   setRandomSeedWithTime(&gameRandom);
-  md_clearScreen(0xe0, 0xe0, 0xe0);
+  unsigned char cc = options.isDarkColor ? 0x10 : 0xe0;
+  md_clearScreen(cc, cc, cc);
   hasTitle = strlen(title) + strlen(description) > 0;
   if (hasTitle) {
     initTitle();

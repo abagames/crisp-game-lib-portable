@@ -34,7 +34,8 @@ CS = {{
       }};
 int charactersCount = 3;
 
-Options options = {.viewSizeX = 100, .viewSizeY = 100, .soundSeed = 0};
+Options options = {
+    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 0, .isDarkColor = false};
 
 typedef struct _Player {
   Vector pos;
