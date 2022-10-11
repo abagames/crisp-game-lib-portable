@@ -29,7 +29,7 @@ int getPlusOrMinusRandom(Random *random) {
 
 void setRandomSeed(Random *random, uint32_t w) {
   int loopCount = 32;
-  random->w = 123456789ul;
+  random->x = 123456789ul;
   random->y = 362436069ul;
   random->z = 521288629ul;
   random->w = w;
@@ -37,6 +37,7 @@ void setRandomSeed(Random *random, uint32_t w) {
     nextRandom(random);
   }
 }
+
 void setRandomSeedWithTime(Random *random) {
   setRandomSeed(random, (unsigned)time(NULL));
 }
