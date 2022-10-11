@@ -151,7 +151,7 @@ void updateFromTask() {
   btnAWasReleased = btnAIsPressed && !ba;
   btnAIsPressed = ba;
   setInput(btnAIsPressed, btnAWasPressed, btnAWasReleased);
-  bool bb = !lgfx ::gpio_in(BUTTON_B_PIN);
+  bool bb = !lgfx::gpio_in(BUTTON_B_PIN);
   btnBWasPressed = !btnBIsPressed && bb;
   btnBIsPressed = bb;
   if (btnBWasPressed) {
