@@ -34,7 +34,6 @@ float tempo = 120;
 Input input;
 int state;
 bool hasTitle;
-Random gameRandom;
 
 // Collision
 typedef struct {
@@ -556,9 +555,74 @@ void particle(float x, float y, float count, float speed, float angle,
   addParticle(x, y, count, speed, angle, angleWidth);
 }
 
+// Replay and input
+#define MAX_RECORDED_INPUT_COUNT 5120
+uint32_t replayRandomSeed;
+Input recordedInputs[MAX_RECORDED_INPUT_COUNT];
+int recordedInputCount;
+int recordedInputIndex;
+bool isReplayRecorded = false;
+bool isReplaying = false;
+Random gameRandom;
+
+void initRecord(uint32_t randomSeed) {
+  replayRandomSeed = randomSeed;
+  setRandomSeed(&gameRandom, randomSeed);
+  recordedInputCount = 0;
+  isReplayRecorded = true;
+}
+
+void recordInput() {
+  if (recordedInputCount >= MAX_RECORDED_INPUT_COUNT) {
+    return;
+  }
+  recordedInputs[recordedInputCount] = input;
+  recordedInputCount++;
+}
+
+void startReplay() {
+  setRandomSeed(&gameRandom, replayRandomSeed);
+  recordedInputIndex = 0;
+  isReplaying = true;
+}
+
+bool replayInput() {
+  if (recordedInputIndex >= recordedInputCount) {
+    return false;
+  }
+  input = recordedInputs[recordedInputIndex];
+  recordedInputIndex++;
+  return true;
+}
+
+void stopReplay() { isReplaying = false; }
+
+Input currentInput;
+
+void initInput() {
+  input.isPressed = input.isJustPressed = input.isJustReleased = false;
+  currentInput.isPressed = currentInput.isJustPressed =
+      currentInput.isJustReleased = false;
+}
+
+void updateInput() {
+  input.isPressed = currentInput.isPressed;
+  input.isJustPressed = currentInput.isJustPressed;
+  input.isJustReleased = currentInput.isJustReleased;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void setInput(bool isPressed, bool isJustPressed, bool isJustReleased) {
+  currentInput.isPressed = isPressed;
+  currentInput.isJustPressed = isJustPressed;
+  currentInput.isJustReleased = isJustReleased;
+}
+
 // Utilities
 float rnd(float low, float high) { return getRandom(&gameRandom, low, high); }
+
 int rndi(int low, int high) { return getIntRandom(&gameRandom, low, high); }
+
 void consoleLog(char *format, ...) {
   char cc[99];
   va_list args;
@@ -595,6 +659,8 @@ int getHashFromString(char *str) {
 }
 
 // In game
+Random gameSeedRandom;
+
 void resetDrawState() {
   resetColorAndCharacterOptions();
   thickness = 3;
@@ -604,6 +670,7 @@ void resetDrawState() {
 
 void initInGame() {
   state = STATE_IN_GAME;
+  stopReplay();
   if (prevScore > hiScore) {
     hiScore = prevScore;
   }
@@ -613,6 +680,16 @@ void initInGame() {
   resetDrawState();
   isPlayingBgm = true;
   ticks = -1;
+  initRecord(nextRandom(&gameSeedRandom));
+}
+
+void updateInGame() {
+  clearView();
+  updateInput();
+  recordInput();
+  update();
+  updateParticles();
+  updateScoreBoards();
 }
 
 // Title
@@ -644,11 +721,27 @@ void initTitle() {
   state = STATE_TITLE;
   ticks = -1;
   resetDrawState();
+  if (isReplayRecorded) {
+    initParticle();
+    resetDrawState();
+    startReplay();
+  }
 }
 
 void updateTitle() {
-  if (input.isJustPressed) {
+  clearView();
+  if (currentInput.isJustPressed) {
     initInGame();
+    return;
+  }
+  if (isReplaying) {
+    if (!replayInput()) {
+      ticks = -1;
+      startReplay();
+    } else {
+      update();
+      updateParticles();
+    }
   }
   saveCurrentColorAndCharacterOptions();
   drawCharacters(title,
@@ -677,8 +770,12 @@ void drawGameOver() {
 
 void initGameOver() {
   state = STATE_GAME_OVER;
-  isPlayingBgm = false;
-  prevScore = (int)score;
+  if (isReplaying) {
+    stopReplay();
+  } else {
+    isPlayingBgm = false;
+    prevScore = (int)score;
+  }
   gameOverTicks = 0;
   saveCurrentColorAndCharacterOptions();
   drawGameOver();
@@ -687,7 +784,7 @@ void initGameOver() {
 
 void updateGameOver() {
   if (!hasTitle) {
-    if (input.isJustPressed) {
+    if (currentInput.isJustPressed) {
       initInGame();
     }
     return;
@@ -697,9 +794,9 @@ void updateGameOver() {
     drawGameOver();
     loadCurrentColorAndCharacterOptions();
   }
-  if (gameOverTicks > 20 && input.isJustPressed) {
+  if (gameOverTicks > 20 && currentInput.isJustPressed) {
     initInGame();
-  } else if (gameOverTicks > 300) {
+  } else if (gameOverTicks > 120) {
     initTitle();
   }
   gameOverTicks++;
@@ -716,8 +813,9 @@ void initGame() {
   initScore();
   initParticle();
   initSound();
+  initInput();
   parseDescription();
-  setRandomSeedWithTime(&gameRandom);
+  setRandomSeedWithTime(&gameSeedRandom);
   unsigned char cc = options.isDarkColor ? 0x10 : 0xe0;
   md_clearScreen(cc, cc, cc);
   resetDrawState();
@@ -734,24 +832,13 @@ void updateFrame() {
   hitBoxesIndex = 0;
   difficulty = (float)ticks / 60 / FPS + 1;
   if (state == STATE_TITLE) {
-    clearView();
     updateTitle();
   } else if (state == STATE_IN_GAME) {
-    clearView();
-    update();
-    updateParticles();
-    updateScoreBoards();
+    updateInGame();
   } else if (state == STATE_GAME_OVER) {
     updateGameOver();
   }
   updateSound();
   drawScore();
   ticks++;
-}
-
-EMSCRIPTEN_KEEPALIVE
-void setInput(bool isPressed, bool isJustPressed, bool isJustReleased) {
-  input.isPressed = isPressed;
-  input.isJustPressed = isJustPressed;
-  input.isJustReleased = isJustReleased;
 }
