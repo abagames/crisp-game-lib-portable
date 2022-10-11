@@ -35,7 +35,7 @@ CS = {{
 int charactersCount = 3;
 
 Options options = {
-    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 0, .isDarkColor = false};
+    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 2, .isDarkColor = false};
 
 typedef struct _Player {
   Vector pos;
@@ -81,6 +81,7 @@ void addPlayer() {
     ASSIGN_ARRAY_ITEM(players, i, Player, pl);
     if (!pl->isAlive) {
       vectorSet(&pl->pos, rnd(10, 40), rnd(-9, 9));
+      vectorSet(&pl->vel, 0, 0);
       pl->isOnFloor = false;
       pl->isJumping = false;
       pl->isJumped = false;
