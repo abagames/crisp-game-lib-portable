@@ -36,7 +36,7 @@ int charactersCount = 3;
 char pc[2][2] = {"b", "c"};
 
 Options options = {
-    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 3, .isDarkColor = true};
+    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 5, .isDarkColor = true};
 
 typedef struct _Line {
   Vector from;
