@@ -255,7 +255,6 @@ typedef struct {
   int hash;
 } CharacterPattern;
 
-#define MAX_CACHED_CHARACTER_PATTERN_COUNT 128
 CharacterPattern characterPatterns[MAX_CACHED_CHARACTER_PATTERN_COUNT];
 int characterPatternsCount;
 
@@ -359,7 +358,9 @@ void drawCharacter(int index, float x, float y, bool _hasCollision, bool isText,
                  cp->grid, color, &cp->hitBox);
     characterPatternsCount++;
   }
-  md_drawCharacter(cp->grid, x, y, hash);
+  if (color > TRANSPARENT) {
+    md_drawCharacter(cp->grid, x, y, hash);
+  }
   if (hasCollision && _hasCollision) {
     HitBox *thb = &cp->hitBox;
     HitBox hb;
@@ -371,7 +372,9 @@ void drawCharacter(int index, float x, float y, bool _hasCollision, bool isText,
     hb.size.x = thb->size.x;
     hb.size.y = thb->size.y;
     checkHitBox(hitCollision, hb);
-    addHitBox(hb);
+    if (color > TRANSPARENT) {
+      addHitBox(hb);
+    }
   }
 }
 
@@ -783,12 +786,6 @@ void initGameOver() {
 }
 
 void updateGameOver() {
-  if (!hasTitle) {
-    if (currentInput.isJustPressed) {
-      initInGame();
-    }
-    return;
-  }
   if (gameOverTicks == 20) {
     saveCurrentColorAndCharacterOptions();
     drawGameOver();
@@ -796,7 +793,7 @@ void updateGameOver() {
   }
   if (gameOverTicks > 20 && currentInput.isJustPressed) {
     initInGame();
-  } else if (gameOverTicks > 120) {
+  } else if (hasTitle && gameOverTicks > 120) {
     initTitle();
   }
   gameOverTicks++;
