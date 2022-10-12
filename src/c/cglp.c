@@ -704,10 +704,11 @@ int descriptionX;
 void parseDescription() {
   descriptionLineCount = 0;
   int dl = 0;
-  char *line = strtok(description, "\n");
-  while (line != NULL) {
-    strncpy(descriptions[descriptionLineCount], line, 31);
-    int ll = strlen(line);
+  char *line = description;
+  while (strlen(line) > 0) {
+    char *ni = strchr(line, '\n');
+    int ll = ni == NULL ? strlen(line) : ni - line;
+    strncpy(descriptions[descriptionLineCount], line, ll);
     if (ll > dl) {
       dl = ll;
     }
@@ -715,7 +716,10 @@ void parseDescription() {
     if (descriptionLineCount >= MAX_DESCRIPTION_LINE_COUNT) {
       break;
     }
-    line = strtok(NULL, "\n");
+    if (ni == NULL) {
+      break;
+    }
+    line += ll + 1;
   };
   descriptionX = (options.viewSizeX - dl * CHARACTER_WIDTH) / 2;
 }
