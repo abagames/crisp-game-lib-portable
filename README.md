@@ -11,6 +11,7 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - [SURVIVOR](https://abagames.github.io/crisp-game-lib-portable/build/survivor/)
 - [PIN CLIMB](https://abagames.github.io/crisp-game-lib-portable/build/pinclimb/)
 - [THUNDER](https://abagames.github.io/crisp-game-lib-portable/build/thunder/)
+- [BALL TOUR](https://abagames.github.io/crisp-game-lib-portable/build/balltour/)
 
 ## Build for M5StickC PLUS
 
