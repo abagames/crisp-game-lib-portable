@@ -33,7 +33,6 @@ CS = {{
           "ll  ll",
       }};
 int charactersCount = 3;
-char pc[2][2] = {"b", "c"};
 
 Options options = {
     .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 5, .isDarkColor = true};
@@ -165,7 +164,8 @@ void update() {
   player.x += player.vx * sqrtf(difficulty);
   color = BLACK;
   characterOptions.isMirrorX = player.vx < 0;
-  if (character(pc[(ticks / 10) % 2], player.x, 87).isColliding.rect[YELLOW]) {
+  char pc[2] = {'b' + (ticks / 10) % 2, '\0'};
+  if (character(pc, player.x, 87).isColliding.rect[YELLOW]) {
     play(RANDOM);
     end();
   }
