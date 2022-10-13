@@ -5,7 +5,7 @@ const { defineConfig } = require("vite");
 const config = {
   base: "./",
   build: {
-    outDir: "docs/build/balltour/",
+    outDir: "docs/build/colorroll/",
   },
   plugins: [wasmHmr()],
 };

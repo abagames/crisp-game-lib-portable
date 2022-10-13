@@ -12,6 +12,7 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - [PIN CLIMB](https://abagames.github.io/crisp-game-lib-portable/build/pinclimb/)
 - [THUNDER](https://abagames.github.io/crisp-game-lib-portable/build/thunder/)
 - [BALL TOUR](https://abagames.github.io/crisp-game-lib-portable/build/balltour/)
+- [COLOR ROLL](https://abagames.github.io/crisp-game-lib-portable/build/colorroll/)
 
 ## Build for M5StickC PLUS
 
