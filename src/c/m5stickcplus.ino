@@ -17,6 +17,7 @@ class M5Display {};
 
 static LGFX lcd;
 static LGFX_Sprite canvas(&lcd);
+static bool isCanvasCreated = false;
 static int canvasX;
 static int canvasY;
 
@@ -128,6 +129,10 @@ float md_getAudioTime() { return soundTime; }
 void md_consoleLog(char *msg) { Serial.println(msg); }
 
 void md_initView(int w, int h) {
+  if (isCanvasCreated) {
+    canvas.deleteSprite();
+  }
+  isCanvasCreated = true;
   canvas.createSprite(w, h);
   if (w > 135) {
     lcd.setRotation(1);

@@ -2,6 +2,10 @@ export let canvas;
 export let context;
 
 export function init(w, h) {
+  if (canvas != null) {
+    document.body.removeChild(canvas);
+    window.removeEventListener("resize", setSize);
+  }
   const _bodyBackground = "#e0e0e0";
   const bodyCss = `
 -webkit-touch-callout: none;
@@ -33,18 +37,19 @@ image-rendering: pixelated;
   context.imageSmoothingEnabled = false;
   canvas.style.cssText = canvasCss + crispCss;
   document.body.appendChild(canvas);
-  const setSize = () => {
-    const cs = 0.95;
-    const wr = innerWidth / innerHeight;
-    const cr = canvas.width / canvas.height;
-    const flgWh = wr < cr;
-    const cw = flgWh ? cs * innerWidth : cs * innerHeight * cr;
-    const ch = !flgWh ? cs * innerHeight : (cs * innerWidth) / cr;
-    canvas.style.width = `${cw}px`;
-    canvas.style.height = `${ch}px`;
-  };
   window.addEventListener("resize", setSize);
   setSize();
+}
+
+function setSize() {
+  const cs = 0.95;
+  const wr = innerWidth / innerHeight;
+  const cr = canvas.width / canvas.height;
+  const flgWh = wr < cr;
+  const cw = flgWh ? cs * innerWidth : cs * innerHeight * cr;
+  const ch = !flgWh ? cs * innerHeight : (cs * innerWidth) / cr;
+  canvas.style.width = `${cw}px`;
+  canvas.style.height = `${ch}px`;
 }
 
 export function clear(r, g, b) {

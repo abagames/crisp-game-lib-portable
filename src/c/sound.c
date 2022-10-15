@@ -20,7 +20,7 @@ static int _rndi(int low, int high) {
 #define QUANTIZED_DURATION (60.0f / tempo / 2)
 
 bool isSoundEnabled = true;
-bool isPlayingBgm = false;
+bool isPlayingBgm;
 
 typedef struct {
   float freq;
@@ -348,6 +348,7 @@ static void generateBgm() {
 }
 
 void initSound(char *title, char *description, int soundSeed) {
+  isPlayingBgm = false;
   char randomSeedStr[99];
   strncpy(randomSeedStr, title, 98);
   strncat(randomSeedStr, description, 98);

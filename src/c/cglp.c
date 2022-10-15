@@ -566,9 +566,11 @@ static uint32_t replayRandomSeed;
 static Input recordedInputs[MAX_RECORDED_INPUT_COUNT];
 static int recordedInputCount;
 static int recordedInputIndex;
-static bool isReplayRecorded = false;
-static bool isReplaying = false;
+static bool isReplayRecorded;
+static bool isReplaying;
 static Random gameRandom;
+
+static void initReplay() { isReplayRecorded = isReplaying = false; }
 
 static void initRecord(uint32_t randomSeed) {
   replayRandomSeed = randomSeed;
@@ -817,6 +819,7 @@ void initGame() {
   initParticle();
   initSound(title, description, options.soundSeed);
   initInput();
+  initReplay();
   parseDescription();
   setRandomSeedWithTime(&gameSeedRandom);
   unsigned char cc = options.isDarkColor ? 0x10 : 0xe0;
