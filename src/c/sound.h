@@ -11,7 +11,7 @@
 
 EXTERNC bool isSoundEnabled;
 EXTERNC bool isPlayingBgm;
-EXTERNC void initSound();
+EXTERNC void initSound(char *title, char *description, int soundSeed);
 EXTERNC void updateSound();
 EXTERNC void playSoundEffect(int type);
 

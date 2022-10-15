@@ -347,11 +347,11 @@ static void generateBgm() {
   bgm[bgmNoteIndex].freq = -1;
 }
 
-void initSound() {
+void initSound(char *title, char *description, int soundSeed) {
   char randomSeedStr[99];
   strncpy(randomSeedStr, title, 98);
   strncat(randomSeedStr, description, 98);
-  int seed = getHashFromString(randomSeedStr) + options.soundSeed;
+  int seed = getHashFromString(randomSeedStr) + soundSeed;
   setRandomSeed(&soundRandom, seed);
   bgmIndex = 0;
   bgmDuration = BASE_NOTE_DURATION * 8;

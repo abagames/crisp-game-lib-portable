@@ -815,7 +815,7 @@ void initGame() {
   initCharacter();
   initScore();
   initParticle();
-  initSound();
+  initSound(title, description, options.soundSeed);
   initInput();
   parseDescription();
   setRandomSeedWithTime(&gameSeedRandom);
