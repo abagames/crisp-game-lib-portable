@@ -45,10 +45,10 @@ typedef struct {
 } HitBox;
 
 #define MAX_HIT_BOX_COUNT 256
-HitBox hitBoxes[MAX_HIT_BOX_COUNT];
-int hitBoxesIndex;
+static HitBox hitBoxes[MAX_HIT_BOX_COUNT];
+static int hitBoxesIndex;
 
-void initCollision(Collision *collision) {
+static void initCollision(Collision *collision) {
   for (int i = 0; i < COLOR_COUNT; i++) {
     collision->isColliding.rect[i] = false;
   }
@@ -60,13 +60,13 @@ void initCollision(Collision *collision) {
   }
 }
 
-bool testCollision(HitBox r1, HitBox r2) {
+static bool testCollision(HitBox r1, HitBox r2) {
   int ox = r2.pos.x - r1.pos.x;
   int oy = r2.pos.y - r1.pos.y;
   return -r2.size.x < ox && ox < r1.size.x && -r2.size.y < oy && oy < r1.size.y;
 }
 
-void checkHitBox(Collision *cl, HitBox hitBox) {
+static void checkHitBox(Collision *cl, HitBox hitBox) {
   for (int i = 0; i < hitBoxesIndex; i++) {
     HitBox hb = hitBoxes[i];
     if (testCollision(hb, hitBox)) {
@@ -85,13 +85,13 @@ void checkHitBox(Collision *cl, HitBox hitBox) {
 
 // Drawing
 #define MAX_DRAWING_HIT_BOXES_COUNT 64
-HitBox drawingHitBoxes[MAX_DRAWING_HIT_BOXES_COUNT];
-int drawingHitBoxesIndex;
+static HitBox drawingHitBoxes[MAX_DRAWING_HIT_BOXES_COUNT];
+static int drawingHitBoxesIndex;
 
-void beginAddingRects() { drawingHitBoxesIndex = 0; }
+static void beginAddingRects() { drawingHitBoxesIndex = 0; }
 
-void addRect(bool isAlignCenter, float x, float y, float w, float h,
-             Collision *hitCollision) {
+static void addRect(bool isAlignCenter, float x, float y, float w, float h,
+                    Collision *hitCollision) {
   if (isAlignCenter) {
     x -= w / 2;
     y -= h / 2;
@@ -117,9 +117,9 @@ void addRect(bool isAlignCenter, float x, float y, float w, float h,
   }
 }
 
-bool isShownTooManyHitBoxesMessage = false;
+static bool isShownTooManyHitBoxesMessage = false;
 
-void addHitBox(HitBox hb) {
+static void addHitBox(HitBox hb) {
   if (hitBoxesIndex < MAX_HIT_BOX_COUNT) {
     hitBoxes[hitBoxesIndex] = hb;
     hitBoxesIndex++;
@@ -131,7 +131,7 @@ void addHitBox(HitBox hb) {
   }
 }
 
-void endAddingRects() {
+static void endAddingRects() {
   for (int i = 0; i < drawingHitBoxesIndex; i++) {
     addHitBox(drawingHitBoxes[i]);
   }
@@ -155,7 +155,8 @@ Collision box(float x, float y, float w, float h) {
   return hitCollision;
 }
 
-void drawLine(float x, float y, float ox, float oy, Collision *hitCollision) {
+static void drawLine(float x, float y, float ox, float oy,
+                     Collision *hitCollision) {
   int t = floor(thickness);
   if (t < 3) {
     t = 3;
@@ -255,20 +256,21 @@ typedef struct {
   int hash;
 } CharacterPattern;
 
-CharacterPattern characterPatterns[MAX_CACHED_CHARACTER_PATTERN_COUNT];
-int characterPatternsCount;
+static CharacterPattern characterPatterns[MAX_CACHED_CHARACTER_PATTERN_COUNT];
+static int characterPatternsCount;
 
-void initCharacter() {
+static void initCharacter() {
   characterPatternsCount = 0;
   characterOptions.isMirrorX = characterOptions.isMirrorY = false;
   characterOptions.rotation = 0;
 }
 
-char *colorGridChars = "wrgybpclRGYBPCL";
+static char *colorGridChars = "wrgybpclRGYBPCL";
 
-void setColorGrid(char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
-                  unsigned char colorGrid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
-                  int colorIndex, HitBox *hb) {
+static void setColorGrid(
+    char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
+    unsigned char colorGrid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
+    int colorIndex, HitBox *hb) {
   Vector leftTop;
   vectorSet(&leftTop, CHARACTER_WIDTH, CHARACTER_HEIGHT);
   Vector rightBottom;
@@ -324,10 +326,10 @@ void setColorGrid(char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1],
             clamp(rightBottom.y - leftTop.y + 1, 0, CHARACTER_HEIGHT));
 }
 
-bool isShownTooManyCharacterPatternsMessage = false;
+static bool isShownTooManyCharacterPatternsMessage = false;
 
-void drawCharacter(int index, float x, float y, bool _hasCollision, bool isText,
-                   Collision *hitCollision) {
+static void drawCharacter(int index, float x, float y, bool _hasCollision,
+                          bool isText, Collision *hitCollision) {
   if ((isText && (index < '!' || index > '~')) ||
       (!isText && (index < 'a' || index > 'z'))) {
     return;
@@ -378,8 +380,8 @@ void drawCharacter(int index, float x, float y, bool _hasCollision, bool isText,
   }
 }
 
-Collision drawCharacters(char *msg, float x, float y, bool _hasCollision,
-                         bool isText) {
+static Collision drawCharacters(char *msg, float x, float y, bool _hasCollision,
+                                bool isText) {
   Collision hitCollision;
   initCollision(&hitCollision);
   int ml = strlen(msg);
@@ -402,9 +404,9 @@ Collision character(char *msg, float x, float y) {
 
 // Color
 ColorRgb colorRgbs[COLOR_COUNT];
-ColorRgb whiteRgb;
+static ColorRgb whiteRgb;
 
-ColorRgb getRgb(int index, bool isDarkColor) {
+static ColorRgb getRgb(int index, bool isDarkColor) {
   int rgbValues[] = {
       0xeeeeee, 0xe91e63, 0x4caf50, 0xffc107,
       0x3f51b5, 0x9c27b0, 0x03a9f4, 0x616161,
@@ -433,7 +435,7 @@ ColorRgb getRgb(int index, bool isDarkColor) {
   return cr;
 }
 
-void initColor() {
+static void initColor() {
   bool isDarkColor = options.isDarkColor;
   for (int i = 0; i < COLOR_COUNT; i++) {
     colorRgbs[i] = getRgb(i, isDarkColor);
@@ -445,26 +447,26 @@ void initColor() {
   }
 }
 
-void clearView() {
+static void clearView() {
   md_clearView(colorRgbs[WHITE].r, colorRgbs[WHITE].g, colorRgbs[WHITE].b);
 }
 
-int savedColor;
-CharacterOptions savedCharacterOptions;
+static int savedColor;
+static CharacterOptions savedCharacterOptions;
 
-void resetColorAndCharacterOptions() {
+static void resetColorAndCharacterOptions() {
   color = BLACK;
   characterOptions.isMirrorX = characterOptions.isMirrorY = false;
   characterOptions.rotation = 0;
 }
 
-void saveCurrentColorAndCharacterOptions() {
+static void saveCurrentColorAndCharacterOptions() {
   savedColor = color;
   savedCharacterOptions = characterOptions;
   resetColorAndCharacterOptions();
 }
 
-void loadCurrentColorAndCharacterOptions() {
+static void loadCurrentColorAndCharacterOptions() {
   color = savedColor;
   characterOptions = savedCharacterOptions;
 }
@@ -488,8 +490,8 @@ void toggleSound() {
 }
 
 // Score
-int prevScore;
-int hiScore;
+static int prevScore;
+static int hiScore;
 
 typedef struct {
   char str[9];
@@ -499,19 +501,19 @@ typedef struct {
 } ScoreBoard;
 
 #define MAX_SCORE_BOARD_COUNT 16
-ScoreBoard scoreBoards[MAX_SCORE_BOARD_COUNT];
-int scoreBoardsIndex;
+static ScoreBoard scoreBoards[MAX_SCORE_BOARD_COUNT];
+static int scoreBoardsIndex;
 
-void initScore() { score = prevScore = hiScore = 0; }
+static void initScore() { score = prevScore = hiScore = 0; }
 
-void initScoreBoards() {
+static void initScoreBoards() {
   for (int i = 0; i < MAX_SCORE_BOARD_COUNT; i++) {
     scoreBoards[i].ticks = 0;
   }
   scoreBoardsIndex = 0;
 }
 
-void updateScoreBoards() {
+static void updateScoreBoards() {
   saveCurrentColorAndCharacterOptions();
   for (int i = 0; i < MAX_SCORE_BOARD_COUNT; i++) {
     ScoreBoard *sb = &scoreBoards[i];
@@ -540,7 +542,7 @@ void addScore(float value, float x, float y) {
   }
 }
 
-void drawScore() {
+static void drawScore() {
   saveCurrentColorAndCharacterOptions();
   int cc = color;
   color = BLACK;
@@ -560,22 +562,22 @@ void particle(float x, float y, float count, float speed, float angle,
 
 // Replay and input
 #define MAX_RECORDED_INPUT_COUNT 5120
-uint32_t replayRandomSeed;
-Input recordedInputs[MAX_RECORDED_INPUT_COUNT];
-int recordedInputCount;
-int recordedInputIndex;
-bool isReplayRecorded = false;
-bool isReplaying = false;
-Random gameRandom;
+static uint32_t replayRandomSeed;
+static Input recordedInputs[MAX_RECORDED_INPUT_COUNT];
+static int recordedInputCount;
+static int recordedInputIndex;
+static bool isReplayRecorded = false;
+static bool isReplaying = false;
+static Random gameRandom;
 
-void initRecord(uint32_t randomSeed) {
+static void initRecord(uint32_t randomSeed) {
   replayRandomSeed = randomSeed;
   setRandomSeed(&gameRandom, randomSeed);
   recordedInputCount = 0;
   isReplayRecorded = true;
 }
 
-void recordInput() {
+static void recordInput() {
   if (recordedInputCount >= MAX_RECORDED_INPUT_COUNT) {
     return;
   }
@@ -583,13 +585,13 @@ void recordInput() {
   recordedInputCount++;
 }
 
-void startReplay() {
+static void startReplay() {
   setRandomSeed(&gameRandom, replayRandomSeed);
   recordedInputIndex = 0;
   isReplaying = true;
 }
 
-bool replayInput() {
+static bool replayInput() {
   if (recordedInputIndex >= recordedInputCount) {
     return false;
   }
@@ -598,17 +600,17 @@ bool replayInput() {
   return true;
 }
 
-void stopReplay() { isReplaying = false; }
+static void stopReplay() { isReplaying = false; }
 
-Input currentInput;
+static Input currentInput;
 
-void initInput() {
+static void initInput() {
   input.isPressed = input.isJustPressed = input.isJustReleased = false;
   currentInput.isPressed = currentInput.isJustPressed =
       currentInput.isJustReleased = false;
 }
 
-void updateInput() {
+static void updateInput() {
   input.isPressed = currentInput.isPressed;
   input.isJustPressed = currentInput.isJustPressed;
   input.isJustReleased = currentInput.isJustReleased;
@@ -662,16 +664,16 @@ int getHashFromString(char *str) {
 }
 
 // In game
-Random gameSeedRandom;
+static Random gameSeedRandom;
 
-void resetDrawState() {
+static void resetDrawState() {
   resetColorAndCharacterOptions();
   thickness = 3;
   barCenterPosRatio = 0.5;
   hasCollision = true;
 }
 
-void initInGame() {
+static void initInGame() {
   state = STATE_IN_GAME;
   stopReplay();
   if (prevScore > hiScore) {
@@ -686,7 +688,7 @@ void initInGame() {
   initRecord(nextRandom(&gameSeedRandom));
 }
 
-void updateInGame() {
+static void updateInGame() {
   clearView();
   updateInput();
   recordInput();
@@ -697,11 +699,11 @@ void updateInGame() {
 
 // Title
 #define MAX_DESCRIPTION_LINE_COUNT 5
-char descriptions[MAX_DESCRIPTION_LINE_COUNT][32];
-int descriptionLineCount;
-int descriptionX;
+static char descriptions[MAX_DESCRIPTION_LINE_COUNT][32];
+static int descriptionLineCount;
+static int descriptionX;
 
-void parseDescription() {
+static void parseDescription() {
   descriptionLineCount = 0;
   int dl = 0;
   char *line = description;
@@ -724,7 +726,7 @@ void parseDescription() {
   descriptionX = (options.viewSizeX - dl * CHARACTER_WIDTH) / 2;
 }
 
-void initTitle() {
+static void initTitle() {
   state = STATE_TITLE;
   ticks = -1;
   resetDrawState();
@@ -735,7 +737,7 @@ void initTitle() {
   }
 }
 
-void updateTitle() {
+static void updateTitle() {
   clearView();
   if (currentInput.isJustPressed) {
     initInGame();
@@ -765,17 +767,17 @@ void updateTitle() {
 }
 
 // Game over
-int gameOverTicks;
-char *gameOverText = "GAME OVER";
+static int gameOverTicks;
+static char *gameOverText = "GAME OVER";
 
-void drawGameOver() {
+static void drawGameOver() {
   drawCharacters(
       gameOverText,
       (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
       options.viewSizeY * 0.5, false, true);
 }
 
-void initGameOver() {
+static void initGameOver() {
   state = STATE_GAME_OVER;
   if (isReplaying) {
     stopReplay();
@@ -789,7 +791,7 @@ void initGameOver() {
   loadCurrentColorAndCharacterOptions();
 }
 
-void updateGameOver() {
+static void updateGameOver() {
   if (gameOverTicks == 20) {
     saveCurrentColorAndCharacterOptions();
     drawGameOver();

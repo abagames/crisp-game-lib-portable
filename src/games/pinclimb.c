@@ -18,21 +18,19 @@ typedef struct {
   Vector pos;
   bool isAlive;
 } Pin;
-
 typedef struct {
   float angle;
   float length;
   Pin *pin;
 } Cord;
-
-Cord cord;
+static Cord cord;
 #define MAX_PIN_COUNT 32
-Pin pins[MAX_PIN_COUNT];
-int pinIndex;
-float nextPinDist;
+static Pin pins[MAX_PIN_COUNT];
+static int pinIndex;
+static float nextPinDist;
 #define CORD_LENGTH 7
 
-void addPin(float x, float y) {
+static void addPin(float x, float y) {
   ASSIGN_ARRAY_ITEM(pins, pinIndex, Pin, p);
   p->pos.x = x;
   p->pos.y = y;

@@ -17,8 +17,8 @@ class M5Display {};
 
 static LGFX lcd;
 static LGFX_Sprite canvas(&lcd);
-int canvasX;
-int canvasY;
+static int canvasX;
+static int canvasY;
 
 typedef struct {
   float freq;
@@ -28,17 +28,17 @@ typedef struct {
 
 #define TONE_PER_NOTE 32
 #define SOUND_TONE_COUNT 64
-SoundTone soundTones[SOUND_TONE_COUNT];
-int soundToneIndex = 0;
-float soundTime = 0;
+static SoundTone soundTones[SOUND_TONE_COUNT];
+static int soundToneIndex = 0;
+static float soundTime = 0;
 
-void initSoundTones() {
+static void initSoundTones() {
   for (int i = 0; i < SOUND_TONE_COUNT; i++) {
     soundTones[i].when = FLT_MAX;
   }
 }
 
-void addSoundTone(float freq, float duration, float when) {
+static void addSoundTone(float freq, float duration, float when) {
   SoundTone *st = &soundTones[soundToneIndex];
   st->freq = freq;
   st->duration = duration;
@@ -61,14 +61,14 @@ typedef struct {
   int hash;
 } CharaterSprite;
 
-CharaterSprite characterSprites[MAX_CACHED_CHARACTER_PATTERN_COUNT];
-int characterSpritesCount;
+static CharaterSprite characterSprites[MAX_CACHED_CHARACTER_PATTERN_COUNT];
+static int characterSpritesCount;
 
-void initCharacterSprite() { characterSpritesCount = 0; }
+static void initCharacterSprite() { characterSpritesCount = 0; }
 
-uint16_t characterImageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
+static uint16_t characterImageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
 
-void createCharacterImageData(
+static void createCharacterImageData(
     unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3]) {
   int cp = 0;
   for (int y = 0; y < CHARACTER_HEIGHT; y++) {
@@ -138,14 +138,14 @@ void md_initView(int w, int h) {
   canvasY = (lcd.height() - h) / 2;
 }
 
-TaskHandle_t frameTaskHandle;
-bool btnAIsPressed = true;
-bool btnAWasPressed = false;
-bool btnAWasReleased = false;
-bool btnBIsPressed = true;
-bool btnBWasPressed = false;
+static TaskHandle_t frameTaskHandle;
+static bool btnAIsPressed = true;
+static bool btnAWasPressed = false;
+static bool btnAWasReleased = false;
+static bool btnBIsPressed = true;
+static bool btnBWasPressed = false;
 
-void updateFromTask() {
+static void updateFromTask() {
   bool ba = !lgfx::gpio_in(BUTTON_A_PIN);
   btnAWasPressed = !btnAIsPressed && ba;
   btnAWasReleased = btnAIsPressed && !ba;
@@ -163,20 +163,20 @@ void updateFromTask() {
   lcd.endWrite();
 }
 
-void updateFrameTask(void *pvParameters) {
+static void updateFrameTask(void *pvParameters) {
   while (1) {
     xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
     updateFromTask();
   }
 }
 
-void IRAM_ATTR onFrameTimer() {
+static void IRAM_ATTR onFrameTimer() {
   xTaskNotifyFromISR(frameTaskHandle, 0, eIncrement, NULL);
 }
 
-TaskHandle_t soundTaskHandle;
+static TaskHandle_t soundTaskHandle;
 
-void updateFromSoundTask() {
+static void updateFromSoundTask() {
   M5.Beep.update();
   soundTime += 60 / tempo / TONE_PER_NOTE;
   float lastWhen = 0;
@@ -197,14 +197,14 @@ void updateFromSoundTask() {
   }
 }
 
-void updateSoundTask(void *pvParameters) {
+static void updateSoundTask(void *pvParameters) {
   while (1) {
     xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
     updateFromSoundTask();
   }
 }
 
-void IRAM_ATTR onSoundTimer() {
+static void IRAM_ATTR onSoundTimer() {
   xTaskNotifyFromISR(soundTaskHandle, 0, eIncrement, NULL);
 }
 

@@ -8,9 +8,13 @@
 #include "machineDependent.h"
 #include "random.h"
 
-Random soundRandom;
-float _rnd(float low, float high) { return getRandom(&soundRandom, low, high); }
-int _rndi(int low, int high) { return getIntRandom(&soundRandom, low, high); }
+static Random soundRandom;
+static float _rnd(float low, float high) {
+  return getRandom(&soundRandom, low, high);
+}
+static int _rndi(int low, int high) {
+  return getIntRandom(&soundRandom, low, high);
+}
 
 #define BASE_NOTE_DURATION (60.0f / tempo / 32)
 #define QUANTIZED_DURATION (60.0f / tempo / 2)
@@ -25,15 +29,16 @@ typedef struct {
 } Note;
 
 #define MAX_SOUND_EFFECT_NOTE_LENGTH 32
-Note soundEffects[SOUND_EFFECT_TYPE_COUNT][MAX_SOUND_EFFECT_NOTE_LENGTH + 1];
-float soundEffectPlayedTimes[SOUND_EFFECT_TYPE_COUNT];
+static Note soundEffects[SOUND_EFFECT_TYPE_COUNT]
+                        [MAX_SOUND_EFFECT_NOTE_LENGTH + 1];
+static float soundEffectPlayedTimes[SOUND_EFFECT_TYPE_COUNT];
 
-float midiNoteToFreq(int midiNote) {
+static float midiNoteToFreq(int midiNote) {
   return 440 * pow(2, (float)(midiNote - 69) / 12);
 }
 
-void addNotes(Note *ns, int count, int when, int from, int to,
-              float amplitudeFrom, float amplitudeTo) {
+static void addNotes(Note *ns, int count, int when, int from, int to,
+                     float amplitudeFrom, float amplitudeTo) {
   float mn = from;
   float mo = (float)(to - from) / (count - 1);
   float an = amplitudeFrom;
@@ -49,7 +54,7 @@ void addNotes(Note *ns, int count, int when, int from, int to,
   }
 }
 
-void coin(Note *ns) {
+static void coin(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(4, 8);
@@ -66,7 +71,7 @@ void coin(Note *ns) {
   ns[i].freq = -1;
 }
 
-void laser(Note *ns) {
+static void laser(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(9, 19);
@@ -75,7 +80,7 @@ void laser(Note *ns) {
   ns[i].freq = -1;
 }
 
-void explosion(Note *ns) {
+static void explosion(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(5, 12);
@@ -90,7 +95,7 @@ void explosion(Note *ns) {
   ns[i].freq = -1;
 }
 
-void powerUp(Note *ns) {
+static void powerUp(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 5);
@@ -112,7 +117,7 @@ void powerUp(Note *ns) {
   ns[i].freq = -1;
 }
 
-void hit(Note *ns) {
+static void hit(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(5, 9);
@@ -122,7 +127,7 @@ void hit(Note *ns) {
   ns[i].freq = -1;
 }
 
-void jump(Note *ns) {
+static void jump(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 5);
@@ -137,7 +142,7 @@ void jump(Note *ns) {
   ns[i].freq = -1;
 }
 
-void select(Note *ns) {
+static void select(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 4);
@@ -156,7 +161,7 @@ void select(Note *ns) {
   ns[i].freq = -1;
 }
 
-void randomSe(Note *ns) {
+static void randomSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(3, 15);
@@ -171,7 +176,7 @@ void randomSe(Note *ns) {
   ns[i].freq = -1;
 }
 
-void click(Note *ns) {
+static void click(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 6);
@@ -188,7 +193,7 @@ void click(Note *ns) {
   ns[i].freq = -1;
 }
 
-void generateSoundEffect() {
+static void generateSoundEffect() {
   coin(soundEffects[COIN]);
   laser(soundEffects[LASER]);
   explosion(soundEffects[EXPLOSION]);
@@ -220,46 +225,46 @@ void playSoundEffect(int type) {
 }
 
 #define MAX_BGM_NOTE_LENGTH 64
-Note bgm[MAX_BGM_NOTE_LENGTH + 1];
-int bgmNoteLength = 32;
-float bgmDuration;
-int bgmIndex;
-int bgmTime;
+static Note bgm[MAX_BGM_NOTE_LENGTH + 1];
+static int bgmNoteLength = 32;
+static float bgmDuration;
+static int bgmIndex;
+static int bgmTime;
 
 typedef struct {
   int midiNote;
   bool isMinor;
 } Chord;
 
-Chord chords[][4] = {{
-                         {.midiNote = 0, .isMinor = false},
-                         {.midiNote = 0, .isMinor = false},
-                         {.midiNote = 4, .isMinor = true},
-                         {.midiNote = 9, .isMinor = true},
-                     },
-                     {
-                         {.midiNote = 5, .isMinor = false},
-                         {.midiNote = 5, .isMinor = false},
-                         {.midiNote = 2, .isMinor = true},
-                         {.midiNote = 2, .isMinor = true},
-                     },
-                     {
-                         {.midiNote = 7, .isMinor = false},
-                         {.midiNote = 7, .isMinor = false},
-                         {.midiNote = 11, .isMinor = true},
-                         {.midiNote = 11, .isMinor = true},
-                     }};
+static Chord chords[][4] = {{
+                                {.midiNote = 0, .isMinor = false},
+                                {.midiNote = 0, .isMinor = false},
+                                {.midiNote = 4, .isMinor = true},
+                                {.midiNote = 9, .isMinor = true},
+                            },
+                            {
+                                {.midiNote = 5, .isMinor = false},
+                                {.midiNote = 5, .isMinor = false},
+                                {.midiNote = 2, .isMinor = true},
+                                {.midiNote = 2, .isMinor = true},
+                            },
+                            {
+                                {.midiNote = 7, .isMinor = false},
+                                {.midiNote = 7, .isMinor = false},
+                                {.midiNote = 11, .isMinor = true},
+                                {.midiNote = 11, .isMinor = true},
+                            }};
 
-int nextChordsIndex[][3] = {
+static int nextChordsIndex[][3] = {
     {0, 1, 2},
     {1, 2, 0},
     {2, 0, 0},
 };
 
-int keys[7] = {0, 2, 3, 5, 7, 9, 10};
-int progression[2][4] = {{0, 4, 7, 11}, {0, 3, 7, 10}};
+static int keys[7] = {0, 2, 3, 5, 7, 9, 10};
+static int progression[2][4] = {{0, 4, 7, 11}, {0, 3, 7, 10}};
 
-void generateChordProgression(int midiNotes[][4], int len) {
+static void generateChordProgression(int midiNotes[][4], int len) {
   int key = keys[_rndi(0, 7)];
   int octave = 3;
   int chordChangeInterval = 4;
@@ -282,7 +287,7 @@ void generateChordProgression(int midiNotes[][4], int len) {
   }
 }
 
-void reversePattern(bool pattern[], int interval, int len, int freq) {
+static void reversePattern(bool pattern[], int interval, int len, int freq) {
   bool pt[interval];
   for (int i = 0; i < interval; i++) {
     pt[i] = false;
@@ -297,7 +302,7 @@ void reversePattern(bool pattern[], int interval, int len, int freq) {
   }
 }
 
-void createRandomPattern(bool pattern[], int len, int freq) {
+static void createRandomPattern(bool pattern[], int len, int freq) {
   int interval = 4;
   for (int i = 0; i < len; i++) {
     pattern[i] = false;
@@ -308,7 +313,7 @@ void createRandomPattern(bool pattern[], int len, int freq) {
   }
 }
 
-void generateBgm() {
+static void generateBgm() {
   int noteLength = bgmNoteLength;
   int chordMidiNotes[noteLength][4];
   generateChordProgression(chordMidiNotes, noteLength);

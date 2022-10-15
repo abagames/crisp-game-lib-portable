@@ -28,20 +28,20 @@ typedef struct {
   int barCount;
 } Lane;
 #define MAX_LANE_COUNT 32
-Lane lanes[MAX_LANE_COUNT];
-int laneIndex;
-float laneY;
-float shotY;
-int hitColor;
-int laneCount;
-int baseMultiplier;
-int multiplier;
-float penalty;
+static Lane lanes[MAX_LANE_COUNT];
+static int laneIndex;
+static float laneY;
+static float shotY;
+static int hitColor;
+static int laneCount;
+static int baseMultiplier;
+static int multiplier;
+static float penalty;
 #define BAR_COLOR_COUNT 4
-int barColors[BAR_COLOR_COUNT] = {RED, GREEN, BLUE, YELLOW};
+static int barColors[BAR_COLOR_COUNT] = {RED, GREEN, BLUE, YELLOW};
 #define LANE_HEIGHT 7
 
-int addBars(Bar bars[], Bar prevBars[], int prevBarsCount) {
+static int addBars(Bar bars[], Bar prevBars[], int prevBarsCount) {
   int cs[9];
   int csCount;
   if (prevBarsCount == 0) {
@@ -74,10 +74,10 @@ int addBars(Bar bars[], Bar prevBars[], int prevBarsCount) {
   return csCount;
 }
 
-Bar *prevBars;
-int prevBarsCount;
+static Bar *prevBars;
+static int prevBarsCount;
 
-void addLane() {
+static void addLane() {
   play(SELECT);
   float x = rnd(0, 99);
   float vx = rnd(0.5, 1) * (rndi(0, 2) * 2 - 1) * sqrt(difficulty);

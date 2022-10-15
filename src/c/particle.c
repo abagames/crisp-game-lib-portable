@@ -13,9 +13,9 @@ typedef struct {
 } Particle;
 
 #define MAX_PARTICLE_COUNT 64
-Particle particles[MAX_PARTICLE_COUNT];
+static Particle particles[MAX_PARTICLE_COUNT];
 int particleIndex = 0;
-Random particleRandom;
+static Random particleRandom;
 
 void initParticle() {
   setRandomSeedWithTime(&particleRandom);

@@ -45,25 +45,25 @@ typedef struct {
   float ticks;
   bool isAlive;
 } Player;
-Player player;
+static Player player;
 typedef struct {
   Vector pos;
   float vy;
   bool isAlive;
 } Spike;
 #define MAX_SPIKE_COUNT 32
-Spike spikes[MAX_SPIKE_COUNT];
-int spikeIndex;
-float nextSpikeDist;
+static Spike spikes[MAX_SPIKE_COUNT];
+static int spikeIndex;
+static float nextSpikeDist;
 typedef struct {
   Vector pos;
   bool isAlive;
 } Ball;
 #define MAX_BALL_COUNT 16
-Ball balls[MAX_BALL_COUNT];
-int ballIndex;
-float nextBallDist;
-float multiplier;
+static Ball balls[MAX_BALL_COUNT];
+static int ballIndex;
+static float nextBallDist;
+static float multiplier;
 
 void update() {
   if (!ticks) {

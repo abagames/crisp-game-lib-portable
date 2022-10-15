@@ -64,19 +64,18 @@ typedef struct {
 } Barrel;
 
 #define PLAYER_COUNT 9
-Player players[PLAYER_COUNT];
-DownedPlayer downedPlayers[PLAYER_COUNT];
+static Player players[PLAYER_COUNT];
+static DownedPlayer downedPlayers[PLAYER_COUNT];
+static Barrel barrel;
 
-Barrel barrel;
-
-void initPlayers() {
+static void initPlayers() {
   FOR_EACH(players, i) {
     players[i].isAlive = false;
     downedPlayers[i].isAlive = false;
   }
 }
 
-void addPlayer() {
+static void addPlayer() {
   FOR_EACH(players, i) {
     ASSIGN_ARRAY_ITEM(players, i, Player, pl);
     if (!pl->isAlive) {
@@ -94,12 +93,12 @@ void addPlayer() {
   }
 }
 
-void addPlayers() {
+static void addPlayers() {
   play(POWER_UP);
   FOR_EACH(players, i) { addPlayer(); }
 }
 
-void addDownedPlayer(Vector pos, float vx, float vy) {
+static void addDownedPlayer(Vector pos, float vx, float vy) {
   FOR_EACH(downedPlayers, i) {
     ASSIGN_ARRAY_ITEM(downedPlayers, i, DownedPlayer, dp);
     if (!dp->isAlive) {

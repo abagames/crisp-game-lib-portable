@@ -47,23 +47,23 @@ typedef struct _Line {
   bool isAlive;
 } Line;
 #define MAX_LINE_COUNT 128
-Line lines[MAX_LINE_COUNT];
-int lineIndex;
-int activeTicks;
+static Line lines[MAX_LINE_COUNT];
+static int lineIndex;
+static int activeTicks;
 typedef struct {
   Vector pos;
   float vy;
   bool isAlive;
 } Star;
 #define MAX_STAR_COUNT 32
-Star stars[MAX_STAR_COUNT];
-int starIndex;
+static Star stars[MAX_STAR_COUNT];
+static int starIndex;
 typedef struct {
   float x;
   float vx;
 } Player;
-Player player;
-int multiplier;
+static Player player;
+static int multiplier;
 
 void update() {
   if (!ticks) {
