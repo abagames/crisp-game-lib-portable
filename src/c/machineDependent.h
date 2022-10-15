@@ -7,7 +7,8 @@
 #define EXTERNC extern
 #endif
 
-#include "cglp.h"
+#define CHARACTER_WIDTH 6
+#define CHARACTER_HEIGHT 6
 
 EXTERNC void md_drawRect(float x, float y, float w, float h, unsigned char r,
                          unsigned char g, unsigned char b);

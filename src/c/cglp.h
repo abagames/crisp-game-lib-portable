@@ -9,6 +9,7 @@
 
 #include <stdbool.h>
 
+#include "machineDependent.h"
 #include "vector.h"
 
 #define FPS 60
