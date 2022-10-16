@@ -45,5 +45,8 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 - ~~Utility functions~~
   - Partially supported
 - ~~Replay~~
-- [Input position](https://abagames.github.io/crisp-game-lib/ref_document/variables/input.pos.html)
+- ~~[Input position](https://abagames.github.io/crisp-game-lib/ref_document/variables/input.pos.html)~~
   - There is no plan to support a device with a touch panel
+- Support for multiple button types (Left/Right/Up/Down/B/A)
+- Menu screen with multiple game selections
+- Support for another device (e.g. Adafruit PyBadge)
