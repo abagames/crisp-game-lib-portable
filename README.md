@@ -8,25 +8,25 @@ The goal now is to get it running on the [M5StickC PLUS](https://shop.m5stack.co
 
 [Emscripten](https://emscripten.org/) also makes it possible to run [games written in C](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/games/thunder.c) on the browser.
 
-- [SURVIVOR](https://abagames.github.io/crisp-game-lib-portable/build/survivor/)
-- [PIN CLIMB](https://abagames.github.io/crisp-game-lib-portable/build/pinclimb/)
 - [THUNDER](https://abagames.github.io/crisp-game-lib-portable/build/thunder/)
+- [SURVIVOR](https://abagames.github.io/crisp-game-lib-portable/build/survivor/)
 - [BALL TOUR](https://abagames.github.io/crisp-game-lib-portable/build/balltour/)
 - [COLOR ROLL](https://abagames.github.io/crisp-game-lib-portable/build/colorroll/)
+- [PIN CLIMB](https://abagames.github.io/crisp-game-lib-portable/build/pinclimb/)
 
 ## Build for M5StickC PLUS
 
 1. Install [LovyanGFX library](https://github.com/lovyan03/LovyanGFX).
 
-1. Compile [m5stickcplus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/c/m5stickcplus.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino).
+1. Verify and upload [cglpM5StickCPlus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpM5StickCPlus/cglpM5StickCPlus.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino).
 
 1. To enable / disable sounds, press the button B.
 
 ## Build for browsers
 
-1. Run `dev` npm script to start the dev server and watch [js files](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/js)
+1. Run `dev` npm script to start the dev server and watch [js files](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/browser)
 
-1. Run `dev_c` npm script to watch [c files](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/c) and build [wasm files](https://github.com/abagames/crisp-game-lib-portable/tree/main/public/wasm)
+1. Run `dev_c` npm script to watch [c files](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/lib) and build [wasm files](https://github.com/abagames/crisp-game-lib-portable/tree/main/public/wasm)
 
 ## Unimplemented features
 
