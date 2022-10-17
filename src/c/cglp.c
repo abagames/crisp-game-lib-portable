@@ -560,10 +560,53 @@ void particle(float x, float y, float count, float speed, float angle,
   addParticle(x, y, count, speed, angle, angleWidth);
 }
 
-// Replay and input
+// Input and replay
+static Input currentInput;
+
+static void clearButtonState(ButtonState *bs) {
+  bs->isPressed = bs->isJustPressed = bs->isJustReleased = false;
+}
+
+static void initInput() {
+  clearButtonState(&input.left);
+  clearButtonState(&input.right);
+  clearButtonState(&input.up);
+  clearButtonState(&input.down);
+  clearButtonState(&input.b);
+  clearButtonState(&input.a);
+  currentInput = input;
+}
+
+static void updateButtonState(ButtonState *bs, bool isPressed) {
+  bs->isJustPressed = isPressed && !bs->isPressed;
+  bs->isJustReleased = !isPressed && bs->isPressed;
+  bs->isPressed = isPressed;
+}
+
+void updateButtons(Input *input, bool left, bool right, bool up, bool down,
+                   bool b, bool a) {
+  updateButtonState(&input->left, left);
+  updateButtonState(&input->right, right);
+  updateButtonState(&input->up, up);
+  updateButtonState(&input->down, down);
+  updateButtonState(&input->b, b);
+  updateButtonState(&input->a, a);
+  bool isPressed = left || right || up || down || b || a;
+  input->isJustPressed = isPressed && !input->isPressed;
+  input->isJustReleased = !isPressed && input->isPressed;
+  input->isPressed = isPressed;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void setButtonState(bool left, bool right, bool up, bool down, bool b, bool a) {
+  updateButtons(&currentInput, left, right, up, down, b, a);
+}
+
+static void updateInput() { input = currentInput; }
+
 #define MAX_RECORDED_INPUT_COUNT 5120
 static uint32_t replayRandomSeed;
-static Input recordedInputs[MAX_RECORDED_INPUT_COUNT];
+static uint8_t recordedInputs[MAX_RECORDED_INPUT_COUNT];
 static int recordedInputCount;
 static int recordedInputIndex;
 static bool isReplayRecorded;
@@ -572,58 +615,50 @@ static Random gameRandom;
 
 static void initReplay() { isReplayRecorded = isReplaying = false; }
 
+static void recordInput() {
+  if (recordedInputCount >= MAX_RECORDED_INPUT_COUNT) {
+    return;
+  }
+  recordedInputs[recordedInputCount] =
+      (input.left.isPressed << 5) | (input.right.isPressed << 4) |
+      (input.up.isPressed << 3) | (input.down.isPressed << 2) |
+      (input.b.isPressed << 1) | input.a.isPressed;
+  recordedInputCount++;
+}
+
 static void initRecord(uint32_t randomSeed) {
   replayRandomSeed = randomSeed;
   setRandomSeed(&gameRandom, randomSeed);
   recordedInputCount = 0;
   isReplayRecorded = true;
-}
-
-static void recordInput() {
-  if (recordedInputCount >= MAX_RECORDED_INPUT_COUNT) {
-    return;
-  }
-  recordedInputs[recordedInputCount] = input;
-  recordedInputCount++;
-}
-
-static void startReplay() {
-  setRandomSeed(&gameRandom, replayRandomSeed);
-  recordedInputIndex = 0;
-  isReplaying = true;
+  updateInput();
+  recordInput();
 }
 
 static bool replayInput() {
   if (recordedInputIndex >= recordedInputCount) {
     return false;
   }
-  input = recordedInputs[recordedInputIndex];
+  uint8_t ri = recordedInputs[recordedInputIndex];
+  bool left = (ri & 0x20) >> 5;
+  bool right = (ri & 0x10) >> 4;
+  bool up = (ri & 0x8) >> 3;
+  bool down = (ri & 0x4) >> 2;
+  bool b = (ri & 0x2) >> 1;
+  bool a = ri & 0x1;
+  updateButtons(&input, left, right, up, down, b, a);
   recordedInputIndex++;
   return true;
 }
 
+static void startReplay() {
+  setRandomSeed(&gameRandom, replayRandomSeed);
+  recordedInputIndex = 0;
+  isReplaying = true;
+  replayInput();
+}
+
 static void stopReplay() { isReplaying = false; }
-
-static Input currentInput;
-
-static void initInput() {
-  input.isPressed = input.isJustPressed = input.isJustReleased = false;
-  currentInput.isPressed = currentInput.isJustPressed =
-      currentInput.isJustReleased = false;
-}
-
-static void updateInput() {
-  input.isPressed = currentInput.isPressed;
-  input.isJustPressed = currentInput.isJustPressed;
-  input.isJustReleased = currentInput.isJustReleased;
-}
-
-EMSCRIPTEN_KEEPALIVE
-void setInput(bool isPressed, bool isJustPressed, bool isJustReleased) {
-  currentInput.isPressed = isPressed;
-  currentInput.isJustPressed = isJustPressed;
-  currentInput.isJustReleased = isJustReleased;
-}
 
 // Utilities
 float rnd(float low, float high) { return getRandom(&gameRandom, low, high); }

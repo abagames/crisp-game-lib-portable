@@ -144,22 +144,12 @@ void md_initView(int w, int h) {
 }
 
 static TaskHandle_t frameTaskHandle;
-static bool btnAIsPressed = true;
-static bool btnAWasPressed = false;
-static bool btnAWasReleased = false;
-static bool btnBIsPressed = true;
-static bool btnBWasPressed = false;
 
-static void updateFromTask() {
+static void updateFromFrameTask() {
   bool ba = !lgfx::gpio_in(BUTTON_A_PIN);
-  btnAWasPressed = !btnAIsPressed && ba;
-  btnAWasReleased = btnAIsPressed && !ba;
-  btnAIsPressed = ba;
-  setInput(btnAIsPressed, btnAWasPressed, btnAWasReleased);
   bool bb = !lgfx::gpio_in(BUTTON_B_PIN);
-  btnBWasPressed = !btnBIsPressed && bb;
-  btnBIsPressed = bb;
-  if (btnBWasPressed) {
+  setButtonState(false, false, false, false, bb, ba);
+  if (input.b.isJustPressed) {
     toggleSound();
   }
   updateFrame();
@@ -171,7 +161,7 @@ static void updateFromTask() {
 static void updateFrameTask(void *pvParameters) {
   while (1) {
     xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
-    updateFromTask();
+    updateFromFrameTask();
   }
 }
 

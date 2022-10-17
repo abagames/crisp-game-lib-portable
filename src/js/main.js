@@ -6,10 +6,17 @@ import * as audio from "./audio";
 function update() {
   input.update();
   Module.ccall(
-    "setInput",
+    "setButtonState",
     "void",
-    ["boolean", "boolean", "boolean"],
-    [input.isPressed, input.isJustPressed, input.isJustReleased]
+    ["boolean", "boolean", "boolean", "boolean", "boolean", "boolean"],
+    [
+      input.isLeftPressed,
+      input.isRightPressed,
+      input.isUpPressed,
+      input.isDownPressed,
+      input.isBPressed,
+      input.isAPressed,
+    ]
   );
   Module.ccall("updateFrame", "void", [], []);
 }

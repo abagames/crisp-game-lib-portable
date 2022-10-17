@@ -69,6 +69,18 @@ typedef struct {
   bool isPressed;
   bool isJustPressed;
   bool isJustReleased;
+} ButtonState;
+
+typedef struct {
+  ButtonState left;
+  ButtonState right;
+  ButtonState up;
+  ButtonState down;
+  ButtonState b;
+  ButtonState a;
+  bool isPressed;
+  bool isJustPressed;
+  bool isJustReleased;
 } Input;
 
 typedef struct {
@@ -127,8 +139,11 @@ EXTERNC int currentColorIndex;
 EXTERNC ColorRgb colorRgbs[COLOR_COUNT];
 EXTERNC int getHashFromString(char *str);
 
-EXTERNC void setInput(bool isPressed, bool isJustPressed, bool isJustReleased);
+// initGame() should be called at game initialization time
 EXTERNC void initGame();
+// SetButtonState() and updateFrame() should be called once per frame
+EXTERNC void setButtonState(bool left, bool right, bool up, bool down, bool b,
+                            bool a);
 EXTERNC void updateFrame();
 
 EXTERNC char *title;

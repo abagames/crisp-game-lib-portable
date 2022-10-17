@@ -1,18 +1,18 @@
-export let isPressed = false;
-export let isJustPressed = false;
-export let isJustReleased = false;
-let isDown = false;
-let isClicked = false;
-let isReleased = false;
+export let isLeftPressed;
+export let isRightPressed;
+export let isUpPressed;
+export let isDownPressed;
+export let isBPressed;
+export let isAPressed;
+let isPointerDown;
 
 export function init() {
+  initKeyboard();
+  isPointerDown = false;
   document.addEventListener("mousedown", (e) => {
-    onDown(); //e.pageX, e.pageY);
+    onDown();
   });
   document.addEventListener("touchstart", (e) => {
-    onDown(); //e.touches[0].pageX, e.touches[0].pageY);
-  });
-  document.addEventListener("keydown", (e) => {
     onDown();
   });
   document.addEventListener("mouseup", (e) => {
@@ -27,23 +27,209 @@ export function init() {
     },
     { passive: false }
   );
-  document.addEventListener("keyup", (e) => {
-    onUp();
-  });
 }
 
 export function update() {
-  isJustPressed = !isPressed && isClicked;
-  isJustReleased = isPressed && isReleased;
-  isPressed = isDown;
-  isClicked = isReleased = false;
+  updateKeyboard(isPointerDown);
 }
 
 function onDown() {
-  isDown = isClicked = true;
+  isPointerDown = true;
 }
 
 function onUp() {
-  isDown = false;
-  isReleased = true;
+  isPointerDown = false;
 }
+
+let pressingCode;
+
+export function initKeyboard() {
+  isLeftPressed =
+    isRightPressed =
+    isUpPressed =
+    isDownPressed =
+    isBPressed =
+    isAPressed =
+      false;
+  pressingCode = {};
+  document.addEventListener("keydown", (e) => {
+    pressingCode[e.code] = true;
+    if (
+      e.code === "AltLeft" ||
+      e.code === "AltRight" ||
+      e.code === "ArrowRight" ||
+      e.code === "ArrowDown" ||
+      e.code === "ArrowLeft" ||
+      e.code === "ArrowUp"
+    ) {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener("keyup", (e) => {
+    pressingCode[e.code] = false;
+  });
+}
+
+export function updateKeyboard(isPointerPressed) {
+  isLeftPressed = pressingCode["ArrowLeft"] || pressingCode["KeyA"];
+  isRightPressed = pressingCode["ArrowRight"] || pressingCode["KeyD"];
+  isUpPressed = pressingCode["ArrowUp"] || pressingCode["KeyW"];
+  isDownPressed = pressingCode["ArrowDown"] || pressingCode["KeyS"];
+  isBPressed = pressingCode["KeyZ"] || pressingCode["Period"];
+  isAPressed = isPointerPressed;
+  if (isAPressed) {
+    return;
+  }
+  for (let i = 0; i < buttonACodes.length; i++) {
+    if (pressingCode[buttonACodes[i]]) {
+      isAPressed = true;
+      break;
+    }
+  }
+}
+
+const buttonACodes = [
+  "KeyX",
+  "Slash",
+
+  "Escape",
+  "Digit0",
+  "Digit1",
+  "Digit2",
+  "Digit3",
+  "Digit4",
+  "Digit5",
+  "Digit6",
+  "Digit7",
+  "Digit8",
+  "Digit9",
+  "Minus",
+  "Equal",
+  "Backspace",
+  "Tab",
+  "KeyQ",
+  //"KeyW",
+  "KeyE",
+  "KeyR",
+  "KeyT",
+  "KeyY",
+  "KeyU",
+  "KeyI",
+  "KeyO",
+  "KeyP",
+  "BracketLeft",
+  "BracketRight",
+  "Enter",
+  "ControlLeft",
+  //"KeyA",
+  //"KeyS",
+  //"KeyD",
+  "KeyF",
+  "KeyG",
+  "KeyH",
+  "KeyJ",
+  "KeyK",
+  "KeyL",
+  "Semicolon",
+  "Quote",
+  "Backquote",
+  "ShiftLeft",
+  "Backslash",
+  //"KeyZ",
+  //"KeyX",
+  "KeyC",
+  "KeyV",
+  "KeyB",
+  "KeyN",
+  "KeyM",
+  "Comma",
+  //"Period",
+  //"Slash",
+  "ShiftRight",
+  "NumpadMultiply",
+  "AltLeft",
+  "Space",
+  "CapsLock",
+  "F1",
+  "F2",
+  "F3",
+  "F4",
+  "F5",
+  "F6",
+  "F7",
+  "F8",
+  "F9",
+  "F10",
+  "Pause",
+  "ScrollLock",
+  "Numpad7",
+  "Numpad8",
+  "Numpad9",
+  "NumpadSubtract",
+  "Numpad4",
+  "Numpad5",
+  "Numpad6",
+  "NumpadAdd",
+  "Numpad1",
+  "Numpad2",
+  "Numpad3",
+  "Numpad0",
+  "NumpadDecimal",
+  "IntlBackslash",
+  "F11",
+  "F12",
+  "F13",
+  "F14",
+  "F15",
+  "F16",
+  "F17",
+  "F18",
+  "F19",
+  "F20",
+  "F21",
+  "F22",
+  "F23",
+  "F24",
+  "IntlYen",
+  "Undo",
+  "Paste",
+  "MediaTrackPrevious",
+  "Cut",
+  "Copy",
+  "MediaTrackNext",
+  "NumpadEnter",
+  "ControlRight",
+  "LaunchMail",
+  "AudioVolumeMute",
+  "MediaPlayPause",
+  "MediaStop",
+  "Eject",
+  "AudioVolumeDown",
+  "AudioVolumeUp",
+  "BrowserHome",
+  "NumpadDivide",
+  "PrintScreen",
+  "AltRight",
+  "Help",
+  "NumLock",
+  "Pause",
+  "Home",
+  //"ArrowUp",
+  "PageUp",
+  //"ArrowLeft",
+  //"ArrowRight",
+  "End",
+  //"ArrowDown",
+  "PageDown",
+  "Insert",
+  "Delete",
+  "OSLeft",
+  "OSRight",
+  "ContextMenu",
+  "BrowserSearch",
+  "BrowserFavorites",
+  "BrowserRefresh",
+  "BrowserStop",
+  "BrowserForward",
+  "BrowserBack",
+];
