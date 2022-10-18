@@ -63,9 +63,14 @@ typedef struct {
 } CharaterSprite;
 
 static CharaterSprite characterSprites[MAX_CACHED_CHARACTER_PATTERN_COUNT];
-static int characterSpritesCount;
+static int characterSpritesCount = 0;
 
-static void initCharacterSprite() { characterSpritesCount = 0; }
+static void initCharacterSprite() {
+  for (int i = 0; i < characterSpritesCount; i++) {
+    characterSprites[i].sprite->deleteSprite();
+  }
+  characterSpritesCount = 0;
+}
 
 static uint16_t characterImageData[CHARACTER_WIDTH * CHARACTER_HEIGHT];
 
@@ -141,6 +146,7 @@ void md_initView(int w, int h) {
   }
   canvasX = (lcd.width() - w) / 2;
   canvasY = (lcd.height() - h) / 2;
+  initCharacterSprite();
 }
 
 static TaskHandle_t frameTaskHandle;
@@ -149,13 +155,19 @@ static void updateFromFrameTask() {
   bool ba = !lgfx::gpio_in(BUTTON_A_PIN);
   bool bb = !lgfx::gpio_in(BUTTON_B_PIN);
   setButtonState(false, false, false, false, bb, ba);
-  if (input.b.isJustPressed) {
-    toggleSound();
-  }
   updateFrame();
   lcd.startWrite();
   canvas.pushSprite(canvasX, canvasY);
   lcd.endWrite();
+  if (!isInMenu) {
+    if (currentInput.b.isJustPressed) {
+      if (currentInput.a.isPressed) {
+        goToMenu();
+      } else {
+        toggleSound();
+      }
+    }
+  }
 }
 
 static void updateFrameTask(void *pvParameters) {
@@ -210,7 +222,6 @@ void setup() {
   lcd.setBrightness(128);
   initSoundTones();
   disableSound();
-  initCharacterSprite();
   initGame();
   hw_timer_t *frameTimer = NULL;
   frameTimer = timerBegin(0, getApbFrequency() / FPS / 1000, true);

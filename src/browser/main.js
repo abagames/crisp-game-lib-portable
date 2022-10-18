@@ -39,7 +39,6 @@ function animationLoop() {
 }
 
 function onRuntimeInitialized() {
-  character.init();
   input.init();
   audio.init();
   Module.ccall("initGame", "void", [], []);
@@ -48,6 +47,7 @@ function onRuntimeInitialized() {
 
 window.initView = (w, h) => {
   view.init(w, h);
+  character.init();
 };
 
 window.Module = {

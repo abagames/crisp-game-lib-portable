@@ -5,7 +5,7 @@ const { defineConfig } = require("vite");
 const config = {
   base: "./",
   build: {
-    outDir: "docs/build/thunder/",
+    outDir: "docs/build/",
   },
   plugins: [wasmHmr()],
 };

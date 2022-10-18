@@ -12,6 +12,7 @@
 
 #include "cglp.h"
 #include "machineDependent.h"
+#include "menu.h"
 #include "particle.h"
 #include "random.h"
 #include "sound.h"
@@ -32,8 +33,20 @@ CharacterOptions characterOptions;
 bool hasCollision;
 float tempo = 120;
 Input input;
-int state;
-bool hasTitle;
+Input currentInput;
+bool isInMenu;
+
+static int state;
+static bool hasTitle;
+static bool isShowingScore;
+static bool isBgmEnabled;
+
+static char *title;
+static char *description;
+static char (*characters)[CHARACTER_HEIGHT][CHARACTER_WIDTH + 1];
+static int charactersCount;
+static Options options;
+static void (*update)(void);
 
 // Collision
 typedef struct {
@@ -543,6 +556,9 @@ void addScore(float value, float x, float y) {
 }
 
 static void drawScore() {
+  if (!isShowingScore) {
+    return;
+  }
   saveCurrentColorAndCharacterOptions();
   int cc = color;
   color = BLACK;
@@ -561,11 +577,11 @@ void particle(float x, float y, float count, float speed, float angle,
 }
 
 // Input and replay
-static Input currentInput;
-
 static void clearButtonState(ButtonState *bs) {
   bs->isPressed = bs->isJustPressed = bs->isJustReleased = false;
 }
+
+static bool isInputJustInitialized;
 
 static void initInput() {
   clearButtonState(&input.left);
@@ -575,6 +591,7 @@ static void initInput() {
   clearButtonState(&input.b);
   clearButtonState(&input.a);
   currentInput = input;
+  isInputJustInitialized = true;
 }
 
 static void updateButtonState(ButtonState *bs, bool isPressed) {
@@ -600,6 +617,13 @@ void updateButtons(Input *input, bool left, bool right, bool up, bool down,
 EMSCRIPTEN_KEEPALIVE
 void setButtonState(bool left, bool right, bool up, bool down, bool b, bool a) {
   updateButtons(&currentInput, left, right, up, down, b, a);
+  if (isInputJustInitialized) {
+    currentInput.left.isJustReleased = currentInput.right.isJustReleased =
+        currentInput.up.isJustReleased = currentInput.down.isJustReleased =
+            currentInput.b.isJustReleased = currentInput.a.isJustReleased =
+                false;
+    isInputJustInitialized = false;
+  }
 }
 
 static void updateInput() { input = currentInput; }
@@ -720,7 +744,9 @@ static void initInGame() {
   initScoreBoards();
   initParticle();
   resetDrawState();
-  isPlayingBgm = true;
+  if (isBgmEnabled) {
+    isPlayingBgm = true;
+  }
   ticks = -1;
   initRecord(nextRandom(&gameSeedRandom));
 }
@@ -736,7 +762,9 @@ static void updateInGame() {
 
 // Title
 #define MAX_DESCRIPTION_LINE_COUNT 5
-static char descriptions[MAX_DESCRIPTION_LINE_COUNT][32];
+#define MAX_DESCRIPTION_STRLEN 32
+static char descriptions[MAX_DESCRIPTION_LINE_COUNT]
+                        [MAX_DESCRIPTION_STRLEN + 1];
 static int descriptionLineCount;
 static int descriptionX;
 
@@ -747,9 +775,14 @@ static void parseDescription() {
   while (strlen(line) > 0) {
     char *ni = strchr(line, '\n');
     int ll = ni == NULL ? strlen(line) : ni - line;
-    strncpy(descriptions[descriptionLineCount], line, ll);
-    if (ll > dl) {
-      dl = ll;
+    int lln = ll;
+    if (lln > MAX_DESCRIPTION_STRLEN) {
+      lln = MAX_DESCRIPTION_STRLEN;
+    }
+    strncpy(descriptions[descriptionLineCount], line, lln);
+    descriptions[descriptionLineCount][lln] = '\0';
+    if (lln > dl) {
+      dl = lln;
     }
     descriptionLineCount++;
     if (descriptionLineCount >= MAX_DESCRIPTION_LINE_COUNT) {
@@ -844,16 +877,20 @@ static void updateGameOver() {
 
 void end() { initGameOver(); }
 
-// Initialize
-EMSCRIPTEN_KEEPALIVE
-void initGame() {
+static void resetGame(int gameIndex) {
+  Game game = getGame(gameIndex);
+  title = game.title;
+  description = game.description;
+  characters = game.characters;
+  charactersCount = game.charactersCount;
+  options = game.options;
+  update = game.update;
   md_initView(options.viewSizeX, options.viewSizeY);
   initColor();
   initCharacter();
   initScore();
   initParticle();
   initSound(title, description, options.soundSeed);
-  initInput();
   initReplay();
   parseDescription();
   setRandomSeedWithTime(&gameSeedRandom);
@@ -865,6 +902,32 @@ void initGame() {
     initTitle();
   } else {
     initInGame();
+  }
+}
+
+void goToMenu() {
+  isShowingScore = false;
+  isBgmEnabled = false;
+  isInMenu = true;
+  resetGame(0);
+}
+
+// Initialize
+void restartGame(int gameIndex) {
+  isShowingScore = true;
+  isBgmEnabled = true;
+  isInMenu = false;
+  resetGame(gameIndex);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void initGame() {
+  initInput();
+  addGames();
+  if (gameCount == 2) {
+    restartGame(1);
+  } else {
+    goToMenu();
   }
 }
 
@@ -882,4 +945,12 @@ void updateFrame() {
   updateSound();
   drawScore();
   ticks++;
+  if (currentInput.up.isPressed && currentInput.down.isPressed) {
+    if (currentInput.a.isJustPressed) {
+      goToMenu();
+    }
+    if (currentInput.b.isJustPressed) {
+      toggleSound();
+    }
+  }
 }

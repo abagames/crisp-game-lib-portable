@@ -4,10 +4,10 @@
 
 #include "cglp.h"
 
-char *title = "SURVIVOR";
-char *description = "[Tap] Jump";
+static char *title = "SURVIVOR";
+static char *description = "[Tap] Jump";
 
-#define CS char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
+#define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 CS = {{
           "llllll",
           "ll l l",
@@ -32,9 +32,9 @@ CS = {{
           "ll l l",
           "llllll",
       }};
-int charactersCount = 3;
+static int charactersCount = 3;
 
-Options options = {
+static Options options = {
     .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 2, .isDarkColor = false};
 
 typedef struct _Player {
@@ -110,7 +110,7 @@ static void addDownedPlayer(Vector pos, float vx, float vy) {
   }
 }
 
-void update() {
+static void update() {
   if (!ticks) {
     initPlayers();
     barrel.isAlive = false;
@@ -271,4 +271,8 @@ void update() {
     barrel.isAlive = false;
     addScore(playerCount, 10, 50);
   }
+}
+
+void addGameSurvivor() {
+  addGame(title, description, characters, charactersCount, options, update);
 }

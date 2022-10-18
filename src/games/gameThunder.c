@@ -4,10 +4,10 @@
 
 #include "cglp.h"
 
-char *title = "THUNDER";
-char *description = "[Tap] Turn";
+static char *title = "THUNDER";
+static char *description = "[Tap] Turn";
 
-#define CS char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
+#define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 CS = {{
           "      ",
           "      ",
@@ -32,9 +32,9 @@ CS = {{
           "llllll",
           "ll  ll",
       }};
-int charactersCount = 3;
+static int charactersCount = 3;
 
-Options options = {
+static Options options = {
     .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 5, .isDarkColor = true};
 
 typedef struct _Line {
@@ -65,7 +65,7 @@ typedef struct {
 static Player player;
 static int multiplier;
 
-void update() {
+static void update() {
   if (!ticks) {
     INIT_UNALIVED_ARRAY(lines);
     lineIndex = 0;
@@ -191,4 +191,8 @@ void update() {
       s->isAlive = false;
     }
   }
+}
+
+void addGameThunder() {
+  addGame(title, description, characters, charactersCount, options, update);
 }

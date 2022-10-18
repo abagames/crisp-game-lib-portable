@@ -5,10 +5,10 @@
 
 #include "cglp.h"
 
-char *title = "BALL TOUR";
-char *description = "[Hold]\n Move forward";
+static char *title = "BALL TOUR";
+static char *description = "[Hold]\n Move forward";
 
-#define CS char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
+#define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 CS = {{
           "llllll",
           "l l ll",
@@ -33,9 +33,9 @@ CS = {{
           "  lll ",
           "  ll  ",
       }};
-int charactersCount = 3;
+static int charactersCount = 3;
 
-Options options = {
+static Options options = {
     .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 4, .isDarkColor = true};
 
 typedef struct {
@@ -65,7 +65,7 @@ static int ballIndex;
 static float nextBallDist;
 static float multiplier;
 
-void update() {
+static void update() {
   if (!ticks) {
     vectorSet(&player.pos, 90, 50);
     player.yAngle = 0;
@@ -154,4 +154,8 @@ void update() {
   char mm[9];
   sprintf(mm, "x%d", (int)multiplier);
   text(mm, 3, 9);
+}
+
+void addGameBallTour() {
+  addGame(title, description, characters, charactersCount, options, update);
 }

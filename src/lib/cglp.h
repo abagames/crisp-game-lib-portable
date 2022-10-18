@@ -106,6 +106,8 @@ EXTERNC CharacterOptions characterOptions;
 EXTERNC bool hasCollision;
 EXTERNC float tempo;
 EXTERNC Input input;
+EXTERNC Input currentInput;
+EXTERNC bool isInMenu;
 EXTERNC Collision rect(float x, float y, float w, float h);
 EXTERNC Collision box(float x, float y, float w, float h);
 EXTERNC Collision line(float x1, float y1, float x2, float y2);
@@ -128,6 +130,8 @@ EXTERNC void consoleLog(char *format, ...);
 EXTERNC void enableSound();
 EXTERNC void disableSound();
 EXTERNC void toggleSound();
+EXTERNC void goToMenu();
+EXTERNC void restartGame(int gameIndex);
 
 typedef struct {
   unsigned char r;
@@ -145,13 +149,6 @@ EXTERNC void initGame();
 EXTERNC void setButtonState(bool left, bool right, bool up, bool down, bool b,
                             bool a);
 EXTERNC void updateFrame();
-
-EXTERNC char *title;
-EXTERNC char *description;
-EXTERNC char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1];
-EXTERNC int charactersCount;
-EXTERNC Options options;
-EXTERNC void update();
 
 #define FOR_EACH(array, index) \
   for (int index = 0; index < sizeof(array) / sizeof(array[0]); index++)
@@ -176,3 +173,5 @@ EXTERNC void update();
   } while (0)
 
 #endif
+
+#include "menu.h"

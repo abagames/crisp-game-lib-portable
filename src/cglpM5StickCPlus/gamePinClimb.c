@@ -4,14 +4,14 @@
 
 #include "cglp.h"
 
-char *title = "PIN CLIMB";
-char *description = "[Hold] Stretch";
+static char *title = "PIN CLIMB";
+static char *description = "[Hold] Stretch";
 
-#define CS char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
+#define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 CS = {};
-int charactersCount = 0;
+static int charactersCount = 0;
 
-Options options = {
+static Options options = {
     .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 1, .isDarkColor = false};
 
 typedef struct {
@@ -38,7 +38,7 @@ static void addPin(float x, float y) {
   pinIndex = wrap(pinIndex + 1, 0, MAX_PIN_COUNT);
 }
 
-void update() {
+static void update() {
   if (!ticks) {
     INIT_UNALIVED_ARRAY(pins);
     pinIndex = 0;
@@ -90,4 +90,8 @@ void update() {
     addPin(rnd(10, 90), -2 - nextPinDist);
     nextPinDist += rnd(5, 15);
   }
+}
+
+void addGamePinCLimb() {
+  addGame(title, description, characters, charactersCount, options, update);
 }

@@ -5,14 +5,14 @@
 
 #include "cglp.h"
 
-char *title = "COLOR ROLL";
-char *description = "[Tap] Shoot";
+static char *title = "COLOR ROLL";
+static char *description = "[Tap] Shoot";
 
-#define CS char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
+#define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 CS = {};
-int charactersCount = 0;
+static int charactersCount = 0;
 
-Options options = {
+static Options options = {
     .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 5, .isDarkColor = false};
 
 typedef struct {
@@ -96,7 +96,7 @@ static void addLane() {
   laneIndex++;
 }
 
-void update() {
+static void update() {
   if (!ticks) {
     laneIndex = 0;
     shotY = -999;
@@ -202,4 +202,8 @@ void update() {
       end();
     }
   }
+}
+
+void addGameColorRoll() {
+  addGame(title, description, characters, charactersCount, options, update);
 }
