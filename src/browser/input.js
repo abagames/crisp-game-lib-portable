@@ -71,11 +71,11 @@ export function initKeyboard() {
 }
 
 export function updateKeyboard(isPointerPressed) {
-  isLeftPressed = pressingCode["ArrowLeft"] || pressingCode["KeyA"];
-  isRightPressed = pressingCode["ArrowRight"] || pressingCode["KeyD"];
-  isUpPressed = pressingCode["ArrowUp"] || pressingCode["KeyW"];
-  isDownPressed = pressingCode["ArrowDown"] || pressingCode["KeyS"];
-  isBPressed = pressingCode["KeyZ"] || pressingCode["Period"];
+  isLeftPressed = pressingCode["ArrowLeft"];
+  isRightPressed = pressingCode["ArrowRight"];
+  isUpPressed = pressingCode["ArrowUp"];
+  isDownPressed = pressingCode["ArrowDown"];
+  isBPressed = pressingCode["KeyZ"] || pressingCode["KeyB"];
   isAPressed = isPointerPressed;
   if (isAPressed) {
     return;
@@ -90,7 +90,7 @@ export function updateKeyboard(isPointerPressed) {
 
 const buttonACodes = [
   "KeyX",
-  "Slash",
+  "KeyA",
 
   "Escape",
   "Digit0",
@@ -108,7 +108,7 @@ const buttonACodes = [
   "Backspace",
   "Tab",
   "KeyQ",
-  //"KeyW",
+  "KeyW",
   "KeyE",
   "KeyR",
   "KeyT",
@@ -122,8 +122,8 @@ const buttonACodes = [
   "Enter",
   "ControlLeft",
   //"KeyA",
-  //"KeyS",
-  //"KeyD",
+  "KeyS",
+  "KeyD",
   "KeyF",
   "KeyG",
   "KeyH",
@@ -139,7 +139,7 @@ const buttonACodes = [
   //"KeyX",
   "KeyC",
   "KeyV",
-  "KeyB",
+  //"KeyB",
   "KeyN",
   "KeyM",
   "Comma",
