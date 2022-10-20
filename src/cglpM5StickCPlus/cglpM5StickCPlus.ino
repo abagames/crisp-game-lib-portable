@@ -63,9 +63,16 @@ typedef struct {
 } CharaterSprite;
 
 static CharaterSprite characterSprites[MAX_CACHED_CHARACTER_PATTERN_COUNT];
-static int characterSpritesCount = 0;
+static int characterSpritesCount;
 
 static void initCharacterSprite() {
+  for (int i = 0; i < MAX_CACHED_CHARACTER_PATTERN_COUNT; i++) {
+    characterSprites[i].sprite = new LGFX_Sprite(&canvas);
+  }
+  characterSpritesCount = 0;
+}
+
+static void resetCharacterSprite() {
   for (int i = 0; i < characterSpritesCount; i++) {
     characterSprites[i].sprite->deleteSprite();
   }
@@ -102,7 +109,6 @@ void md_drawCharacter(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
     cp = &characterSprites[characterSpritesCount];
     cp->hash = hash;
     createCharacterImageData(grid);
-    cp->sprite = new LGFX_Sprite(&canvas);
     cp->sprite->createSprite(CHARACTER_WIDTH, CHARACTER_HEIGHT);
     cp->sprite->setSwapBytes(true);
     cp->sprite->pushImage(0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT,
@@ -146,7 +152,7 @@ void md_initView(int w, int h) {
   }
   canvasX = (lcd.width() - w) / 2;
   canvasY = (lcd.height() - h) / 2;
-  initCharacterSprite();
+  resetCharacterSprite();
 }
 
 static TaskHandle_t frameTaskHandle;
@@ -220,6 +226,7 @@ void setup() {
   lcd.init();
   lcd.setRotation(0);
   lcd.setBrightness(128);
+  initCharacterSprite();
   initSoundTones();
   disableSound();
   initGame();
