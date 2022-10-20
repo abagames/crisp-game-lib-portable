@@ -875,7 +875,7 @@ static void updateGameOver() {
   gameOverTicks++;
 }
 
-void end() { initGameOver(); }
+void gameOver() { initGameOver(); }
 
 static void resetGame(int gameIndex) {
   Game game = getGame(gameIndex);

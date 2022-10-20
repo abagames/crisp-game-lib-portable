@@ -199,7 +199,7 @@ static void update() {
     TIMES(laneCount - laneIndex, i) { addLane(); }
     if (maxY > 97) {
       play(EXPLOSION);
-      end();
+      gameOver();
     }
   }
 }

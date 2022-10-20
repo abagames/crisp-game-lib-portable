@@ -120,7 +120,7 @@ EXTERNC void play(int type);
 EXTERNC void addScore(float value, float x, float y);
 EXTERNC float rnd(float high, float low);
 EXTERNC int rndi(int high, int low);
-EXTERNC void end();
+EXTERNC void gameOver();
 EXTERNC void particle(float x, float y, float count, float speed, float angle,
                       float angleWidth);
 

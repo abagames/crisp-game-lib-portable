@@ -65,7 +65,7 @@ static void update() {
   bar(cord.pin->pos.x, cord.pin->pos.y, cord.length, cord.angle);
   if (cord.pin->pos.y > 98) {
     play(EXPLOSION);
-    end();
+    gameOver();
   }
   Pin *nextPin = NULL;
   FOR_EACH(pins, i) {

@@ -265,7 +265,7 @@ static void update() {
   COUNT_IS_ALIVE(players, playerCount);
   if (playerCount == 0) {
     play(RANDOM);
-    end();
+    gameOver();
   }
   if (barrel.pos.x < -barrel.r) {
     barrel.isAlive = false;

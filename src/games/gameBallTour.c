@@ -117,7 +117,7 @@ static void update() {
   color = RED;
   if (character("c", player.pos.x, player.pos.y - 6).isColliding.text['*']) {
     play(EXPLOSION);
-    end();
+    gameOver();
   }
   color = GREEN;
   FOR_EACH(balls, i) {
