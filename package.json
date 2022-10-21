@@ -16,6 +16,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
+    "generate_reference": "doxygen ./Doxyfile",
     "//": "Call emsdk_env.bat or emsdk_env.sh if needed",
     "dev_c": "emsdk_env.bat && npm-watch _compile_c",
     "_compile_c": "emcc ./src/games/gameThunder.c ./src/games/gameSurvivor.c ./src/games/gameBallTour.c ./src/games/gameColorRoll.c ./src/games/gamePinClimb.c ./src/lib/cglp.c ./src/lib/menu.c ./src/lib/sound.c ./src/lib/particle.c ./src/lib/random.c ./src/lib/vector.c ./src/lib/textPattern.c -I./src/lib -O2 -s WASM=1 -sEXPORTED_RUNTIME_METHODS=ccall --js-library ./src/browser/library.js -o ./public/wasm/cglp.js"

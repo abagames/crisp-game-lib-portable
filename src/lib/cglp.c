@@ -1,3 +1,4 @@
+/// \cond
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #else
@@ -22,18 +23,38 @@
 #define STATE_TITLE 0
 #define STATE_IN_GAME 1
 #define STATE_GAME_OVER 2
+/// \endcond
 
+//! A variable incremented by one every 1/60 of a second (readonly).
 int ticks;
+//! Game score.
 float score;
+//! A variable that is one at the beginning of the game, two after 1 minute, and
+//! increasing by one every minute (readonly).
 float difficulty;
+//! Set the color for drawing rectangles, particles, texts, and characters.
+//! Setting the color prior to `text()` and `character()` will recolor the
+//! pixel art. Use `color = BLACK` to restore and use the original colors.
+//! Colors are `WHITE`, `RED`, `GREEN`, `YELLOW`, `BLUE`, `PURPLE`, `CYAN`,
+//! `BLACK`, `LIGHT_*` and `TRANSPARENT`.
 int color;
+//! Set the thickness for drawing `line()`, `bar()` and `arc()`.
 float thickness;
+//! A value from 0 to 1 that defines where the center coordinates are on the
+//! `bar()`, default: 0.5.
 float barCenterPosRatio;
+//! Options for drawing `text()` and `character()`.
 CharacterOptions characterOptions;
+//! If `hasCollision` is set to `true`, the drawn rectangle will have no
+//! collision with other rectangles. Used to improve performance.
 bool hasCollision;
+//! Tempo of background music.
 float tempo = 120;
+//! Input state from the buttons (readonly).
 Input input;
+//! Input state (used to get input on title screen) (readonly).
 Input currentInput;
+//! Set to `true` when the menu screen is open (readonly).
 bool isInMenu;
 
 static int state;
@@ -49,6 +70,7 @@ static Options options;
 static void (*update)(void);
 
 // Collision
+/// \cond
 typedef struct {
   int rectIndex;
   int textIndex;
@@ -58,6 +80,7 @@ typedef struct {
 } HitBox;
 
 #define MAX_HIT_BOX_COUNT 256
+/// \endcond
 static HitBox hitBoxes[MAX_HIT_BOX_COUNT];
 static int hitBoxesIndex;
 
@@ -97,7 +120,9 @@ static void checkHitBox(Collision *cl, HitBox hitBox) {
 }
 
 // Drawing
+/// \cond
 #define MAX_DRAWING_HIT_BOXES_COUNT 64
+/// \endcond
 static HitBox drawingHitBoxes[MAX_DRAWING_HIT_BOXES_COUNT];
 static int drawingHitBoxesIndex;
 
@@ -150,6 +175,8 @@ static void endAddingRects() {
   }
 }
 
+//! Draw a rectangle. Returns information on objects that collided while
+//! drawing.
 Collision rect(float x, float y, float w, float h) {
   Collision hitCollision;
   initCollision(&hitCollision);
@@ -159,6 +186,7 @@ Collision rect(float x, float y, float w, float h) {
   return hitCollision;
 }
 
+//! Draw a box. Returns information on objects that collided while drawing.
 Collision box(float x, float y, float w, float h) {
   Collision hitCollision;
   initCollision(&hitCollision);
@@ -193,6 +221,7 @@ static void drawLine(float x, float y, float ox, float oy,
   }
 }
 
+//! Draw a line. Returns information on objects that collided while drawing.
 Collision line(float x1, float y1, float x2, float y2) {
   Collision hitCollision;
   initCollision(&hitCollision);
@@ -202,6 +231,7 @@ Collision line(float x1, float y1, float x2, float y2) {
   return hitCollision;
 }
 
+//! Draw a bar. Returns information on objects that collided while drawing.
 Collision bar(float x, float y, float length, float angle) {
   Collision hitCollision;
   initCollision(&hitCollision);
@@ -215,6 +245,7 @@ Collision bar(float x, float y, float length, float angle) {
   return hitCollision;
 }
 
+//! Draw a arc. Returns information on objects that collided while drawing.
 Collision arc(float centerX, float centerY, float radius, float angleFrom,
               float angleTo) {
   Collision hitCollision;
@@ -263,11 +294,13 @@ Collision arc(float centerX, float centerY, float radius, float angleFrom,
 }
 
 // Text and character
+/// \cond
 typedef struct {
   unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3];
   HitBox hitBox;
   int hash;
 } CharacterPattern;
+/// \endcond
 
 static CharacterPattern characterPatterns[MAX_CACHED_CHARACTER_PATTERN_COUNT];
 static int characterPatternsCount;
@@ -407,16 +440,22 @@ static Collision drawCharacters(char *msg, float x, float y, bool _hasCollision,
   return hitCollision;
 }
 
+//! Draw a text. Returns information on objects that collided while drawing.
 Collision text(char *msg, float x, float y) {
   return drawCharacters(msg, x, y, true, true);
 }
 
+//! Draw a pixel art. Returns information on objects that collided while
+//! drawing. You can define pixel arts (6x6 dots) of characters with
+//! `characters` array.
 Collision character(char *msg, float x, float y) {
   return drawCharacters(msg, x, y, true, false);
 }
 
 // Color
+/// \cond
 ColorRgb colorRgbs[COLOR_COUNT];
+/// \endcond
 static ColorRgb whiteRgb;
 
 static ColorRgb getRgb(int index, bool isDarkColor) {
@@ -485,15 +524,20 @@ static void loadCurrentColorAndCharacterOptions() {
 }
 
 // Sound
+//! Play a sound effect. Type are `COIN`, `LASER`, `EXPLOSION`, `POWER_UP`,
+//! `HIT`, `JUMP`, `SELECT`, `CLICK` and `RANDOM`.
 void play(int type) { playSoundEffect(type); }
 
+//! Enable playing background music and sound effects.
 void enableSound() { isSoundEnabled = true; }
 
+//! Disable playing background music and sound effects.
 void disableSound() {
   isSoundEnabled = false;
   md_stopTone();
 }
 
+//! Toggle sound playing flag.
 void toggleSound() {
   if (isSoundEnabled) {
     disableSound();
@@ -506,6 +550,7 @@ void toggleSound() {
 static int prevScore;
 static int hiScore;
 
+/// \cond
 typedef struct {
   char str[9];
   Vector pos;
@@ -514,6 +559,7 @@ typedef struct {
 } ScoreBoard;
 
 #define MAX_SCORE_BOARD_COUNT 16
+/// \endcond
 static ScoreBoard scoreBoards[MAX_SCORE_BOARD_COUNT];
 static int scoreBoardsIndex;
 
@@ -540,6 +586,8 @@ static void updateScoreBoards() {
   loadCurrentColorAndCharacterOptions();
 }
 
+//! Add score points and draw additional score on the screen. You can also add
+//! score points simply by adding the `score` variable.
 void addScore(float value, float x, float y) {
   score += value;
   ScoreBoard *sb = &scoreBoards[scoreBoardsIndex];
@@ -571,6 +619,7 @@ static void drawScore() {
   loadCurrentColorAndCharacterOptions();
 }
 
+//! Add particles.
 void particle(float x, float y, float count, float speed, float angle,
               float angleWidth) {
   addParticle(x, y, count, speed, angle, angleWidth);
@@ -600,8 +649,8 @@ static void updateButtonState(ButtonState *bs, bool isPressed) {
   bs->isPressed = isPressed;
 }
 
-void updateButtons(Input *input, bool left, bool right, bool up, bool down,
-                   bool b, bool a) {
+static void updateButtons(Input *input, bool left, bool right, bool up,
+                          bool down, bool b, bool a) {
   updateButtonState(&input->left, left);
   updateButtonState(&input->right, right);
   updateButtonState(&input->up, up);
@@ -614,6 +663,8 @@ void updateButtons(Input *input, bool left, bool right, bool up, bool down,
   input->isPressed = isPressed;
 }
 
+//! Set whether or not each button is pressed.
+//! This function must be called from the machine dependent input handling step.
 EMSCRIPTEN_KEEPALIVE
 void setButtonState(bool left, bool right, bool up, bool down, bool b, bool a) {
   updateButtons(&currentInput, left, right, up, down, b, a);
@@ -628,7 +679,9 @@ void setButtonState(bool left, bool right, bool up, bool down, bool b, bool a) {
 
 static void updateInput() { input = currentInput; }
 
+/// \cond
 #define MAX_RECORDED_INPUT_COUNT 5120
+/// \endcond
 static uint32_t replayRandomSeed;
 static uint8_t recordedInputs[MAX_RECORDED_INPUT_COUNT];
 static int recordedInputCount;
@@ -685,10 +738,14 @@ static void startReplay() {
 static void stopReplay() { isReplaying = false; }
 
 // Utilities
+//! Get a random float value of [low, high).
 float rnd(float low, float high) { return getRandom(&gameRandom, low, high); }
 
+//! Get a random int value of [low, high - 1].
 int rndi(int low, int high) { return getIntRandom(&gameRandom, low, high); }
 
+//! Print a message to the console (the same arguments as for printf can be
+//! used).
 void consoleLog(char *format, ...) {
   char cc[99];
   va_list args;
@@ -697,8 +754,10 @@ void consoleLog(char *format, ...) {
   md_consoleLog(cc);
 }
 
+//! Clamp a value to [low, high].
 float clamp(float v, float low, float high) { return fmax(low, fmin(v, high)); }
 
+//! Wrap a value to [low, high).
 float wrap(float v, float low, float high) {
   float w = high - low;
   float o = v - low;
@@ -713,6 +772,7 @@ float wrap(float v, float low, float high) {
   }
 }
 
+/// \cond
 int getHashFromString(char *str) {
   int hash = 0;
   int len = strlen(str);
@@ -723,6 +783,7 @@ int getHashFromString(char *str) {
   }
   return hash;
 }
+/// \endcond
 
 // In game
 static Random gameSeedRandom;
@@ -761,8 +822,10 @@ static void updateInGame() {
 }
 
 // Title
+/// \cond
 #define MAX_DESCRIPTION_LINE_COUNT 5
 #define MAX_DESCRIPTION_STRLEN 32
+/// \endcond
 static char descriptions[MAX_DESCRIPTION_LINE_COUNT]
                         [MAX_DESCRIPTION_STRLEN + 1];
 static int descriptionLineCount;
@@ -875,6 +938,7 @@ static void updateGameOver() {
   gameOverTicks++;
 }
 
+//! Transit to the game-over state.
 void gameOver() { initGameOver(); }
 
 static void resetGame(int gameIndex) {
@@ -905,6 +969,7 @@ static void resetGame(int gameIndex) {
   }
 }
 
+//! Go to the game selection menu screen.
 void goToMenu() {
   isShowingScore = false;
   isBgmEnabled = false;
@@ -913,6 +978,7 @@ void goToMenu() {
 }
 
 // Initialize
+//! Restart another game specified by `gameIndex`.
 void restartGame(int gameIndex) {
   isShowingScore = true;
   isBgmEnabled = true;
@@ -920,6 +986,8 @@ void restartGame(int gameIndex) {
   resetGame(gameIndex);
 }
 
+//! Initialize all games and go to the game selection menu screen.
+//! This function must be called from the machine dependent setup step.
 EMSCRIPTEN_KEEPALIVE
 void initGame() {
   initInput();
@@ -931,6 +999,8 @@ void initGame() {
   }
 }
 
+//! Update game frames every 1/60 second.
+//! This function must be called from the machine dependent update step.
 EMSCRIPTEN_KEEPALIVE
 void updateFrame() {
   hitBoxesIndex = 0;
