@@ -6,7 +6,11 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 - [M5StickC PLUS](https://shop.m5stack.com/products/m5stickc-plus-esp32-pico-mini-iot-development-kit)
 
-![screenshot](./docs/screenshot.gif)
+![screenshot](./docs/screenshotM5StickCPlus.gif)
+
+- [Adafruit PyBadge](https://learn.adafruit.com/adafruit-pybadge)
+
+![screenshot](./docs/screenshotPyBadge.gif)
 
 - Browser (built with [Emscripten](https://emscripten.org/))
   - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
@@ -26,6 +30,16 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 1. To enable / disable sounds, press the B button.
 
 1. Hold down the A button and press the B button to open the game selection menu.
+
+## Build for PyBadge
+
+1. Install [LovyanGFX library](https://github.com/lovyan03/LovyanGFX).
+
+1. Verify and upload [cglpPyBadge.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpPyBadge/cglpPyBadge.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino).
+
+1. To enable / disable sounds, press the START button.
+
+1. Press the SELECT button to open the game selection menu.
 
 ## Build for browsers
 
