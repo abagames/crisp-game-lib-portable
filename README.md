@@ -50,3 +50,20 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 1. Button assignments: (A) X key, (B) Z key, (left/right/up/down) arrow keys
 
 1. Press the X key while holding down the up and down arrow keys to open the game selection menu.
+
+## How to port the library to other devices
+
+The source codes for [library](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/lib) and [games](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games) are written device-independent. Besides, you need to implement device-dependent code for the following functions:
+
+- Device initialization function (e.g. `setup()` in Arduino) that calls `initGame()`
+
+- Frame update function (e.g. `loop()` in Arduino) that calls `setButtonState()` and `updateFrame()`
+
+  - The state of the button press must be notified to the library with the `setButtonState()`
+
+- Drawing and audio processing functions that are defined in [machineDependent.h](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/lib/machineDependent.h)
+  - `md_getAudioTime()` function should return the audio timer value in seconds
+  - `md_playTone(float freq, float duration, float when)` function should play a tone with `freq` frequency, `duration` length (in seconds) and staring from `when` seconds on the audio timer
+  - `md_drawCharacter(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3], float x, float y, int hash)` function should draw the pixel art defined by `grid[y][x][r, g, b]` at position (x, y). Since `hash` will be the same for the same pixel art, you can cache pixel art images using `hash` as an index and avoid redrawing the same image
+
+Sample device-dependent codes are [cglpM5StickCPlus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpM5StickCPlus/cglpM5StickCPlus.ino) and [cglpPyBadge.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpPyBadge/cglpPyBadge.ino).
