@@ -590,8 +590,12 @@ static void updateScoreBoards() {
 //! score points simply by adding the `score` variable.
 void addScore(float value, float x, float y) {
   score += value;
+  int v = (int)value;
+  if (v == 0) {
+    return;
+  }
   ScoreBoard *sb = &scoreBoards[scoreBoardsIndex];
-  sprintf(sb->str, "+%d", (int)value);
+  sprintf(sb->str, v > 0 ? "+%d" : "%d", v);
   int l = strlen(sb->str);
   sb->pos.x = x - l * CHARACTER_WIDTH / 2;
   sb->pos.y = y - CHARACTER_HEIGHT / 2;
