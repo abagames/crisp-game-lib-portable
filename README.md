@@ -4,13 +4,17 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 ## Target devices
 
-- [M5StickC PLUS](https://shop.m5stack.com/products/m5stickc-plus-esp32-pico-mini-iot-development-kit)
+- [M5StickC PLUS](https://docs.m5stack.com/en/core/m5stickc_plus)
 
 ![screenshot](./docs/screenshotM5StickCPlus.gif)
 
 - [Adafruit PyBadge](https://learn.adafruit.com/adafruit-pybadge)
 
 ![screenshot](./docs/screenshotPyBadge.gif)
+
+- [M5Stack BASIC](http://docs.m5stack.com/en/core/basic)
+
+  - [cglpM5Stack.ino](https://gist.github.com/obono/1606cf8a8a4e9c9f97de4ebebad3460a) (ported by [OBONO](https://github.com/obono))
 
 - Browser (built with [Emscripten](https://emscripten.org/))
   - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
@@ -25,7 +29,11 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 1. Install [LovyanGFX library](https://github.com/lovyan03/LovyanGFX).
 
-1. Verify and upload [cglpM5StickCPlus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpM5StickCPlus/cglpM5StickCPlus.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino).
+1. Create `cglpM5StickCPlus/` directory.
+
+1. Copy [cglpM5StickCPlus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpM5StickCPlus/cglpM5StickCPlus.ino), [./src/lib/\*](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/lib) and [./src/games/\*](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games) files to the directory.
+
+1. Verify and upload `cglpM5StickCPlus.ino` with [Arduino IDE](https://www.arduino.cc/en/software).
 
 1. To enable / disable sounds, press the B button.
 
@@ -35,7 +43,11 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 1. Install [LovyanGFX library](https://github.com/lovyan03/LovyanGFX).
 
-1. Verify and upload [cglpPyBadge.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpPyBadge/cglpPyBadge.ino) with [Arduino IDE 1.8](https://www.arduino.cc/en/software) or [vscode-arduino](https://github.com/microsoft/vscode-arduino).
+1. Create `cglpPyBadge/` directory.
+
+1. Copy [cglpPyBadge.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpPyBadge/cglpPyBadge.ino), [./src/lib/\*](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/lib) and [./src/games/\*](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games) files to the directory.
+
+1. Verify and upload `cglpPyBadge.ino` with [Arduino IDE](https://www.arduino.cc/en/software).
 
 1. To enable / disable sounds, press the START button.
 
