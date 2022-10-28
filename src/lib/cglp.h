@@ -171,6 +171,7 @@ EXTERNC void updateFrame();
       array[i].isAlive = false;                                  \
     }                                                            \
   } while (0)
+#define RNDPM (rndi(0, 2) * 2 - 1)
 
 #endif
 
