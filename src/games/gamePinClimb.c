@@ -24,18 +24,18 @@ typedef struct {
   Pin *pin;
 } Cord;
 static Cord cord;
-#define MAX_PIN_COUNT 32
-static Pin pins[MAX_PIN_COUNT];
+#define PIN_CLIMB_MAX_PIN_COUNT 32
+static Pin pins[PIN_CLIMB_MAX_PIN_COUNT];
 static int pinIndex;
 static float nextPinDist;
-#define CORD_LENGTH 7
+static float cordLength = 7;
 
 static void addPin(float x, float y) {
   ASSIGN_ARRAY_ITEM(pins, pinIndex, Pin, p);
   p->pos.x = x;
   p->pos.y = y;
   p->isAlive = true;
-  pinIndex = wrap(pinIndex + 1, 0, MAX_PIN_COUNT);
+  pinIndex = wrap(pinIndex + 1, 0, PIN_CLIMB_MAX_PIN_COUNT);
 }
 
 static void update() {
@@ -45,7 +45,7 @@ static void update() {
     addPin(50, 5);
     nextPinDist = 5;
     cord.angle = 0;
-    cord.length = CORD_LENGTH;
+    cord.length = cordLength;
     cord.pin = &pins[0];
     barCenterPosRatio = 0;
   }
@@ -59,7 +59,7 @@ static void update() {
   if (input.isPressed) {
     cord.length += difficulty;
   } else {
-    cord.length += (CORD_LENGTH - cord.length) * 0.1;
+    cord.length += (cordLength - cord.length) * 0.1;
   }
   cord.angle += difficulty * 0.05;
   bar(cord.pin->pos.x, cord.pin->pos.y, cord.length, cord.angle);
@@ -83,7 +83,7 @@ static void update() {
     addScore(ceil(distanceTo(&cord.pin->pos, nextPin->pos.x, nextPin->pos.y)),
              nextPin->pos.x, nextPin->pos.y);
     cord.pin = nextPin;
-    cord.length = CORD_LENGTH;
+    cord.length = cordLength;
   }
   nextPinDist -= scr;
   while (nextPinDist < 0) {

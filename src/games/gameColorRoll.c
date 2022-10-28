@@ -27,8 +27,8 @@ typedef struct {
   Bar bars[8];
   int barCount;
 } Lane;
-#define MAX_LANE_COUNT 32
-static Lane lanes[MAX_LANE_COUNT];
+#define COLOR_ROLL_MAX_LANE_COUNT 32
+static Lane lanes[COLOR_ROLL_MAX_LANE_COUNT];
 static int laneIndex;
 static float laneY;
 static float shotY;
@@ -37,22 +37,22 @@ static int laneCount;
 static int baseMultiplier;
 static int multiplier;
 static float penalty;
-#define BAR_COLOR_COUNT 4
-static int barColors[BAR_COLOR_COUNT] = {RED, GREEN, BLUE, YELLOW};
-#define LANE_HEIGHT 7
+#define COLOR_ROLL_BAR_COLOR_COUNT 4
+static int barColors[COLOR_ROLL_BAR_COLOR_COUNT] = {RED, GREEN, BLUE, YELLOW};
+static float laneHeight = 7;
 
 static int addBars(Bar bars[], Bar prevBars[], int prevBarsCount) {
   int cs[9];
   int csCount;
   if (prevBarsCount == 0) {
-    cs[0] = barColors[rndi(0, BAR_COLOR_COUNT)];
+    cs[0] = barColors[rndi(0, COLOR_ROLL_BAR_COLOR_COUNT)];
     csCount = 1;
   } else {
     TIMES(prevBarsCount, i) { cs[i] = prevBars[i].color; }
     csCount = prevBarsCount;
   }
   if (csCount == 1 || (csCount < 4 && rnd(0, 1) < 0.5)) {
-    cs[csCount] = barColors[rndi(0, BAR_COLOR_COUNT)];
+    cs[csCount] = barColors[rndi(0, COLOR_ROLL_BAR_COLOR_COUNT)];
     csCount++;
   } else {
     int ri = rndi(0, csCount);
@@ -89,7 +89,7 @@ static void addLane() {
     l->y = 0;
     prevBarsCount = l->barCount = addBars(l->bars, NULL, 0);
   } else {
-    l->y = -laneIndex * LANE_HEIGHT;
+    l->y = -laneIndex * laneHeight;
     prevBarsCount = l->barCount = addBars(l->bars, prevBars, prevBarsCount);
   }
   prevBars = l->bars;
@@ -122,7 +122,7 @@ static void update() {
   }
   color = hitColor == -999 ? BLACK : hitColor;
   rect(49, sy, 3, 99 - sy);
-  float my = LANE_HEIGHT * laneCount;
+  float my = laneHeight * laneCount;
   laneY += sqrtf(difficulty) * 0.005;
   if (laneY < my) {
     laneY += (my - laneY) * 0.2;
@@ -145,13 +145,13 @@ static void update() {
       color = b->color;
       bool *c;
       if (x + b->width < 99) {
-        c = rect(x, l->y, b->width - 1, -LANE_HEIGHT + 1).isColliding.rect;
+        c = rect(x, l->y, b->width - 1, -laneHeight + 1).isColliding.rect;
       } else {
-        c = rect(x, l->y, 99 - x, -LANE_HEIGHT + 1).isColliding.rect;
-        bool *c2 = rect(0, l->y, b->width - (99 - x) - 1, -LANE_HEIGHT + 1)
+        c = rect(x, l->y, 99 - x, -laneHeight + 1).isColliding.rect;
+        bool *c2 = rect(0, l->y, b->width - (99 - x) - 1, -laneHeight + 1)
                        .isColliding.rect;
         c[BLACK] |= c2[BLACK];
-        TIMES(BAR_COLOR_COUNT, k) {
+        TIMES(COLOR_ROLL_BAR_COLOR_COUNT, k) {
           int ci = barColors[k];
           c[ci] |= c2[ci];
         }
@@ -168,7 +168,7 @@ static void update() {
       }
       x = wrap(x + b->width, 0, 99);
     }
-    ly -= LANE_HEIGHT;
+    ly -= laneHeight;
     if (isShotRemoved) {
       play(HIT);
       shotY = -999;

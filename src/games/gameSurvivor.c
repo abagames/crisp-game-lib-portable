@@ -63,9 +63,9 @@ typedef struct {
   bool isAlive;
 } Barrel;
 
-#define PLAYER_COUNT 9
-static Player players[PLAYER_COUNT];
-static DownedPlayer downedPlayers[PLAYER_COUNT];
+#define SURVIVOR_PLAYER_COUNT 9
+static Player players[SURVIVOR_PLAYER_COUNT];
+static DownedPlayer downedPlayers[SURVIVOR_PLAYER_COUNT];
 static Barrel barrel;
 
 static void initPlayers() {

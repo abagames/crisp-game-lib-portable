@@ -46,8 +46,8 @@ typedef struct _Line {
   bool isActive;
   bool isAlive;
 } Line;
-#define MAX_LINE_COUNT 128
-static Line lines[MAX_LINE_COUNT];
+#define THUNDER_MAX_LINE_COUNT 128
+static Line lines[THUNDER_MAX_LINE_COUNT];
 static int lineIndex;
 static int activeTicks;
 typedef struct {
@@ -55,8 +55,8 @@ typedef struct {
   float vy;
   bool isAlive;
 } Star;
-#define MAX_STAR_COUNT 32
-static Star stars[MAX_STAR_COUNT];
+#define THUNDER_MAX_STAR_COUNT 32
+static Star stars[THUNDER_MAX_STAR_COUNT];
 static int starIndex;
 typedef struct {
   float x;
@@ -87,7 +87,7 @@ static void update() {
     l->prevLine = NULL;
     l->isActive = false;
     l->isAlive = true;
-    lineIndex = wrap(lineIndex + 1, 0, MAX_LINE_COUNT);
+    lineIndex = wrap(lineIndex + 1, 0, THUNDER_MAX_LINE_COUNT);
   }
   color = LIGHT_BLUE;
   rect(0, 90, 100, 10);
@@ -108,14 +108,14 @@ static void update() {
         vectorSet(&s->pos, l->to.x, l->to.y);
         s->vy = -l->to.y * 0.02;
         s->isAlive = true;
-        starIndex = wrap(starIndex + 1, 0, MAX_STAR_COUNT);
+        starIndex = wrap(starIndex + 1, 0, THUNDER_MAX_STAR_COUNT);
       }
       l->isAlive = false;
       continue;
     }
     if (l->ticks > 0) {
       vectorAdd(&l->to, l->vel.x, l->vel.y);
-      if (activeTicks < 0 && (l->to.y > 90 || lc >= MAX_LINE_COUNT)) {
+      if (activeTicks < 0 && (l->to.y > 90 || lc >= THUNDER_MAX_LINE_COUNT)) {
         play(EXPLOSION);
         Line *al = l;
         color = YELLOW;
@@ -146,7 +146,7 @@ static void update() {
         nl->prevLine = l;
         nl->isActive = false;
         nl->isAlive = true;
-        lineIndex = wrap(lineIndex + 1, 0, MAX_LINE_COUNT);
+        lineIndex = wrap(lineIndex + 1, 0, THUNDER_MAX_LINE_COUNT);
       }
     }
     color = LIGHT_BLACK;

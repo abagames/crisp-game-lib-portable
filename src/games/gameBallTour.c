@@ -51,16 +51,16 @@ typedef struct {
   float vy;
   bool isAlive;
 } Spike;
-#define MAX_SPIKE_COUNT 32
-static Spike spikes[MAX_SPIKE_COUNT];
+#define BALL_TOUR_MAX_SPIKE_COUNT 32
+static Spike spikes[BALL_TOUR_MAX_SPIKE_COUNT];
 static int spikeIndex;
 static float nextSpikeDist;
 typedef struct {
   Vector pos;
   bool isAlive;
 } Ball;
-#define MAX_BALL_COUNT 16
-static Ball balls[MAX_BALL_COUNT];
+#define BALL_TOUR_MAX_BALL_COUNT 16
+static Ball balls[BALL_TOUR_MAX_BALL_COUNT];
 static int ballIndex;
 static float nextBallDist;
 static float multiplier;
@@ -90,7 +90,7 @@ static void update() {
                 : 0;
     s->isAlive = true;
     nextSpikeDist += rnd(9, 49);
-    spikeIndex = wrap(spikeIndex + 1, 0, MAX_SPIKE_COUNT);
+    spikeIndex = wrap(spikeIndex + 1, 0, BALL_TOUR_MAX_SPIKE_COUNT);
   }
   color = BLACK;
   FOR_EACH(spikes, i) {
@@ -146,7 +146,7 @@ static void update() {
       b->pos = p;
       b->isAlive = true;
       nextBallDist += rnd(25, 64);
-      ballIndex = wrap(ballIndex + 1, 0, MAX_BALL_COUNT);
+      ballIndex = wrap(ballIndex + 1, 0, BALL_TOUR_MAX_BALL_COUNT);
     }
   }
   multiplier = clamp(multiplier - 0.02 * difficulty, 1, 999);
