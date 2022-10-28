@@ -53,13 +53,14 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 - Hold down the A button and press the B button (M5StickCPlus, M5Stack)
 - Press the SELECT button (PyBadge)
-- Press the F5 key (Browser)
+- Press the X key while holding down the up and down arrow keys (Browser)
 
 ### Toggle sound on/off
 
 - Press the B button (M5StickCPlus)
 - Press the C Button (M5Stack)
 - Press the START button (PyBadge)
+- Press the Z key while holding down the up and down arrow keys (Browser)
 
 ### Key assignment on browser
 
