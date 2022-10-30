@@ -76,7 +76,7 @@ static void update() {
   if (lc == 0) {
     ASSIGN_ARRAY_ITEM(lines, lineIndex, Line, l);
     vectorSet(&l->from, rnd(30, 70), 0);
-    vectorSet(&l->to, l->from.x, l->from.y);
+    vectorSet(&l->to, VEC_XY(l->from));
     vectorSet(&l->vel, 0.5 * difficulty, 0);
     rotate(&l->vel, M_PI_2);
     l->ticks = ceilf(30.0f / difficulty);
@@ -93,7 +93,7 @@ static void update() {
     SKIP_IS_NOT_ALIVE(l);
     if (l->isActive) {
       color = YELLOW;
-      line(l->from.x, l->from.y, l->to.x, l->to.y);
+      line(VEC_XY(l->from), VEC_XY(l->to));
       l->isAlive = activeTicks >= 0;
       continue;
     }
@@ -101,7 +101,7 @@ static void update() {
     if (activeTicks > 0) {
       if (l->ticks > 0) {
         ASSIGN_ARRAY_ITEM(stars, starIndex, Star, s);
-        vectorSet(&s->pos, l->to.x, l->to.y);
+        vectorSet(&s->pos, VEC_XY(l->to));
         s->vy = -l->to.y * 0.02;
         s->isAlive = true;
         starIndex = wrap(starIndex + 1, 0, THUNDER_MAX_STAR_COUNT);
@@ -110,13 +110,13 @@ static void update() {
       continue;
     }
     if (l->ticks > 0) {
-      vectorAdd(&l->to, l->vel.x, l->vel.y);
+      vectorAdd(&l->to, VEC_XY(l->vel));
       if (activeTicks < 0 && (l->to.y > 90 || lc >= THUNDER_MAX_LINE_COUNT)) {
         play(EXPLOSION);
         Line *al = l;
         color = YELLOW;
         for (int j = 0; j < 99; j++) {
-          particle(al->to.x, al->to.y, 30, 2, 0, M_PI * 2);
+          particle(VEC_XY(al->to), 30, 2, 0, M_PI * 2);
           al->isActive = true;
           al = al->prevLine;
           if (al == NULL) {
@@ -129,12 +129,12 @@ static void update() {
     } else if (l->ticks == 0) {
       play(HIT);
       color = BLACK;
-      particle(l->to.x, l->to.y, 9, 1, 0, M_PI * 2);
+      particle(VEC_XY(l->to), 9, 1, 0, M_PI * 2);
       for (int j = 0; j < rndi(1, 4); j++) {
         ASSIGN_ARRAY_ITEM(lines, lineIndex, Line, nl);
-        vectorSet(&nl->from, l->to.x, l->to.y);
-        vectorSet(&nl->to, l->to.x, l->to.y);
-        vectorSet(&nl->vel, l->vel.x, l->vel.y);
+        vectorSet(&nl->from, VEC_XY(l->to));
+        vectorSet(&nl->to, VEC_XY(l->to));
+        vectorSet(&nl->vel, VEC_XY(l->vel));
         vectorMul(&nl->vel, 1.0 / vectorLength(&nl->vel));
         rotate(&nl->vel, rnd(-0.7, 0.7));
         vectorMul(&nl->vel, rnd(0.3, 1) * sqrt(difficulty));
@@ -148,7 +148,7 @@ static void update() {
     color = LIGHT_BLACK;
     hasCollision = false;
     thickness = 2;
-    line(l->from.x, l->from.y, l->to.x, l->to.y);
+    line(VEC_XY(l->from), VEC_XY(l->to));
     thickness = 3;
     hasCollision = true;
   }
@@ -179,10 +179,10 @@ static void update() {
         continue;
       }
     }
-    bool *c = character("a", s->pos.x, s->pos.y).isColliding.character;
+    bool *c = character("a", VEC_XY(s->pos)).isColliding.character;
     if (c['b'] || c['c']) {
       play(COIN);
-      addScore(multiplier, s->pos.x, s->pos.y);
+      addScore(multiplier, VEC_XY(s->pos));
       multiplier++;
       s->isAlive = false;
     }

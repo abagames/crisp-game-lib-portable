@@ -1,3 +1,4 @@
+/// \cond
 #ifndef CGLP_H
 #define CGLP_H
 
@@ -53,10 +54,7 @@
 #define MAX_CHARACTER_PATTERN_COUNT 26
 #define ASCII_CHARACTER_COUNT 127
 #define MAX_CACHED_CHARACTER_PATTERN_COUNT 128
-
-typedef struct {
-  bool black;
-} RectCollision;
+/// \endcond
 
 typedef struct {
   bool rect[COLOR_COUNT];
@@ -99,6 +97,7 @@ typedef struct {
   int rotation;
 } CharacterOptions;
 
+/// \cond
 EXTERNC int ticks;
 EXTERNC float score;
 EXTERNC float difficulty;
@@ -146,19 +145,24 @@ EXTERNC int currentColorIndex;
 EXTERNC ColorRgb colorRgbs[COLOR_COUNT];
 EXTERNC int getHashFromString(char *str);
 
-// initGame() should be called at game initialization time
 EXTERNC void initGame();
-// SetButtonState() and updateFrame() should be called once per frame
 EXTERNC void setButtonState(bool left, bool right, bool up, bool down, bool b,
                             bool a);
 EXTERNC void updateFrame();
+/// \endcond
 
+//! Iterate over an `array` with variable `index`
 #define FOR_EACH(array, index) \
   for (int index = 0; index < sizeof(array) / sizeof(array[0]); index++)
+//! Assign the `index` th item in the `array` to an `item` variable of `type`
 #define ASSIGN_ARRAY_ITEM(array, index, type, item) type *item = &array[index]
+//! Skip (continue) if the member `isAlive` of variable `item` is false.
 #define SKIP_IS_NOT_ALIVE(item) \
   if (!item->isAlive) continue
+//! Iterate `count` times with variable `index`
 #define TIMES(count, index) for (int index = 0; index < count; index++)
+//! Count the number of items in the array for which the `isAlive` member is
+//! true and assigns it to a variable defined as the int variable `counter`
 #define COUNT_IS_ALIVE(array, counter)                           \
   int counter = 0;                                               \
   do {                                                           \
@@ -168,12 +172,14 @@ EXTERNC void updateFrame();
       }                                                          \
     }                                                            \
   } while (0)
+//! Set the `isAlive` member to false for all items in the `array`
 #define INIT_UNALIVED_ARRAY(array)                               \
   do {                                                           \
     for (int i = 0; i < sizeof(array) / sizeof(array[0]); i++) { \
       array[i].isAlive = false;                                  \
     }                                                            \
   } while (0)
+//! Return 1 or -1 randomly
 #define RNDPM() (rndi(0, 2) * 2 - 1)
 
 #include "menu.h"

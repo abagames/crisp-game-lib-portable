@@ -122,8 +122,7 @@ static void update() {
   }
   barrel.pos.x -= barrel.vx * difficulty;
   thickness = 3 + barrel.r * 0.1;
-  arc(barrel.pos.x, barrel.pos.y, barrel.r, barrel.angle,
-      barrel.angle + M_PI * 2);
+  arc(VEC_XY(barrel.pos), barrel.r, barrel.angle, barrel.angle + M_PI * 2);
   barrel.angle -= barrel.vx / barrel.r;
   particle(barrel.pos.x, barrel.pos.y + barrel.r, barrel.r * 0.05,
            barrel.vx * 5, -0.1, 0.2);
@@ -138,7 +137,7 @@ static void update() {
         ASSIGN_ARRAY_ITEM(players, j, Player, ap);
         SKIP_IS_NOT_ALIVE(ap);
         if (i != j && p->isOnFloor &&
-            distanceTo(&p->pos, ap->pos.x, ap->pos.y) < 4) {
+            distanceTo(&p->pos, VEC_XY(ap->pos)) < 4) {
           play(SELECT);
           Player *bp = p;
           for (int k = 0; k < 99; k++) {
@@ -179,7 +178,7 @@ static void update() {
         (p->isOnFloor || (p->underFoot != NULL && p->underFoot->isJumped))) {
       play(JUMP);
       vectorSet(&p->vel, 0, -1.5);
-      particle(p->pos.x, p->pos.y, 10, 2, M_PI_2, 0.5);
+      particle(VEC_XY(p->pos), 10, 2, M_PI_2, 0.5);
       p->isOnFloor = false;
       p->isJumping = true;
       if (p->underFoot != NULL) {
@@ -221,7 +220,7 @@ static void update() {
       }
     }
     char pc[2] = {'a' + (p->ticks / 30) % 2, '\0'};
-    if (character(pc, p->pos.x, p->pos.y).isColliding.rect[BLACK]) {
+    if (character(pc, VEC_XY(p->pos)).isColliding.rect[BLACK]) {
       if (p->onHead != NULL) {
         p->onHead->underFoot = NULL;
         p->onHead->isJumping = true;
@@ -255,7 +254,7 @@ static void update() {
     p->pos.x += p->vel.x;
     p->pos.y += p->vel.y;
     p->vel.y += 0.2;
-    character("c", p->pos.x, p->pos.y);
+    character("c", VEC_XY(p->pos));
     p->isAlive = p->pos.y < 105;
   }
   COUNT_IS_ALIVE(players, playerCount);

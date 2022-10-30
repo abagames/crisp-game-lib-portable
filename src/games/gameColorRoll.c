@@ -75,7 +75,7 @@ static int prevBarsCount;
 static void addLane() {
   play(SELECT);
   float x = rnd(0, 99);
-  float vx = rnd(0.5, 1) * (rndi(0, 2) * 2 - 1) * sqrt(difficulty);
+  float vx = rnd(0.5, 1) * RNDPM() * sqrt(difficulty);
   ASSIGN_ARRAY_ITEM(lanes, laneIndex, Lane, l);
   l->x = x;
   l->vx = vx;

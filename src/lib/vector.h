@@ -1,3 +1,4 @@
+/// \cond
 #ifndef VECTOR_H
 #define VECTOR_H
 
@@ -21,5 +22,9 @@ EXTERNC float angleTo(Vector* vec, float x, float y);
 EXTERNC float distanceTo(Vector* vec, float x, float y);
 EXTERNC float vectorAngle(Vector* vec);
 EXTERNC float vectorLength(Vector* vec);
+/// \endcond
+
+//! Expand 'v' to 'v.x, v.y'
+#define VEC_XY(v) v.x, v.y
 
 #endif

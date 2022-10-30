@@ -58,7 +58,7 @@ static void update() {
     cord.length += (cordLength - cord.length) * 0.1;
   }
   cord.angle += difficulty * 0.05;
-  bar(cord.pin->pos.x, cord.pin->pos.y, cord.length, cord.angle);
+  bar(VEC_XY(cord.pin->pos), cord.length, cord.angle);
   if (cord.pin->pos.y > 98) {
     play(EXPLOSION);
     gameOver();
@@ -68,16 +68,15 @@ static void update() {
     ASSIGN_ARRAY_ITEM(pins, i, Pin, p);
     SKIP_IS_NOT_ALIVE(p);
     p->pos.y += scr;
-    if (box(p->pos.x, p->pos.y, 3, 3).isColliding.rect[BLACK] &&
-        p != cord.pin) {
+    if (box(VEC_XY(p->pos), 3, 3).isColliding.rect[BLACK] && p != cord.pin) {
       nextPin = p;
     }
     p->isAlive = p->pos.y <= 102;
   }
   if (nextPin != NULL) {
     play(POWER_UP);
-    addScore(ceil(distanceTo(&cord.pin->pos, nextPin->pos.x, nextPin->pos.y)),
-             nextPin->pos.x, nextPin->pos.y);
+    addScore(ceil(distanceTo(&cord.pin->pos, VEC_XY(nextPin->pos))),
+             VEC_XY(nextPin->pos));
     cord.pin = nextPin;
     cord.length = cordLength;
   }

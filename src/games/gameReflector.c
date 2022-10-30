@@ -116,12 +116,12 @@ static void update() {
   }
   color = BLACK;
   char uc[2] = {'a' + (int)(ticks / 15) % 2, '\0'};
-  character(uc, ufo.pos.x, ufo.pos.y);
+  character(uc, VEC_XY(ufo.pos));
   color = BLUE;
   Vector up;
-  addWithAngle(vectorSet(&up, ufo.pos.x, ufo.pos.y), ufo.angle + M_PI / 2, 6);
+  addWithAngle(vectorSet(&up, VEC_XY(ufo.pos)), ufo.angle + M_PI / 2, 6);
   thickness = 3 + ufo.power * 3;
-  bar(up.x, up.y, 9 - ufo.power * 9, ufo.angle);
+  bar(VEC_XY(up), 9 - ufo.power * 9, ufo.angle);
   thickness = 3;
   COUNT_IS_ALIVE(tanks, tc);
   if (tc == 0) {
@@ -154,7 +154,7 @@ static void update() {
     SKIP_IS_NOT_ALIVE(e);
     e->ticks--;
     float r = e->radius * sin(e->ticks / e->duration * M_PI);
-    arc(e->pos.x, e->pos.y, r, 0, M_PI * 2);
+    arc(VEC_XY(e->pos), r, 0, M_PI * 2);
     e->isAlive = e->ticks >= 0;
   }
   color = BLACK;
@@ -164,7 +164,7 @@ static void update() {
     ASSIGN_ARRAY_ITEM(tanks, i, Tank, t);
     SKIP_IS_NOT_ALIVE(t);
     t->pos.x += t->vx * t->speed;
-    float ta = angleTo(&t->pos, ufo.pos.x, ufo.pos.y);
+    float ta = angleTo(&t->pos, VEC_XY(ufo.pos));
     if (fabsf(ta) < t->angleVel) {
       t->angle = ta;
     } else if (ta < t->angle) {
@@ -172,23 +172,22 @@ static void update() {
     } else {
       t->angle += t->angleVel;
     }
-    bar(t->pos.x, t->pos.y, 3, t->angle);
+    bar(VEC_XY(t->pos), 3, t->angle);
     char tc[2] = {'c' + (int)(ticks / 25) % 2, '\n'};
     characterOptions.isMirrorX = t->vx < 0;
-    if (character(tc, t->pos.x, t->pos.y).isColliding.rect[LIGHT_RED]) {
+    if (character(tc, VEC_XY(t->pos)).isColliding.rect[LIGHT_RED]) {
       play(POWER_UP);
-      addScore(multiplier, t->pos.x, t->pos.y);
+      addScore(multiplier, VEC_XY(t->pos));
       multiplier++;
-      particle(t->pos.x, t->pos.y, 16, 1, 0, M_PI * 2);
+      particle(VEC_XY(t->pos), 16, 1, 0, M_PI * 2);
       t->isAlive = false;
       continue;
-      ;
     }
     t->fireTicks--;
     if (t->fireTicks < 0) {
       play(LASER);
       ASSIGN_ARRAY_ITEM(bullets, bulletIndex, Bullet, b);
-      vectorSet(&b->pos, t->pos.x, t->pos.y);
+      vectorSet(&b->pos, VEC_XY(t->pos));
       rotate(vectorSet(&b->vel, t->fireSpeed, 0), t->angle);
       b->isAlive = true;
       bulletIndex = wrap(bulletIndex + 1, 0, REFLECTOR_MAX_BULLET_COUNT);
@@ -201,12 +200,12 @@ static void update() {
   FOR_EACH(bullets, i) {
     ASSIGN_ARRAY_ITEM(bullets, i, Bullet, b);
     SKIP_IS_NOT_ALIVE(b);
-    vectorAdd(&b->pos, b->vel.x, b->vel.y);
-    Collisions c = bar(b->pos.x, b->pos.y, 4, vectorAngle(&b->vel)).isColliding;
+    vectorAdd(&b->pos, VEC_XY(b->vel));
+    Collisions c = bar(VEC_XY(b->pos), 4, vectorAngle(&b->vel)).isColliding;
     if (b->vel.y < 0) {
       if (c.rect[BLUE]) {
         play(COIN);
-        particle(b->pos.x, b->pos.y, 9, 1 + ufo.power * 2, ufo.angle + M_PI / 2,
+        particle(VEC_XY(b->pos), 9, 1 + ufo.power * 2, ufo.angle + M_PI / 2,
                  M_PI / 8);
         float ra = vectorAngle(&b->vel) - ufo.angle;
         float a = vectorAngle(&b->vel);
@@ -228,7 +227,7 @@ static void update() {
       float radius = s * s;
       float duration = sqrt(radius) * 9;
       ASSIGN_ARRAY_ITEM(explosions, explosionIndex, Explosion, e);
-      vectorSet(&e->pos, b->pos.x, b->pos.y);
+      vectorSet(&e->pos, VEC_XY(b->pos));
       e->radius = radius;
       e->ticks = e->duration = duration;
       e->isAlive = true;

@@ -80,9 +80,7 @@ static void update() {
   if (nextSpikeDist < 0) {
     ASSIGN_ARRAY_ITEM(spikes, spikeIndex, Spike, s);
     vectorSet(&s->pos, -9, rnd(10, 80));
-    s->vy = rnd(0, 1) < 0.2
-                ? rnd(1, difficulty) * (rnd(0, 1) < 0.5 ? -1 : 1) * 0.3
-                : 0;
+    s->vy = rnd(0, 1) < 0.2 ? rnd(1, difficulty) * RNDPM() * 0.3 : 0;
     s->isAlive = true;
     nextSpikeDist += rnd(9, 49);
     spikeIndex = wrap(spikeIndex + 1, 0, BALL_TOUR_MAX_SPIKE_COUNT);
@@ -108,7 +106,7 @@ static void update() {
   }
   player.vx = (input.isPressed ? 1 : 0.1) * difficulty;
   char pc[2] = {'a' + (int)(player.ticks / 50) % 2, '\0'};
-  character(pc, player.pos.x, player.pos.y);
+  character(pc, VEC_XY(player.pos));
   color = RED;
   if (character("c", player.pos.x, player.pos.y - 6).isColliding.text['*']) {
     play(EXPLOSION);
@@ -119,9 +117,9 @@ static void update() {
     ASSIGN_ARRAY_ITEM(balls, i, Ball, b);
     SKIP_IS_NOT_ALIVE(b);
     b->pos.x += player.vx;
-    bool *c = character("c", b->pos.x, b->pos.y).isColliding.character;
+    bool *c = character("c", VEC_XY(b->pos)).isColliding.character;
     if (c['a'] || c['b'] || c['c']) {
-      addScore((int)multiplier, player.pos.x, player.pos.y);
+      addScore((int)multiplier, VEC_XY(player.pos));
       multiplier += 10;
       play(SELECT);
       b->isAlive = false;
@@ -134,7 +132,7 @@ static void update() {
     Vector p;
     vectorSet(&p, -3, rnd(20, 70));
     color = TRANSPARENT;
-    if (character("c", p.x, p.y).isColliding.text['*']) {
+    if (character("c", VEC_XY(p)).isColliding.text['*']) {
       nextBallDist += 9;
     } else {
       ASSIGN_ARRAY_ITEM(balls, ballIndex, Ball, b);

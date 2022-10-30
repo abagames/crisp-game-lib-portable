@@ -21,7 +21,10 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 - [Sample codes](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games)
 
-- [Reference](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/cglp_8c.html)
+- Reference
+  - [Functions and variables](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/cglp_8c.html)
+  - [Structs and macros](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/cglp_8h.html)
+  - [2d vector functions](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/vector_8c.html) ([macros](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/vector_8h.html))
 
 ## How to write your own game
 

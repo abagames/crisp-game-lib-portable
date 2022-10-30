@@ -57,7 +57,7 @@ static void update() {
     vectorSet(&startPos, 5, 20);
     TIMES(CAST_N_NODES_COUNT, i) {
       Node *n = &nodes[i];
-      vectorSet(&n->pos, startPos.x, startPos.y);
+      vectorSet(&n->pos, VEC_XY(startPos));
       vectorSet(&n->vel, 0, 0);
     }
     TIMES(CAST_N_NODES_COUNT - 1, i) { nodes[i + 1].nextNode = &nodes[i]; }
@@ -76,7 +76,7 @@ static void update() {
   color = LIGHT_BLUE;
   rect(0, waterY, 150, 3);
   color = BLACK;
-  character("a", nodes[0].pos.x, nodes[0].pos.y);
+  character("a", VEC_XY(nodes[0].pos));
   if (nodeState != 3 && waterY < startPos.y - 4) {
     play(EXPLOSION);
     gameOver();
@@ -94,8 +94,8 @@ static void update() {
     throwPower += 0.05 * sqrt(difficulty);
     float a = 0.1 - throwPower * 0.2;
     Vector p;
-    addWithAngle(vectorSet(&p, startPos.x, startPos.y), a, throwPower * 5 + 3);
-    line(startPos.x, startPos.y, p.x, p.y);
+    addWithAngle(vectorSet(&p, VEC_XY(startPos)), a, throwPower * 5 + 3);
+    line(VEC_XY(startPos), VEC_XY(p));
     if (input.isJustReleased || throwPower > 3) {
       play(JUMP);
       throwPower = clamp(throwPower, 1, 3);
@@ -120,16 +120,15 @@ static void update() {
         n->vel.y += (n->pos.y < waterY ? 0.05 : 0.01) * difficulty;
         vectorMul(&n->vel, 0.99);
       } else {
-        if (!line(n->nextNode->pos.x, n->nextNode->pos.y, n->pos.x, n->pos.y)
+        if (!line(VEC_XY(n->nextNode->pos), VEC_XY(n->pos))
                  .isColliding.rect[LIGHT_YELLOW]) {
-          float d = distanceTo(&n->pos, n->nextNode->pos.x, n->nextNode->pos.y);
+          float d = distanceTo(&n->pos, VEC_XY(n->nextNode->pos));
           if (d > nodeDist) {
-            float a = angleTo(&n->nextNode->pos, n->pos.x, n->pos.y);
-            addWithAngle(
-                vectorSet(&n->pos, n->nextNode->pos.x, n->nextNode->pos.y), a,
-                nodeDist);
+            float a = angleTo(&n->nextNode->pos, VEC_XY(n->pos));
+            addWithAngle(vectorSet(&n->pos, VEC_XY(n->nextNode->pos)), a,
+                         nodeDist);
           }
-          vectorAdd(&n->pos, n->vel.x, n->vel.y);
+          vectorAdd(&n->pos, VEC_XY(n->vel));
           n->vel.y += (n->pos.y < waterY ? 0.005 : 0.001) * difficulty;
           vectorMul(&n->vel, 0.99);
         }
@@ -144,18 +143,17 @@ static void update() {
     FOR_EACH(nodes, i) {
       ASSIGN_ARRAY_ITEM(nodes, i, Node, n);
       vectorSet(&n->vel, 0, 0);
-      if (distanceTo(&n->pos, startPos.x, startPos.y) > 1 &&
-          n->pos.x > startPos.x) {
-        float a = angleTo(&n->pos, startPos.x, startPos.y);
+      if (distanceTo(&n->pos, VEC_XY(startPos)) > 1 && n->pos.x > startPos.x) {
+        float a = angleTo(&n->pos, VEC_XY(startPos));
         addWithAngle(&n->pos, a, sqrt(difficulty) * 2);
       } else {
-        vectorSet(&n->pos, startPos.x, startPos.y);
+        vectorSet(&n->pos, VEC_XY(startPos));
         if (i == 0) {
           nodeState = 0;
         }
       }
       if (i > 0) {
-        line(n->nextNode->pos.x, n->nextNode->pos.y, n->pos.x, n->pos.y);
+        line(VEC_XY(n->nextNode->pos), VEC_XY(n->pos));
       }
     }
   }
@@ -181,7 +179,7 @@ static void update() {
       vectorAdd(vectorSet(&p, cp.x, cp.y), rnd(0, 20), rnd(0, 9) * RNDPM());
       p.x = clamp(p.x, 153, 180);
       p.y = clamp(p.y, waterY + 4, 96);
-      vectorSet(&f->pos, p.x, p.y);
+      vectorSet(&f->pos, VEC_XY(p));
       vectorSet(&f->vel, vx, 0);
       f->type = type;
       f->isAlive = true;
@@ -194,10 +192,10 @@ static void update() {
     SKIP_IS_NOT_ALIVE(f);
     color = f->type == 0 ? RED : BLUE;
     characterOptions.isMirrorX = f->vel.x < 0;
-    Collisions c = character("b", f->pos.x, f->pos.y).isColliding;
+    Collisions c = character("b", VEC_XY(f->pos)).isColliding;
     if (c.rect[BLACK] || c.character['a']) {
       if (nodeState == 3) {
-        float a = angleTo(&f->pos, startPos.x, startPos.y);
+        float a = angleTo(&f->pos, VEC_XY(startPos));
         addWithAngle(&f->pos, a, sqrt(difficulty) * 2);
         f->pos.y -= difficulty * 0.3;
         if (f->pos.x < startPos.x + 9) {
@@ -225,7 +223,7 @@ static void update() {
     } else {
       f->vel.y = 0;
     }
-    vectorAdd(&f->pos, f->vel.x, f->vel.y);
+    vectorAdd(&f->pos, VEC_XY(f->vel));
     f->vel.x += rnd(0, sqrt(difficulty)) * RNDPM() * 0.01;
     if (c.rect[LIGHT_YELLOW] && f->vel.x < 0) {
       f->vel.x *= -1;
