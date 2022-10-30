@@ -23,6 +23,27 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 - [Reference](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/cglp_8c.html)
 
+## How to write your own game
+
+1. Copy [game_Template.c](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/games/game_Template.c) to `game[your game name].c`
+
+1. Comment out other games in [menuGameList.c](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/lib/menuGameList.c) and add `addGame[your game name]()`
+
+```
+void addGames() {
+  /*addGameThunder();
+  ...(snip)...
+  addGameReflector();*/
+  addGame[your game name]();
+}
+```
+
+1. Write your own game in `game[your game name].c` and rename `void addGame_Template() {` to `void addGame[your game name]() {`
+
+1. [Build for browser](##Browser) and debug
+
+1. Once the game is complete, revert other games that were commented out in [menuGameList.c](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/lib/menuGameList.c) and build it for other devices
+
 ## Build for [target device]
 
 ### M5StickCPlus, M5Stack, PyBadge
