@@ -30,9 +30,13 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 1. Copy [game_Template.c](https://raw.githubusercontent.com/abagames/crisp-game-lib-portable/main/src/games/game_Template.c) to `game[your game name].c`
 
-1. Comment out other games in [menuGameList.c](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/lib/menuGameList.c) and add `addGame[your game name]()`
+1. Comment out other games in [menuGameList.c](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/lib/menuGameList.c) and add `void addGame[your game name]();` and `addGame[your game name]()`
 
    ```
+   ...(snip)...
+   void addGameReflector();
+   void addGame[your game name]();
+
    void addGames() {
      /*addGameThunder();
      ...(snip)...
