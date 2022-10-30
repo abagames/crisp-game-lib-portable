@@ -14,3 +14,7 @@ static void update() {
   if (!ticks) {
   }
 }
+
+void addGame_Template() {
+  addGame(title, description, characters, charactersCount, options, update);
+}
