@@ -995,6 +995,7 @@ void restartGame(int gameIndex) {
 EMSCRIPTEN_KEEPALIVE
 void initGame() {
   initInput();
+  addMenu();
   addGames();
   if (gameCount == 2) {
     restartGame(1);

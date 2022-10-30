@@ -49,29 +49,9 @@ void addGame(char *title, char *description,
 
 Game getGame(int index) { return games[index]; }
 
-static void addMenu() {
+void addMenu() {
   char c[][CHARACTER_WIDTH][CHARACTER_HEIGHT + 1] = {};
   Options o = {
       .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 0, .isDarkColor = false};
   addGame("", "", c, 0, o, update);
-}
-
-void addGameThunder();
-void addGameSurvivor();
-void addGameBallTour();
-void addGameColorRoll();
-void addGamePinCLimb();
-void addGameCastN();
-void addGameReflector();
-
-void addGames() {
-  addMenu();
-  // Add games to menu
-  addGameThunder();
-  addGameSurvivor();
-  addGameBallTour();
-  addGameColorRoll();
-  addGamePinCLimb();
-  addGameCastN();
-  addGameReflector();
 }

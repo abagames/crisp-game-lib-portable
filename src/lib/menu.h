@@ -24,6 +24,7 @@ EXTERNC void addGame(char *title, char *description,
                      int charactersCount, Options options,
                      void (*update)(void));
 EXTERNC Game getGame(int index);
+EXTERNC void addMenu();
 EXTERNC void addGames();
 
 #endif
