@@ -1,8 +1,3 @@
-#include <math.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-
 #include "cglp.h"
 
 static char *title = "BALL TOUR";

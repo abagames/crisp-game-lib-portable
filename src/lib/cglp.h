@@ -7,7 +7,10 @@
 #define EXTERNC extern
 #endif
 
+#include <math.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
 
 #include "machineDependent.h"
 #include "vector.h"
@@ -173,6 +176,6 @@ EXTERNC void updateFrame();
   } while (0)
 #define RNDPM (rndi(0, 2) * 2 - 1)
 
-#endif
-
 #include "menu.h"
+
+#endif
