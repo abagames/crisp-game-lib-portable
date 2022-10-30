@@ -178,7 +178,7 @@ static void update() {
     TIMES(c, i) {
       ASSIGN_ARRAY_ITEM(fishes, fishIndex, Fish, f);
       Vector p;
-      vectorAdd(vectorSet(&p, cp.x, cp.y), rnd(0, 20), rnd(0, 9) * RNDPM);
+      vectorAdd(vectorSet(&p, cp.x, cp.y), rnd(0, 20), rnd(0, 9) * RNDPM());
       p.x = clamp(p.x, 153, 180);
       p.y = clamp(p.y, waterY + 4, 96);
       vectorSet(&f->pos, p.x, p.y);
@@ -226,7 +226,7 @@ static void update() {
       f->vel.y = 0;
     }
     vectorAdd(&f->pos, f->vel.x, f->vel.y);
-    f->vel.x += rnd(0, sqrt(difficulty)) * RNDPM * 0.01;
+    f->vel.x += rnd(0, sqrt(difficulty)) * RNDPM() * 0.01;
     if (c.rect[LIGHT_YELLOW] && f->vel.x < 0) {
       f->vel.x *= -1;
     }

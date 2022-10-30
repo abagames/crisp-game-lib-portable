@@ -130,7 +130,7 @@ static void update() {
   nextTankTicks--;
   if (nextTankTicks < 0) {
     ASSIGN_ARRAY_ITEM(tanks, tankIndex, Tank, t);
-    float vx = RNDPM;
+    float vx = RNDPM();
     float fireInterval = rnd(200, 300) / difficulty;
     float av = rnd(1, 5);
     vectorSet(&t->pos, vx > 0 ? -3 : 103, 87);
