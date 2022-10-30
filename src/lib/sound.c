@@ -54,7 +54,7 @@ static void addNotes(Note *ns, int count, int when, int from, int to,
   }
 }
 
-static void coin(Note *ns) {
+static void coinSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(4, 8);
@@ -71,7 +71,7 @@ static void coin(Note *ns) {
   ns[i].freq = -1;
 }
 
-static void laser(Note *ns) {
+static void laserSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(9, 19);
@@ -80,7 +80,7 @@ static void laser(Note *ns) {
   ns[i].freq = -1;
 }
 
-static void explosion(Note *ns) {
+static void explosionSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(5, 12);
@@ -95,7 +95,7 @@ static void explosion(Note *ns) {
   ns[i].freq = -1;
 }
 
-static void powerUp(Note *ns) {
+static void powerUpSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 5);
@@ -117,7 +117,7 @@ static void powerUp(Note *ns) {
   ns[i].freq = -1;
 }
 
-static void hit(Note *ns) {
+static void hitSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(5, 9);
@@ -127,7 +127,7 @@ static void hit(Note *ns) {
   ns[i].freq = -1;
 }
 
-static void jump(Note *ns) {
+static void jumpSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 5);
@@ -142,7 +142,7 @@ static void jump(Note *ns) {
   ns[i].freq = -1;
 }
 
-static void select(Note *ns) {
+static void selectSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 4);
@@ -176,7 +176,7 @@ static void randomSe(Note *ns) {
   ns[i].freq = -1;
 }
 
-static void click(Note *ns) {
+static void clickSe(Note *ns) {
   int i = 0;
   int w = 0;
   int d = _rndi(2, 6);
@@ -194,15 +194,15 @@ static void click(Note *ns) {
 }
 
 static void generateSoundEffect() {
-  coin(soundEffects[COIN]);
-  laser(soundEffects[LASER]);
-  explosion(soundEffects[EXPLOSION]);
-  powerUp(soundEffects[POWER_UP]);
-  hit(soundEffects[HIT]);
-  jump(soundEffects[JUMP]);
-  select(soundEffects[SELECT]);
+  coinSe(soundEffects[COIN]);
+  laserSe(soundEffects[LASER]);
+  explosionSe(soundEffects[EXPLOSION]);
+  powerUpSe(soundEffects[POWER_UP]);
+  hitSe(soundEffects[HIT]);
+  jumpSe(soundEffects[JUMP]);
+  selectSe(soundEffects[SELECT]);
   randomSe(soundEffects[RANDOM]);
-  click(soundEffects[CLICK]);
+  clickSe(soundEffects[CLICK]);
 }
 
 void playSoundEffect(int type) {
