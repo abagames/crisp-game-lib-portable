@@ -5,6 +5,7 @@ void addGameColorRoll();
 void addGamePinCLimb();
 void addGameCastN();
 void addGameReflector();
+void addGameFroooog();
 
 void addGames() {
   addGameThunder();
@@ -14,4 +15,5 @@ void addGames() {
   addGamePinCLimb();
   addGameCastN();
   addGameReflector();
+  addGameFroooog();
 }
