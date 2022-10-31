@@ -4,8 +4,15 @@ static char *title = "PIN CLIMB";
 static char *description = "[Hold] Stretch";
 
 #define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
-CS = {};
-static int charactersCount = 0;
+CS = {{
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+}};
+static int charactersCount = 1;
 
 static Options options = {
     .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 1, .isDarkColor = false};

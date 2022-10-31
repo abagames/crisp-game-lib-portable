@@ -178,7 +178,7 @@ static void update() {
         (p->isOnFloor || (p->underFoot != NULL && p->underFoot->isJumped))) {
       play(JUMP);
       vectorSet(&p->vel, 0, -1.5);
-      particle(VEC_XY(p->pos), 10, 2, M_PI_2, 0.5);
+      particle(VEC_XY(p->pos), 10, 2, M_PI / 2, 0.5);
       p->isOnFloor = false;
       p->isJumping = true;
       if (p->underFoot != NULL) {

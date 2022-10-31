@@ -50,8 +50,7 @@ void addGame(char *title, char *description,
 Game getGame(int index) { return games[index]; }
 
 void addMenu() {
-  char c[][CHARACTER_WIDTH][CHARACTER_HEIGHT + 1] = {};
   Options o = {
       .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 0, .isDarkColor = false};
-  addGame("", "", c, 0, o, update);
+  addGame("", "", NULL, 0, o, update);
 }

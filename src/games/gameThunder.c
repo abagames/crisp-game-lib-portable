@@ -78,7 +78,7 @@ static void update() {
     vectorSet(&l->from, rnd(30, 70), 0);
     vectorSet(&l->to, VEC_XY(l->from));
     vectorSet(&l->vel, 0.5 * difficulty, 0);
-    rotate(&l->vel, M_PI_2);
+    rotate(&l->vel, M_PI / 2);
     l->ticks = ceilf(30.0f / difficulty);
     l->prevLine = NULL;
     l->isActive = false;

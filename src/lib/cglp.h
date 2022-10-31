@@ -54,6 +54,10 @@
 #define MAX_CHARACTER_PATTERN_COUNT 26
 #define ASCII_CHARACTER_COUNT 127
 #define MAX_CACHED_CHARACTER_PATTERN_COUNT 128
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 /// \endcond
 
 typedef struct {

@@ -288,7 +288,7 @@ static void generateChordProgression(int midiNotes[][4], int len) {
 }
 
 static void reversePattern(bool pattern[], int interval, int len, int freq) {
-  bool pt[interval];
+  bool pt[MAX_BGM_NOTE_LENGTH];
   for (int i = 0; i < interval; i++) {
     pt[i] = false;
   }
@@ -315,11 +315,11 @@ static void createRandomPattern(bool pattern[], int len, int freq) {
 
 static void generateBgm() {
   int noteLength = bgmNoteLength;
-  int chordMidiNotes[noteLength][4];
+  int chordMidiNotes[MAX_BGM_NOTE_LENGTH][4];
   generateChordProgression(chordMidiNotes, noteLength);
-  bool pattern[noteLength];
+  bool pattern[MAX_BGM_NOTE_LENGTH];
   createRandomPattern(pattern, noteLength, 1);
-  bool continuingPattern[noteLength];
+  bool continuingPattern[MAX_BGM_NOTE_LENGTH];
   for (int i = 0; i < noteLength; i++) {
     continuingPattern[i] = _rnd(0, 1) < 0.8;
   }
