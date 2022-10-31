@@ -591,9 +591,6 @@ static void updateScoreBoards() {
 void addScore(float value, float x, float y) {
   score += value;
   int v = (int)value;
-  if (v == 0) {
-    return;
-  }
   ScoreBoard *sb = &scoreBoards[scoreBoardsIndex];
   sprintf(sb->str, v > 0 ? "+%d" : "%d", v);
   int l = strlen(sb->str);
@@ -971,6 +968,7 @@ static void resetGame(int gameIndex) {
   } else {
     initInGame();
   }
+  ticks = 0;
 }
 
 //! Go to the game selection menu screen.
