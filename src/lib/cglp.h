@@ -132,6 +132,7 @@ EXTERNC void particle(float x, float y, float count, float speed, float angle,
 
 EXTERNC float clamp(float v, float low, float high);
 EXTERNC float wrap(float v, float low, float high);
+EXTERNC char *intToChar(int v);
 EXTERNC void consoleLog(char *format, ...);
 EXTERNC void enableSound();
 EXTERNC void disableSound();

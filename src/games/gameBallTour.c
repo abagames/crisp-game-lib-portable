@@ -144,9 +144,8 @@ static void update() {
   }
   multiplier = clamp(multiplier - 0.02 * difficulty, 1, 999);
   color = BLACK;
-  char mm[9];
-  sprintf(mm, "x%d", (int)multiplier);
-  text(mm, 3, 9);
+  text("x", 3, 9);
+  text(intToChar((int)multiplier), 9, 9);
 }
 
 void addGameBallTour() {

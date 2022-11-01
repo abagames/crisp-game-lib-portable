@@ -773,6 +773,14 @@ float wrap(float v, float low, float high) {
   }
 }
 
+static char numberCharBuffer[99];
+
+//! Convert a value of type `int` to a value of type `char*`.
+char *intToChar(int v) {
+  snprintf(numberCharBuffer, 98, "%d", v);
+  return numberCharBuffer;
+}
+
 /// \cond
 int getHashFromString(char *str) {
   int hash = 0;
