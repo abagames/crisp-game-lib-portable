@@ -40,7 +40,7 @@ void addParticle(float x, float y, float count, float speed, float angle,
         angle + getRandom(&particleRandom, 0, angleWidth) - angleWidth / 2;
     Particle *p = &particles[particleIndex];
     vectorSet(&p->pos, x, y);
-    rotate(vectorSet(&p->vel, speed * getRandom(&particleRandom, 0.5, 1), 0),
+    rotate(vectorSet(&p->vel, speed * getRandom(&particleRandom, 0.5f, 1), 0),
            a);
     p->ticks =
         clamp(getRandom(&particleRandom, 10, 20) + sqrt(fabsf(speed)), 10, 60);
@@ -59,7 +59,7 @@ void updateParticles() {
       continue;
     }
     vectorAdd(&p->pos, p->vel.x, p->vel.y);
-    vectorMul(&p->vel, 0.98);
+    vectorMul(&p->vel, 0.98f);
     ColorRgb *rgb = &colorRgbs[p->colorIndex];
     md_drawRect(p->pos.x, p->pos.y, 1, 1, rgb->r, rgb->g, rgb->b);
     p->ticks--;

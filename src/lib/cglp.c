@@ -204,9 +204,9 @@ static void drawLine(float x, float y, float ox, float oy,
   } else if (t > 10) {
     t = 10;
   }
-  float lx = fabs(ox);
-  float ly = fabs(oy);
-  float rn = ceil(lx > ly ? lx / t : ly / t);
+  float lx = fabsf(ox);
+  float ly = fabsf(oy);
+  float rn = ceilf(lx > ly ? lx / t : ly / t);
   if (rn < 3) {
     rn = 3;
   } else if (rn > 99) {
@@ -259,7 +259,7 @@ Collision arc(float centerX, float centerY, float radius, float angleFrom,
     af = angleFrom;
     ao = angleTo - angleFrom;
   }
-  if (ao < 0.01) {
+  if (ao < 0.01f) {
     return hitCollision;
   }
   if (ao < 0) {
@@ -267,7 +267,7 @@ Collision arc(float centerX, float centerY, float radius, float angleFrom,
   } else if (ao > M_PI * 2) {
     ao = M_PI * 2;
   }
-  int lc = ceil(ao * sqrt(radius * 0.25));
+  int lc = ceilf(ao * sqrtf(radius * 0.25f));
   if (lc < 1) {
     lc = 1;
   } else if (lc > 36) {
@@ -275,14 +275,14 @@ Collision arc(float centerX, float centerY, float radius, float angleFrom,
   }
   float ai = ao / lc;
   float a = af;
-  float p1x = radius * cos(a) + centerX;
-  float p1y = radius * sin(a) + centerY;
+  float p1x = radius * cosf(a) + centerX;
+  float p1y = radius * sinf(a) + centerY;
   float p2x, p2y;
   float ox, oy;
   for (int i = 0; i < lc; i++) {
     a += ai;
-    p2x = radius * cos(a) + centerX;
-    p2y = radius * sin(a) + centerY;
+    p2x = radius * cosf(a) + centerX;
+    p2y = radius * sinf(a) + centerY;
     ox = p2x - p1x;
     oy = p2y - p1y;
     drawLine(p1x, p1y, ox, oy, &hitCollision);
@@ -487,9 +487,9 @@ static ColorRgb getRgb(int index, bool isDarkColor) {
   cr.g = (v & 0xff00) >> 8;
   cr.b = v & 0xff;
   if (index >= LIGHT_RED) {
-    cr.r = isDarkColor ? cr.r * 0.5 : whiteRgb.r - (whiteRgb.r - cr.r) * 0.5;
-    cr.g = isDarkColor ? cr.g * 0.5 : whiteRgb.g - (whiteRgb.g - cr.g) * 0.5;
-    cr.b = isDarkColor ? cr.b * 0.5 : whiteRgb.b - (whiteRgb.b - cr.b) * 0.5;
+    cr.r = isDarkColor ? cr.r / 2 : whiteRgb.r - (whiteRgb.r - cr.r) / 2;
+    cr.g = isDarkColor ? cr.g / 2 : whiteRgb.g - (whiteRgb.g - cr.g) / 2;
+    cr.b = isDarkColor ? cr.b / 2 : whiteRgb.b - (whiteRgb.b - cr.b) / 2;
   }
   if (index == WHITE) {
     whiteRgb = cr;
@@ -589,7 +589,7 @@ static void updateScoreBoards() {
     if (sb->ticks > 0) {
       drawCharacters(sb->str, sb->pos.x, sb->pos.y, false, true);
       sb->pos.y += sb->vy;
-      sb->vy *= 0.9;
+      sb->vy *= 0.9f;
       sb->ticks--;
     }
   }
@@ -766,16 +766,18 @@ void consoleLog(char *format, ...) {
 }
 
 //! Clamp a value to [low, high].
-float clamp(float v, float low, float high) { return fmax(low, fmin(v, high)); }
+float clamp(float v, float low, float high) {
+  return fmaxf(low, fminf(v, high));
+}
 
 //! Wrap a value to [low, high).
 float wrap(float v, float low, float high) {
   float w = high - low;
   float o = v - low;
   if (o >= 0) {
-    return fmod(o, w) + low;
+    return fmodf(o, w) + low;
   } else {
-    float wv = w + fmod(o, w) + low;
+    float wv = w + fmodf(o, w) + low;
     if (wv >= high) {
       wv -= w;
     }
@@ -810,7 +812,7 @@ static Random gameSeedRandom;
 static void resetDrawState() {
   resetColorAndCharacterOptions();
   thickness = 3;
-  barCenterPosRatio = 0.5;
+  barCenterPosRatio = 0.5f;
   hasCollision = true;
 }
 
@@ -907,11 +909,11 @@ static void updateTitle() {
   saveCurrentColorAndCharacterOptions();
   drawCharacters(title,
                  (options.viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
-                 options.viewSizeY * 0.25, false, true);
+                 options.viewSizeY * 0.25f, false, true);
   if (ticks > 30) {
     for (int i = 0; i < descriptionLineCount; i++) {
       drawCharacters(descriptions[i], descriptionX,
-                     options.viewSizeY * 0.55 + i * CHARACTER_HEIGHT, false,
+                     options.viewSizeY * 0.55f + i * CHARACTER_HEIGHT, false,
                      true);
     }
   }
@@ -926,7 +928,7 @@ static void drawGameOver() {
   drawCharacters(
       gameOverText,
       (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
-      options.viewSizeY * 0.5, false, true);
+      options.viewSizeY * 0.5f, false, true);
 }
 
 static void initGameOver() {

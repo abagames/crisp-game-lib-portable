@@ -149,7 +149,7 @@ static void selectSe(Note *ns) {
   int f = _rndi(60, 90);
   ns[i].freq = midiNoteToFreq(f);
   ns[i].when = w * BASE_NOTE_DURATION;
-  ns[i].duration = ceil(d * 0.7) * BASE_NOTE_DURATION;
+  ns[i].duration = ceilf(d * 0.7f) * BASE_NOTE_DURATION;
   i++;
   w += d;
   d = _rndi(4, 9);
@@ -182,13 +182,13 @@ static void clickSe(Note *ns) {
   int d = _rndi(2, 6);
   ns[i].freq = midiNoteToFreq(_rndi(65, 80));
   ns[i].when = w * BASE_NOTE_DURATION;
-  ns[i].duration = ceil(d / 2) * BASE_NOTE_DURATION;
+  ns[i].duration = ceilf(d / 2) * BASE_NOTE_DURATION;
   i++;
   w += d;
   d = _rndi(2, 6);
   ns[i].freq = midiNoteToFreq(_rndi(70, 85));
   ns[i].when = w * BASE_NOTE_DURATION;
-  ns[i].duration = ceil(d / 2) * BASE_NOTE_DURATION;
+  ns[i].duration = ceilf(d / 2) * BASE_NOTE_DURATION;
   i++;
   ns[i].freq = -1;
 }
@@ -210,7 +210,7 @@ void playSoundEffect(int type) {
     return;
   }
   float ct = md_getAudioTime();
-  float qt = ceil(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
+  float qt = ceilf(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
   if (qt <= soundEffectPlayedTimes[type]) {
     return;
   }
@@ -229,7 +229,7 @@ static Note bgm[MAX_BGM_NOTE_LENGTH + 1];
 static int bgmNoteLength = 32;
 static float bgmDuration;
 static int bgmIndex;
-static int bgmTime;
+static float bgmTime;
 
 typedef struct {
   int midiNote;
@@ -275,7 +275,7 @@ static void generateChordProgression(int midiNotes[][4], int len) {
       if (i == 0) {
         chordIndex = _rndi(0, 2);
         chord = chords[chordIndex][_rndi(0, 4)];
-      } else if (_rnd(0, 1) < 0.8 - ((i / chordChangeInterval) % 2 * 0.5)) {
+      } else if (_rnd(0, 1) < 0.8f - ((i / chordChangeInterval) % 2 * 0.5f)) {
         chordIndex = nextChordsIndex[chordIndex][_rndi(0, 3)];
         chord = chords[chordIndex][_rndi(0, 4)];
       }
@@ -321,7 +321,7 @@ static void generateBgm() {
   createRandomPattern(pattern, noteLength, 1);
   bool continuingPattern[MAX_BGM_NOTE_LENGTH];
   for (int i = 0; i < noteLength; i++) {
-    continuingPattern[i] = _rnd(0, 1) < 0.8;
+    continuingPattern[i] = _rnd(0, 1) < 0.8f;
   }
   float duration = bgmDuration;
   float when = -duration;
@@ -362,7 +362,7 @@ void initSound(char *title, char *description, int soundSeed) {
   }
   generateBgm();
   float ct = md_getAudioTime();
-  bgmTime = ceil(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
+  bgmTime = ceilf(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
 }
 
 void updateSound() {
@@ -374,7 +374,7 @@ void updateSound() {
   float bt = bgmTime + bn->when;
   if (ct > bt) {
     bgmIndex = 0;
-    bgmTime = ceil(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
+    bgmTime = ceilf(ct / QUANTIZED_DURATION) * QUANTIZED_DURATION;
   } else if (bt < ct + 1.0f / FPS * 2) {
     md_playTone(bn->freq, bn->duration, bt);
     bgmIndex++;
