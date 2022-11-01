@@ -793,19 +793,6 @@ char *intToChar(int v) {
   return numberCharBuffer;
 }
 
-/// \cond
-int getHashFromString(char *str) {
-  int hash = 0;
-  int len = strlen(str);
-  for (int i = 0; i < len; i++) {
-    int chr = str[i];
-    hash = (hash << 5) - hash + chr;
-    hash |= 0;
-  }
-  return hash;
-}
-/// \endcond
-
 // In game
 static Random gameSeedRandom;
 

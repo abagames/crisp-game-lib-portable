@@ -148,7 +148,6 @@ typedef struct {
 
 EXTERNC int currentColorIndex;
 EXTERNC ColorRgb colorRgbs[COLOR_COUNT];
-EXTERNC int getHashFromString(char *str);
 
 EXTERNC void initGame();
 EXTERNC void setButtonState(bool left, bool right, bool up, bool down, bool b,
