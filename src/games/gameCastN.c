@@ -5,22 +5,32 @@ static char *description =
     "[Hold]    Select power\n[Release] Cast\n[Tap]     Pull";
 
 #define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
-CS = {{
-          "      ",
-          "  YYY ",
-          " YyyyY",
-          " YyyyY",
-          " YyyyY",
-          "  YYY ",
-      },
-      {
-          "      ",
-          "  lll ",
-          "l ll l",
-          "llllll",
-          "l llll",
-          "  ll   ",
-      }};
+CS = {
+    {
+        "      ",
+        "  YYY ",
+        " YyyyY",
+        " YyyyY",
+        " YyyyY",
+        "  YYY ",
+    },
+    {
+        "      ",
+        "  lll ",
+        "l ll l",
+        "llllll",
+        "l llll",
+        "  ll   ",
+    },
+    {
+        "      ",
+        "lllll ",
+        "  ll l",
+        "llllll",
+        "l ll  ",
+        "   lll",
+    },
+};
 static int charactersCount = 2;
 
 static Options options = {
@@ -42,7 +52,7 @@ typedef struct {
   int type;
   bool isAlive;
 } Fish;
-#define CAST_N_MAX_FISH_COUNT 64
+#define CAST_N_MAX_FISH_COUNT 80
 static Fish fishes[CAST_N_MAX_FISH_COUNT];
 static int fishIndex;
 static int nextFishTicks;
@@ -192,7 +202,8 @@ static void update() {
     SKIP_IS_NOT_ALIVE(f);
     color = f->type == 0 ? RED : BLUE;
     characterOptions.isMirrorX = f->vel.x < 0;
-    Collisions c = character("b", VEC_XY(f->pos)).isColliding;
+    char fc[2] = {'c' - f->type, '\0'};
+    Collisions c = character(fc, VEC_XY(f->pos)).isColliding;
     if (c.rect[BLACK] || c.character['a']) {
       if (nodeState == 3) {
         float a = angleTo(&f->pos, VEC_XY(startPos));
