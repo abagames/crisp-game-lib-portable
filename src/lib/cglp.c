@@ -372,6 +372,14 @@ static void setColorGrid(
             clamp(rightBottom.y - leftTop.y + 1, 0, CHARACTER_HEIGHT));
 }
 
+static int getHashFromIntegers(int *values, int count) {
+  int hash = 23;
+  for (int i = 0; i < count; i++) {
+    hash = hash * 37 + values[i];
+  }
+  return hash;
+}
+
 static bool isShownTooManyCharacterPatternsMessage = false;
 
 static void drawCharacter(int index, float x, float y, bool _hasCollision,
@@ -380,11 +388,13 @@ static void drawCharacter(int index, float x, float y, bool _hasCollision,
       (!isText && (index < 'a' || index > 'z'))) {
     return;
   }
-  char hashStr[99];
-  snprintf(hashStr, 98, "%d:%d:%d:%d:%d:%d", index, isText, color,
-           characterOptions.isMirrorX, characterOptions.isMirrorY,
-           characterOptions.rotation);
-  int hash = getHashFromString(hashStr);
+  int hashBaseValues[7] = {index,
+                           isText,
+                           color,
+                           characterOptions.isMirrorX,
+                           characterOptions.isMirrorY,
+                           characterOptions.rotation};
+  int hash = getHashFromIntegers(hashBaseValues, 7);
   CharacterPattern *cp = NULL;
   for (int i = 0; i < characterPatternsCount; i++) {
     if (characterPatterns[i].hash == hash) {
