@@ -1,7 +1,12 @@
-#include "random.h"
+#ifdef PLAYDATE_ARM_DEVICE
+#include "pd_api.h"
+extern PlaydateAPI *pd;
+#endif
 
 #include <stdint.h>
 #include <time.h>
+
+#include "random.h"
 
 uint32_t nextRandom(Random *random) {
   uint32_t t = random->x ^ (random->x << 11);
@@ -39,5 +44,9 @@ void setRandomSeed(Random *random, uint32_t w) {
 }
 
 void setRandomSeedWithTime(Random *random) {
+#ifndef PLAYDATE_ARM_DEVICE
   setRandomSeed(random, (unsigned)time(NULL));
+#else
+  setRandomSeed(random, pd->system->getCurrentTimeMilliseconds());
+#endif
 }

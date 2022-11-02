@@ -2,3 +2,8 @@ node_modules/
 .vscode/
 package-lock.json
 build/
+src/cglpPlaydate/build/
+src/cglpPlaydate/build_arm/
+src/cglpPlaydate/crisp-game-lib-portable.pdx/
+src/cglpPlaydate/Source/pdex.bin
+src/cglpPlaydate/Source/pdex.dll

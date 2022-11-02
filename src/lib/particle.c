@@ -43,7 +43,7 @@ void addParticle(float x, float y, float count, float speed, float angle,
     rotate(vectorSet(&p->vel, speed * getRandom(&particleRandom, 0.5f, 1), 0),
            a);
     p->ticks =
-        clamp(getRandom(&particleRandom, 10, 20) + sqrt(fabsf(speed)), 10, 60);
+        clamp(getRandom(&particleRandom, 10, 20) + sqrtf(fabsf(speed)), 10, 60);
     p->colorIndex = color;
     particleIndex++;
     if (particleIndex >= MAX_PARTICLE_COUNT) {

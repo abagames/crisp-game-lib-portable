@@ -282,7 +282,8 @@ static void generateChordProgression(int midiNotes[][4], int len) {
     }
     int pi = chord.isMinor ? 1 : 0;
     for (int j = 0; j < 4; j++) {
-      midiNotes[i][j] = octave * 12 + 12 + chord.midiNote + progression[pi][j];
+      midiNotes[i][j] =
+          octave * 12 + 12 + key + chord.midiNote + progression[pi][j];
     }
   }
 }

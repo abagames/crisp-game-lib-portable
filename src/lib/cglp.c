@@ -5,6 +5,11 @@
 #define EMSCRIPTEN_KEEPALIVE
 #endif
 
+#ifdef PLAYDATE_ARM_DEVICE
+#include "pd_api.h"
+extern PlaydateAPI *pd;
+#endif
+
 #include <math.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -61,6 +66,7 @@ static int state;
 static bool hasTitle;
 static bool isShowingScore;
 static bool isBgmEnabled;
+static int viewSizeX, viewSizeY;
 
 static char *title;
 static char *description;
@@ -149,10 +155,39 @@ static void addRect(bool isAlignCenter, float x, float y, float w, float h,
       drawingHitBoxesIndex++;
     }
   }
-  if (color > TRANSPARENT) {
-    ColorRgb *rgb = &colorRgbs[color];
-    md_drawRect(x, y, w, h, rgb->r, rgb->g, rgb->b);
+  if (color == TRANSPARENT) {
+    return;
   }
+  if (w < 0) {
+    x -= w;
+    w = -w;
+  }
+  if (h < 0) {
+    y -= h;
+    h = -h;
+  }
+  if (x >= viewSizeX || y >= viewSizeY) {
+    return;
+  }
+  if (x < 0) {
+    w += x;
+    x = 0;
+  }
+  if (y < 0) {
+    h += y;
+    y = 0;
+  }
+  if (x + w >= viewSizeX) {
+    w = viewSizeX - x + 1;
+  }
+  if (y + h >= viewSizeY) {
+    h = viewSizeY - y + 1;
+  }
+  if (w < 1 || h < 1) {
+    return;
+  }
+  ColorRgb *rgb = &colorRgbs[color];
+  md_drawRect(x, y, w, h, rgb->r, rgb->g, rgb->b);
 }
 
 static bool isShownTooManyHitBoxesMessage = false;
@@ -416,7 +451,8 @@ static void drawCharacter(int index, float x, float y, bool _hasCollision,
                  cp->grid, color, &cp->hitBox);
     characterPatternsCount++;
   }
-  if (color > TRANSPARENT) {
+  if (color > TRANSPARENT && x > -CHARACTER_WIDTH && x < viewSizeX &&
+      y > -CHARACTER_HEIGHT && y < viewSizeY) {
     md_drawCharacter(cp->grid, x, y, hash);
   }
   if (hasCollision && _hasCollision) {
@@ -601,8 +637,17 @@ static void updateScoreBoards() {
 void addScore(float value, float x, float y) {
   score += value;
   int v = (int)value;
+  if (v > 9999999) {
+    return;
+  }
   ScoreBoard *sb = &scoreBoards[scoreBoardsIndex];
-  sprintf(sb->str, v > 0 ? "+%d" : "%d", v);
+  if (v > 0) {
+    sb->str[0] = '+';
+    sb->str[1] = '\0';
+  } else {
+    sb->str[0] = '\0';
+  }
+  strcat(sb->str, intToChar(v));
   int l = strlen(sb->str);
   sb->pos.x = x - l * CHARACTER_WIDTH / 2;
   sb->pos.y = y - CHARACTER_HEIGHT / 2;
@@ -619,14 +664,14 @@ static void drawScore() {
     return;
   }
   saveCurrentColorAndCharacterOptions();
-  int cc = color;
   color = BLACK;
   char sc[16];
   int s = state == STATE_IN_GAME ? (int)score : prevScore;
-  snprintf(sc, 15, "%d", s);
+  strncpy(sc, intToChar(s), 15);
   drawCharacters(sc, 3, 3, false, true);
-  snprintf(sc, 15, "HI %d", hiScore);
-  drawCharacters(sc, options.viewSizeX - strlen(sc) * 6 + 2, 3, false, true);
+  strcpy(sc, "HI ");
+  strncat(sc, intToChar(hiScore), 15);
+  drawCharacters(sc, viewSizeX - strlen(sc) * 6 + 2, 3, false, true);
   loadCurrentColorAndCharacterOptions();
 }
 
@@ -758,11 +803,15 @@ int rndi(int low, int high) { return getIntRandom(&gameRandom, low, high); }
 //! Print a message to the console (the same arguments as for printf can be
 //! used).
 void consoleLog(char *format, ...) {
+#ifndef PLAYDATE_ARM_DEVICE
   char cc[99];
   va_list args;
   va_start(args, format);
   vsnprintf(cc, 98, format, args);
   md_consoleLog(cc);
+#else
+  md_consoleLog(format);
+#endif
 }
 
 //! Clamp a value to [low, high].
@@ -785,11 +834,22 @@ float wrap(float v, float low, float high) {
   }
 }
 
+#ifndef PLAYDATE_ARM_DEVICE
 static char numberCharBuffer[99];
+#else
+static char *numberCharBuffer = NULL;
+#endif
 
 //! Convert a value of type `int` to a value of type `char*`.
 char *intToChar(int v) {
+#ifndef PLAYDATE_ARM_DEVICE
   snprintf(numberCharBuffer, 98, "%d", v);
+#else
+  if (!numberCharBuffer) {
+    free(numberCharBuffer);
+  }
+  pd->system->formatString(&numberCharBuffer, "%d", v);
+#endif
   return numberCharBuffer;
 }
 
@@ -864,7 +924,7 @@ static void parseDescription() {
     }
     line += ll + 1;
   };
-  descriptionX = (options.viewSizeX - dl * CHARACTER_WIDTH) / 2;
+  descriptionX = (viewSizeX - dl * CHARACTER_WIDTH) / 2;
 }
 
 static void initTitle() {
@@ -894,9 +954,8 @@ static void updateTitle() {
     }
   }
   saveCurrentColorAndCharacterOptions();
-  drawCharacters(title,
-                 (options.viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
-                 options.viewSizeY * 0.25f, false, true);
+  drawCharacters(title, (viewSizeX - strlen(title) * CHARACTER_WIDTH) / 2,
+                 viewSizeY * 0.25f, false, true);
   if (ticks > 30) {
     for (int i = 0; i < descriptionLineCount; i++) {
       drawCharacters(descriptions[i], descriptionX,
@@ -912,10 +971,9 @@ static int gameOverTicks;
 static char *gameOverText = "GAME OVER";
 
 static void drawGameOver() {
-  drawCharacters(
-      gameOverText,
-      (options.viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
-      options.viewSizeY * 0.5f, false, true);
+  drawCharacters(gameOverText,
+                 (viewSizeX - strlen(gameOverText) * CHARACTER_WIDTH) / 2,
+                 viewSizeY * 0.5f, false, true);
 }
 
 static void initGameOver() {
@@ -956,8 +1014,10 @@ static void resetGame(int gameIndex) {
   characters = game.characters;
   charactersCount = game.charactersCount;
   options = game.options;
+  viewSizeX = options.viewSizeX;
+  viewSizeY = options.viewSizeY;
   update = game.update;
-  md_initView(options.viewSizeX, options.viewSizeY);
+  md_initView(viewSizeX, viewSizeY);
   initColor();
   initCharacter();
   initScore();
