@@ -47,7 +47,7 @@ typedef struct {
   float angle;
   float power;
 } Ufo;
-Ufo ufo;
+static Ufo ufo;
 typedef struct {
   Vector pos;
   float vx;
@@ -60,17 +60,17 @@ typedef struct {
   bool isAlive;
 } Tank;
 #define REFLECTOR_MAX_TANK_COUNT 32
-Tank tanks[REFLECTOR_MAX_TANK_COUNT];
-int tankIndex;
-float nextTankTicks;
+static Tank tanks[REFLECTOR_MAX_TANK_COUNT];
+static int tankIndex;
+static float nextTankTicks;
 typedef struct {
   Vector pos;
   Vector vel;
   bool isAlive;
 } Bullet;
 #define REFLECTOR_MAX_BULLET_COUNT 32
-Bullet bullets[REFLECTOR_MAX_BULLET_COUNT];
-int bulletIndex;
+static Bullet bullets[REFLECTOR_MAX_BULLET_COUNT];
+static int bulletIndex;
 typedef struct {
   Vector pos;
   float radius;
@@ -79,9 +79,9 @@ typedef struct {
   bool isAlive;
 } Explosion;
 #define REFLECTOR_MAX_EXPLOSION_COUNT 8
-Explosion explosions[REFLECTOR_MAX_EXPLOSION_COUNT];
-int explosionIndex;
-float multiplier;
+static Explosion explosions[REFLECTOR_MAX_EXPLOSION_COUNT];
+static int explosionIndex;
+static float multiplier;
 
 static void update() {
   if (!ticks) {

@@ -27,9 +27,9 @@ typedef struct {
   bool isAlive;
 } Lane;
 #define FROOOOG_MAX_LANE_COUNT 16
-Lane lanes[FROOOOG_MAX_LANE_COUNT];
-int laneIndex;
-int nextEmptyLaneCount;
+static Lane lanes[FROOOOG_MAX_LANE_COUNT];
+static int laneIndex;
+static int nextEmptyLaneCount;
 typedef struct {
   Vector pos;
   float vx;
@@ -38,9 +38,9 @@ typedef struct {
   bool isAlive;
 } Car;
 #define FROOOOG_MAX_CAR_COUNT 32
-Car cars[FROOOOG_MAX_CAR_COUNT];
-int carIndex;
-float nextLaneY;
+static Car cars[FROOOOG_MAX_CAR_COUNT];
+static int carIndex;
+static float nextLaneY;
 typedef struct {
   float y;
   float py;
@@ -48,7 +48,7 @@ typedef struct {
   bool isSafe;
   int state;
 } Frog;
-Frog frog;
+static Frog frog;
 
 static void addLane(bool isEmpty) {
   nextEmptyLaneCount--;
