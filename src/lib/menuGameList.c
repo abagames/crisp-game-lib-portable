@@ -6,6 +6,7 @@ void addGamePinCLimb();
 void addGameCastN();
 void addGameReflector();
 void addGameFroooog();
+void addGameRWheel();
 
 void addGames() {
   addGameThunder();
@@ -16,4 +17,5 @@ void addGames() {
   addGameCastN();
   addGameReflector();
   addGameFroooog();
+  addGameRWheel();
 }
