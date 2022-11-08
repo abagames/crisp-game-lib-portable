@@ -14,6 +14,10 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 ![screenshot](./docs/screenshotPyBadge.gif)
 
+- [Playdate](https://play.date/) (Experimental)
+
+![screenshot](./docs/screenshotPlaydate.gif)
+
 - Browser
   - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
 
@@ -57,7 +61,7 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 1. Install [LovyanGFX library](https://github.com/lovyan03/LovyanGFX)
 
-1. Create `cglp[target device]/` directory. (e.g. `cglpM5StickCPlus/`)
+1. Create `cglp[target device]/` directory (e.g. `cglpM5StickCPlus/`)
 
 1. Copy `cglp[target device].ino`, [./src/lib/\*](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/lib) and [./src/games/\*](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games) files to the directory
 
@@ -66,6 +70,22 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
    - [cglpPyBadge.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpPyBadge/cglpPyBadge.ino)
 
 1. Verify and upload `cglp[target device].ino` with [Arduino IDE](https://www.arduino.cc/en/software)
+
+### Playdate (Experimental)
+
+Note: Tested on Windows simulator only.
+
+1. Copy [./src/cglpPlaydate](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/cglpPlaydate) directory
+
+1. Create `cglpPlaydate/build` directory
+
+1. Move to `cglpPlaydate/build` directory and `cmake ..`
+
+1. Open `crisp-game-lib-portable.sln` with Visual Studio
+
+1. Build the solution (see [Building for the Simulator using Visual Studio](https://sdk.play.date/1.12.3/Inside%20Playdate%20with%20C.html#_building_for_the_simulator_using_visual_studio))
+
+1. See also [Building for the Playdate using NMake](https://sdk.play.date/1.12.3/Inside%20Playdate%20with%20C.html#_building_for_the_playdate_using_nmake)
 
 ### Browser
 
