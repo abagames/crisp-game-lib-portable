@@ -101,6 +101,7 @@ Note: Tested on Windows simulator only.
 
 - Hold down the A button and press the B button (M5StickCPlus, M5Stack)
 - Press the SELECT button (PyBadge)
+- Press A, B, Up and Right buttons simultaneously (Playdate)
 - Press the X key while holding down the up and down arrow keys (Browser)
 
 ### Toggle sound on/off
