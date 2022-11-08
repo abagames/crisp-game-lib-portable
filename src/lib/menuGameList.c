@@ -7,6 +7,7 @@ void addGameCastN();
 void addGameReflector();
 void addGameFroooog();
 void addGameRWheel();
+void addGameLadderDrop();
 
 void addGames() {
   addGameThunder();
@@ -18,4 +19,5 @@ void addGames() {
   addGameReflector();
   addGameFroooog();
   addGameRWheel();
+  addGameLadderDrop();
 }
