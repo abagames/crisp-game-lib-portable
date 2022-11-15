@@ -177,11 +177,11 @@ static void addRect(bool isAlignCenter, float x, float y, float w, float h,
     h += y;
     y = 0;
   }
-  if (x + w >= viewSizeX) {
-    w = viewSizeX - x + 1;
+  if (x + w > viewSizeX) {
+    w = ceilf(viewSizeX - x);
   }
-  if (y + h >= viewSizeY) {
-    h = viewSizeY - y + 1;
+  if (y + h > viewSizeY) {
+    h = ceilf(viewSizeY - y);
   }
   if (w < 1 || h < 1) {
     return;
