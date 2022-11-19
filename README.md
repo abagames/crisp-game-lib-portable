@@ -18,6 +18,8 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 ![screenshot](./docs/screenshotPlaydate.gif)
 
+- [Arduboy](https://www.arduboy.com/)
+
 - Browser
   - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
 
@@ -86,6 +88,12 @@ Note: Tested on Windows simulator only.
 1. Build the solution (see [Building for the Simulator using Visual Studio](https://sdk.play.date/1.12.3/Inside%20Playdate%20with%20C.html#_building_for_the_simulator_using_visual_studio))
 
 1. See also [Building for the Playdate using NMake](https://sdk.play.date/1.12.3/Inside%20Playdate%20with%20C.html#_building_for_the_playdate_using_nmake)
+
+### Arduboy
+
+Note: Some features are limited due to device resource limitations.
+
+[crisp-game-lib-arduboy](https://github.com/obono/crisp-game-lib-arduboy) (ported by [OBONO](https://github.com/obono))
 
 ### Browser
 
