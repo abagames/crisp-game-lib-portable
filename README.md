@@ -23,9 +23,9 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 - Browser
   - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
 
-## Sample codes and reference
+## Sample game codes and reference
 
-- [Sample codes](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games)
+- [Sample game codes](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games)
 
 - Reference
   - [Functions and variables](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/cglp_8c.html)
@@ -93,7 +93,7 @@ Note: Tested on Windows simulator only.
 
 Note: Some features are limited due to device resource limitations.
 
-[crisp-game-lib-arduboy](https://github.com/obono/crisp-game-lib-arduboy) (ported by [OBONO](https://github.com/obono))
+- [crisp-game-lib-arduboy](https://github.com/obono/crisp-game-lib-arduboy) (ported by [OBONO](https://github.com/obono))
 
 ### Browser
 
