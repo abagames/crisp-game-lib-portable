@@ -149,11 +149,11 @@ char textPatterns[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1] = {
     },
     {
         "      ",
-        "  lll ",
-        " l   l",
+        " llll ",
+        "     l",
         "   ll ",
-        " l   l",
-        "  lll ",
+        "     l",
+        " llll ",
     },
     {
         "      ",
@@ -277,11 +277,11 @@ char textPatterns[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1] = {
     },
     {
         "      ",
-        "  lll ",
-        " l   l",
+        "  llll",
         " l    ",
-        " l   l",
-        "  lll ",
+        " l    ",
+        " l    ",
+        "  llll",
     },
     {
         "      ",
@@ -313,7 +313,7 @@ char textPatterns[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1] = {
         " l    ",
         " l  ll",
         " l   l",
-        "  lll ",
+        "  llll",
     },
     {
         "      ",
@@ -336,8 +336,8 @@ char textPatterns[TEXT_PATTERN_COUNT][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1] = {
         "   lll",
         "    l ",
         "    l ",
-        " l  l ",
-        "  ll  ",
+        "    l ",
+        " lll  ",
     },
     {
         "      ",
