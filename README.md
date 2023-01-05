@@ -20,6 +20,8 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 - [Arduboy](https://www.arduboy.com/)
 
+- [ESP32-2432S028R](https://ja.aliexpress.com/item/1005004502250619.html)
+
 - Browser
   - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
 
@@ -94,6 +96,10 @@ Note: Tested on Windows simulator only.
 Note: Some features are limited due to device resource limitations.
 
 - [crisp-game-lib-arduboy](https://github.com/obono/crisp-game-lib-arduboy) (ported by [OBONO](https://github.com/obono))
+
+### ESP32-2432S028R
+
+- [cglp-dentaroUI](https://github.com/dentaro/cglp-dentaroUI) (ported by [dentaro](https://github.com/dentaro))
 
 ### Browser
 
