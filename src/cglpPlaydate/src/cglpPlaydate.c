@@ -152,7 +152,7 @@ static int update(void* userdata) {
       goToMenu();
     }
   }
-  return 0;
+  return 1;
 }
 
 static void init() {
