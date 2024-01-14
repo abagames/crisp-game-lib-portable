@@ -22,6 +22,8 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 - [ESP32-2432S028R](https://ja.aliexpress.com/item/1005004502250619.html)
 
+- [ESPboy](https://www.espboy.com/)
+
 - Browser
   - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
 
