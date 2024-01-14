@@ -101,6 +101,10 @@ Note: Some features are limited due to device resource limitations.
 
 - [cglp-dentaroUI](https://github.com/dentaro/cglp-dentaroUI) (ported by [dentaro](https://github.com/dentaro))
 
+### ESPboy
+
+- [cglpESPboy](https://github.com/ESPboy-edu/ESPboy_crisp-game-lib-portable/tree/main/cglpESPboy) (ported by [ESPboy](https://github.com/ESPboy-edu))
+
 ### Browser
 
 1. Install [Emscripten](https://emscripten.org/)
