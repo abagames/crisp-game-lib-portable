@@ -87,9 +87,9 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 1. Open `crisp-game-lib-portable.sln` with Visual Studio
 
-1. Build the solution (see [Building for the Simulator using Visual Studio](https://sdk.play.date/1.12.3/Inside%20Playdate%20with%20C.html#_building_for_the_simulator_using_visual_studio))
+1. Build the solution (see [Building for the Simulator using Visual Studio](https://sdk.play.date/2.3.1/Inside%20Playdate%20with%20C.html#_building_for_the_simulator_using_visual_studio))
 
-1. See also [Building for the Playdate using NMake](https://sdk.play.date/1.12.3/Inside%20Playdate%20with%20C.html#_building_for_the_playdate_using_nmake)
+1. See also [Building for the Playdate using NMake](https://sdk.play.date/2.3.1/Inside%20Playdate%20with%20C.html#_building_for_the_playdate_using_nmake)
 
 ### Arduboy
 
