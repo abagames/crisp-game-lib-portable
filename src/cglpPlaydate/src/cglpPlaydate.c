@@ -122,7 +122,7 @@ void md_clearScreen(unsigned char r, unsigned char g, unsigned char b) {
 }
 
 void md_playTone(float freq, float duration, float when) {
-  pd->sound->synth->playNote(synth, freq, 0.1f, duration,
+  pd->sound->synth->playNote(synth, freq, 0.4f, duration,
                              (uint32_t)(when * 44100));
 }
 
