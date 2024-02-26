@@ -14,7 +14,7 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 ![screenshot](./docs/screenshotPyBadge.gif)
 
-- [Playdate](https://play.date/) (Experimental)
+- [Playdate](https://play.date/)
 
 ![screenshot](./docs/screenshotPlaydate.gif)
 

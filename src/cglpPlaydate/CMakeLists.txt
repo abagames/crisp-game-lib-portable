@@ -28,7 +28,7 @@ set(CMAKE_XCODE_GENERATE_SCHEME TRUE)
 set(PLAYDATE_GAME_NAME crisp-game-lib-portable)
 set(PLAYDATE_GAME_DEVICE crisp-game-lib-portable-DEVICE)
 
-project(${PLAYDATE_GAME_NAME} C ASM)
+project(${PLAYDATE_GAME_NAME} C)
 
 file(GLOB LibSources ../lib/*.c ../lib/*.h)
 file(GLOB GamesSources ../games/*.c)
