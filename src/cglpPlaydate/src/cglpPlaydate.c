@@ -2,8 +2,11 @@
 #include "machineDependent.h"
 #include "pd_api.h"
 
+#define SYNTH_COUNT 4
+
 PlaydateAPI* pd;
-static PDSynth* synth;
+static PDSynth* synths[SYNTH_COUNT];
+static int synthIndex;
 static bool isDarkColor;
 static int baseColor;
 static int viewWidth, viewHeight;
@@ -122,11 +125,20 @@ void md_clearScreen(unsigned char r, unsigned char g, unsigned char b) {
 }
 
 void md_playTone(float freq, float duration, float when) {
-  pd->sound->synth->playNote(synth, freq, 0.4f, duration,
+  pd->sound->synth->playNote(synths[synthIndex], freq, 0.36f, duration,
                              (uint32_t)(when * 44100));
+  synthIndex++;
+  if (synthIndex >= SYNTH_COUNT) {
+    synthIndex = 0;
+  }
 }
 
-void md_stopTone() { pd->sound->synth->noteOff(synth, 0); }
+void md_stopTone() {
+  for (int i = 0; i < SYNTH_COUNT; i++) {
+    pd->sound->synth->noteOff(synths[i], 0);
+  }
+  synthIndex = 0;
+}
 
 float md_getAudioTime() { return (float)pd->sound->getCurrentTime() / 44100; }
 
@@ -156,7 +168,10 @@ static int update(void* userdata) {
 }
 
 static void init() {
-  synth = pd->sound->synth->newSynth();
+  for (int i = 0; i < SYNTH_COUNT; i++) {
+    synths[i] = pd->sound->synth->newSynth();
+  }
+  synthIndex = 0;
   pd->display->setRefreshRate(FPS);
   initCharacterSprite();
   initGame();
