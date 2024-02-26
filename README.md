@@ -77,9 +77,7 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 1. Verify and upload `cglp[target device].ino` with [Arduino IDE](https://www.arduino.cc/en/software)
 
-### Playdate (Experimental)
-
-Note: Tested on Windows simulator only.
+### Playdate
 
 1. Copy [./src/cglpPlaydate](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/cglpPlaydate) directory
 
