@@ -8,8 +8,10 @@ static Game games[MAX_GAME_COUNT];
 static int gameIndex = 1;
 
 static void update() {
+  color = BLUE;
+  text("[A]      [B]", 3, 3);
   color = BLACK;
-  text("[A]Select[B]Down", 3, 3);
+  text("   Select   Down", 3, 3);
   if (input.b.isJustPressed || input.down.isJustPressed) {
     gameIndex++;
   }
@@ -17,14 +19,15 @@ static void update() {
     gameIndex--;
   }
   gameIndex = wrap(gameIndex, 1, gameCount);
+  color = BLACK;
   for (int i = 0; i < gameCount; i++) {
-    color = BLACK;
     float y = i * 6;
     if (i == gameIndex) {
-      rect(0, y, 100, 6);
-      color = WHITE;
+      color = BLUE;
+      text(">", 3, y + 3);
+      color = BLACK;
     }
-    text(games[i].title, 3, y + 3);
+    text(games[i].title, 9, y + 3);
   }
   if (input.a.isJustPressed) {
     restartGame(gameIndex);
