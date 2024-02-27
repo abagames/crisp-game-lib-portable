@@ -4,7 +4,7 @@ package-lock.json
 build/
 src/cglpPlaydate/build/
 src/cglpPlaydate/build_arm/
-src/cglpPlaydate/crisp-game-lib-portable.pdx/
+src/cglpPlaydate/crisp-games.pdx/
 src/cglpPlaydate/Source/pdex.bin
 src/cglpPlaydate/Source/pdex.dll
 src/cglpPlaydate/Source/pdex.elf

@@ -25,8 +25,8 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 set(CMAKE_XCODE_GENERATE_SCHEME TRUE)
 
 # Game Name Customization
-set(PLAYDATE_GAME_NAME crisp-game-lib-portable)
-set(PLAYDATE_GAME_DEVICE crisp-game-lib-portable-DEVICE)
+set(PLAYDATE_GAME_NAME crisp-games)
+set(PLAYDATE_GAME_DEVICE crisp-games-DEVICE)
 
 project(${PLAYDATE_GAME_NAME} C)
 
