@@ -18,7 +18,7 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 ![screenshot](./docs/screenshotPlaydate.gif)
 
-Download [crisp-games.pdx.zip](./docs/crisp-games.pdx.zip) and sideload a game.
+Download [crisp-games.pdx.zip](https://abagames.github.io/crisp-game-lib-portable/crisp-games.pdx.zip) and sideload a game.
 
 - [Arduboy](https://www.arduboy.com/)
 
