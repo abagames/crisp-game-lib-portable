@@ -1,7 +1,7 @@
 #include "cglp.h"
 
 static char *title = "THUNDER";
-static char *description = "[Tap] Turn";
+static char *description = "[Tap]   Turn\n[Arrow] Move";
 
 #define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 CS = {{
@@ -31,7 +31,7 @@ CS = {{
 static int charactersCount = 3;
 
 static Options options = {
-    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 5, .isDarkColor = true};
+    .viewSizeX = 100, .viewSizeY = 100, .soundSeed = 9, .isDarkColor = true};
 
 typedef struct _Line {
   Vector from;
@@ -152,7 +152,12 @@ static void update() {
     thickness = 3;
     hasCollision = true;
   }
-  if (input.isJustPressed || (player.x < 0 && player.vx < 0) ||
+  bool isJustPressed = input.isJustPressed;
+  if (isJustPressed && ((input.left.isJustPressed && player.vx < 0) ||
+                        (input.right.isJustPressed && player.vx > 0))) {
+    isJustPressed = false;
+  }
+  if (isJustPressed || (player.x < 0 && player.vx < 0) ||
       (player.x > 99 && player.vx > 0)) {
     play(LASER);
     player.vx *= -1;
