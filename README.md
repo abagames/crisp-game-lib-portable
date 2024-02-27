@@ -18,6 +18,8 @@ Minimal C-lang library for creating classic arcade-like mini-games running on de
 
 ![screenshot](./docs/screenshotPlaydate.gif)
 
+Download [crisp-games.pdx.zip](./docs/crisp-games.pdx.zip) and sideload a game.
+
 - [Arduboy](https://www.arduboy.com/)
 
 - [ESP32-2432S028R](https://ja.aliexpress.com/item/1005004502250619.html)
