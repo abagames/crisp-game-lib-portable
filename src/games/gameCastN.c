@@ -24,11 +24,11 @@ CS = {
     },
     {
         "      ",
-        "lllll ",
-        "  ll l",
+        "llll  ",
         "llllll",
-        "l ll  ",
+        "l l   ",
         "   lll",
+        "      ",
     },
 };
 static int charactersCount = 2;
