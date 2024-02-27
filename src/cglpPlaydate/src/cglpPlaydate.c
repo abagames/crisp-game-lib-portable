@@ -124,7 +124,9 @@ void md_clearScreen(unsigned char r, unsigned char g, unsigned char b) {
   isDarkColor = r < 128 && g < 182 && b < 128;
   baseColor = isDarkColor ? kColorWhite : kColorBlack;
   pd->graphics->setBackgroundColor(baseColor);
-  int scale = 2;
+  int xScale = 400 / viewWidth;
+  int yScale = 240 / viewHeight;
+  int scale = xScale < yScale ? xScale : yScale;
   pd->display->setScale(scale);
   pd->display->setOffset(0, 0);
   pd->graphics->clear(baseColor);
