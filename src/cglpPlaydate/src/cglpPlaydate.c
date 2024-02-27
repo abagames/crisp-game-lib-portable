@@ -3,6 +3,9 @@
 #include "pd_api.h"
 
 #define SYNTH_COUNT 4
+#define CRANK_ON_DEGREE 5
+#define CRANK_OFF_DEGREE 1
+#define CRANK_OFF_DURATION 1
 
 PlaydateAPI* pd;
 static PDSynth* synths[SYNTH_COUNT];
@@ -10,6 +13,8 @@ static int synthIndex;
 static bool isDarkColor;
 static int baseColor;
 static int viewWidth, viewHeight;
+static int crankWay;
+static int crankOffTicks;
 
 typedef struct {
   LCDBitmap* sprite;
@@ -47,6 +52,9 @@ static void createCharacterImageData(
 
 void md_drawCharacter(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3],
                       float x, float y, int hash) {
+  if (color == TRANSPARENT) {
+    return;
+  }
   CharaterSprite* cp = NULL;
   for (int i = 0; i < characterSpritesCount; i++) {
     if (characterSprites[i].hash == hash) {
@@ -153,9 +161,29 @@ void md_consoleLog(char* msg) { pd->system->logToConsole(msg); }
 static PDButtons buttonsCurrent, buttonsPushed, buttonsReleased;
 
 static int update(void* userdata) {
+  float cc = pd->system->getCrankChange();
+  if (!pd->system->isCrankDocked()) {
+    if (cc > CRANK_ON_DEGREE) {
+      crankWay = 1;
+      crankOffTicks = 0;
+    } else if (cc < -CRANK_ON_DEGREE) {
+      crankWay = -1;
+      crankOffTicks = 0;
+    } else if (cc < CRANK_OFF_DEGREE && cc > -CRANK_OFF_DEGREE) {
+      crankOffTicks++;
+      if (crankOffTicks > CRANK_OFF_DURATION) {
+        crankWay = 0;
+      }
+    }
+  } else {
+    crankWay = 0;
+    crankOffTicks = 0;
+  }
   pd->system->getButtonState(&buttonsCurrent, &buttonsPushed, &buttonsReleased);
-  setButtonState(buttonsCurrent & kButtonLeft, buttonsCurrent & kButtonRight,
-                 buttonsCurrent & kButtonUp, buttonsCurrent & kButtonDown,
+  setButtonState((buttonsCurrent & kButtonLeft) || crankWay == 1,
+                 (buttonsCurrent & kButtonRight) || crankWay == -1,
+                 (buttonsCurrent & kButtonUp) || crankWay == 1,
+                 (buttonsCurrent & kButtonDown) || crankWay == -1,
                  buttonsCurrent & kButtonB, buttonsCurrent & kButtonA);
   updateFrame();
   if (!isInMenu) {
@@ -173,6 +201,9 @@ static void init() {
   }
   synthIndex = 0;
   pd->display->setRefreshRate(FPS);
+  crankWay = 0;
+  crankOffTicks = 0;
+  pd->system->getCrankChange();
   initCharacterSprite();
   initGame();
   pd->system->setUpdateCallback(update, NULL);
