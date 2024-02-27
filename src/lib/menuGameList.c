@@ -1,3 +1,4 @@
+void addGamePakuPaku();
 void addGameThunder();
 void addGameSurvivor();
 void addGameBallTour();
@@ -10,6 +11,7 @@ void addGameRWheel();
 void addGameLadderDrop();
 
 void addGames() {
+  addGamePakuPaku();
   addGameThunder();
   addGameSurvivor();
   addGameBallTour();
