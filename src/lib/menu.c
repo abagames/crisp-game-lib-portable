@@ -3,20 +3,36 @@
 #include "cglp.h"
 
 #define MAX_GAME_COUNT 16
+#define KEY_REPEAT_DURATION 30
 int gameCount = 0;
 static Game games[MAX_GAME_COUNT];
 static int gameIndex = 1;
+static int keyRepeatTicks = 0;
 
 static void update() {
   color = BLUE;
   text("[A]      [B]", 3, 3);
   color = BLACK;
   text("   Select   Down", 3, 3);
-  if (input.b.isJustPressed || input.down.isJustPressed) {
-    gameIndex++;
+  if (input.b.isPressed || input.down.isPressed || input.up.isPressed) {
+    keyRepeatTicks++;
+  } else {
+    keyRepeatTicks = 0;
   }
-  if (input.up.isJustPressed) {
+  if (input.b.isJustPressed || input.down.isJustPressed ||
+      (keyRepeatTicks > KEY_REPEAT_DURATION &&
+       (input.b.isPressed || input.down.isPressed))) {
+    gameIndex++;
+    if (keyRepeatTicks > KEY_REPEAT_DURATION) {
+      keyRepeatTicks = KEY_REPEAT_DURATION / 3 * 2;
+    }
+  }
+  if (input.up.isJustPressed ||
+      (keyRepeatTicks > KEY_REPEAT_DURATION && input.up.isPressed)) {
     gameIndex--;
+    if (keyRepeatTicks > KEY_REPEAT_DURATION) {
+      keyRepeatTicks = KEY_REPEAT_DURATION / 3 * 2;
+    }
   }
   gameIndex = wrap(gameIndex, 1, gameCount);
   color = BLACK;
