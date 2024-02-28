@@ -1,38 +1,22 @@
 # crisp-game-lib-portable
 
-Minimal C-lang library for creating classic arcade-like mini-games running on devices and browsers. Re-implemented version of [crisp-game-lib](https://github.com/abagames/crisp-game-lib) for smaller devices.
+Minimal C-lang library for creating classic arcade-like mini-games running on devices and browsers. Re-implemented version of [crisp-game-lib](https://github.com/abagames/crisp-game-lib) for smaller devices. You can play [sample games in your browser](https://abagames.github.io/crisp-game-lib-portable/build/).
 
 ## Target devices
 
+<img src="./docs/screenshotM5StickCPlus.gif" width="33%"><img src="./docs/screenshotPlaydate.gif" width="33%"><img src="./docs/screenshotPyBadge.gif" width="33%">
+
 - [M5StickC PLUS](https://docs.m5stack.com/en/core/m5stickc_plus)
-
-![screenshot](./docs/screenshotM5StickCPlus.gif)
-
 - [M5Stack BASIC](http://docs.m5stack.com/en/core/basic)
-
+- [Playdate](https://play.date/) (Download [crisp-games.pdx.zip](https://abagames.github.io/crisp-game-lib-portable/crisp-games.pdx.zip) and sideload a game.)
 - [Adafruit PyBadge](https://learn.adafruit.com/adafruit-pybadge)
-
-![screenshot](./docs/screenshotPyBadge.gif)
-
-- [Playdate](https://play.date/)
-
-![screenshot](./docs/screenshotPlaydate.gif)
-
-Download [crisp-games.pdx.zip](https://abagames.github.io/crisp-game-lib-portable/crisp-games.pdx.zip) and sideload a game.
-
 - [Arduboy](https://www.arduboy.com/)
-
 - [ESP32-2432S028R](https://ja.aliexpress.com/item/1005004502250619.html)
-
 - [ESPboy](https://www.espboy.com/)
-
-- Browser
-  - [Play sample games](https://abagames.github.io/crisp-game-lib-portable/build/)
 
 ## Sample game codes and reference
 
 - [Sample game codes](https://github.com/abagames/crisp-game-lib-portable/tree/main/src/games)
-
 - Reference
   - [Functions and variables](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/cglp_8c.html)
   - [Structs and macros](https://abagames.github.io/crisp-game-lib-portable/ref_document/html/cglp_8h.html)
