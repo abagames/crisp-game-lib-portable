@@ -124,8 +124,8 @@ EXTERNC Collision text(char *msg, float x, float y);
 EXTERNC Collision character(char *msg, float x, float y);
 EXTERNC void play(int type);
 EXTERNC void addScore(float value, float x, float y);
-EXTERNC float rnd(float high, float low);
-EXTERNC int rndi(int high, int low);
+EXTERNC float rnd(float low, float high);
+EXTERNC int rndi(int low, int high);
 EXTERNC void gameOver();
 EXTERNC void particle(float x, float y, float count, float speed, float angle,
                       float angleWidth);
