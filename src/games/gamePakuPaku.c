@@ -95,22 +95,22 @@ typedef struct {
   float x;
   float vx;
 } Player;
-Player player;
+static Player player;
 typedef struct {
   float x;
   float eyeVx;
 } Enemy;
-Enemy enemy;
+static Enemy enemy;
 typedef struct {
   float x;
   bool isPower;
   bool isAlive;
 } Dot;
 #define PAKU_PAKU_MAX_DOT_COUNT 16
-Dot dots[PAKU_PAKU_MAX_DOT_COUNT];
-float powerTicks;
-float animTicks;
-int multiplier;
+static Dot dots[PAKU_PAKU_MAX_DOT_COUNT];
+static float powerTicks;
+static float animTicks;
+static int multiplier;
 
 static void addDots() {
   int pi = player.x > 50 ? rndi(1, 6) : rndi(10, 15);
