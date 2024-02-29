@@ -1,9 +1,10 @@
 void addGamePakuPaku();
 void addGameThunder();
-void addGameSurvivor();
 void addGameBallTour();
-void addGameColorRoll();
+void addGameHexmin();
+void addGameSurvivor();
 void addGamePinCLimb();
+void addGameColorRoll();
 void addGameCastN();
 void addGameReflector();
 void addGameFroooog();
@@ -13,10 +14,11 @@ void addGameLadderDrop();
 void addGames() {
   addGamePakuPaku();
   addGameThunder();
-  addGameSurvivor();
   addGameBallTour();
-  addGameColorRoll();
+  addGameHexmin();
+  addGameSurvivor();
   addGamePinCLimb();
+  addGameColorRoll();
   addGameCastN();
   addGameReflector();
   addGameFroooog();
