@@ -135,3 +135,7 @@ The source codes for [library](https://github.com/abagames/crisp-game-lib-portab
   - `md_drawCharacter(unsigned char grid[CHARACTER_HEIGHT][CHARACTER_WIDTH][3], float x, float y, int hash)` function should draw the pixel art defined by `grid[y][x][r, g, b]` at position (x, y). Since `hash` will be the same for the same pixel art, you can cache pixel art images using `hash` as an index and avoid redrawing the same image
 
 Sample device-dependent codes are [cglpM5StickCPlus.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpM5StickCPlus/cglpM5StickCPlus.ino) and [cglpPyBadge.ino](https://github.com/abagames/crisp-game-lib-portable/blob/main/src/cglpPyBadge/cglpPyBadge.ino).
+
+## Porting games from crisp-game-lib using an AI chatbot
+
+You can use an AI chatbot to port game source code for crisp-game-lib to crisp-game-lib-portable. By providing the [prompt](./convert_prompt/prompt.txt) and [set of files](./convert_prompt/knowledge/) to the chatbot, you can obtain the code ported to the C language. I have tried this using [Claude 3 Opus](https://www.anthropic.com/news/claude-3-family), but it is expected to work to some extent with other LLMs as well. The ported code is not perfect, so it needs to be manually checked and corrected.

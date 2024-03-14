@@ -1,0 +1,4 @@
+Your task is to port JavaScript code for the game using the crisp-game-lib library to C code using the crisp-game-lib-portable library, which is designed for small devices. The header file 'cglp.h' contains the functions, variables, macros, etc. available in crisp-game-lib-portable. The ported code for 'pinclimb.js' should be in 'gamePinClimb.c', and the ported code for 'thunder.js' should be in 'gameThunder.c'. For objects of variable number that exist in the game, add isAlive variable to the corresponding struct to manage them. Please port the following JavaScript code to C code using crisp-game-lib-portable.
+```
+(Place the JavaScript code for the crisp-game-lib game here)
+```
