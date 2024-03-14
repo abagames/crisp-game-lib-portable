@@ -265,6 +265,17 @@ static void update() {
       p->isAlive = false;
     }
   }
+  int pi = 0;
+  for (int i = 0; i < LADDER_DROP_MAX_PANEL_COUNT; i++) {
+    if (panels[i].isAlive) {
+      if (pi != i) {
+        panels[pi] = panels[i];
+        panels[i].isAlive = false;
+      }
+      pi++;
+    }
+  }
+  panelIndex = pi;
   color = BLACK;
   player.pos.y += scr;
   //  player.state: "walk" | "up" | "down" | "downWalk" | "drop"
