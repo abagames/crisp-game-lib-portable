@@ -10,6 +10,9 @@ void addGameReflector();
 void addGameFroooog();
 void addGameRWheel();
 void addGameLadderDrop();
+void addGameFracave();
+void addGameInTow();
+void addGameTimberTest();
 
 void addGames() {
   addGamePakuPaku();
@@ -24,4 +27,7 @@ void addGames() {
   addGameFroooog();
   addGameRWheel();
   addGameLadderDrop();
+  addGameFracave();
+  addGameInTow();
+  addGameTimberTest();
 }
