@@ -10,7 +10,7 @@ void addGameReflector();
 void addGameFroooog();
 void addGameRWheel();
 void addGameLadderDrop();
-void addGameFracave();
+void addGameGrapplingH();
 void addGameInTow();
 void addGameTimberTest();
 
@@ -27,7 +27,7 @@ void addGames() {
   addGameFroooog();
   addGameRWheel();
   addGameLadderDrop();
-  addGameFracave();
+  addGameGrapplingH();
   addGameInTow();
   addGameTimberTest();
 }
