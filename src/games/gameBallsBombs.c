@@ -6,7 +6,6 @@ static char *description = "[Hold] Walk";
 #define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
 CS = {
     {
-        "      ",
         " llll ",
         "llLlll",
         "lLllll",
@@ -17,14 +16,12 @@ CS = {
     {
         "      ",
         "      ",
-        "      ",
         " llll ",
         "lLLlll",
         "llllll",
         " llll ",
     },
     {
-        "      ",
         "llllll",
         "ll l l",
         "ll l l",
@@ -39,7 +36,6 @@ CS = {
         "ll l l",
         "llllll",
         "ll  ll",
-        "      ",
     },
     {
         "    r ",
@@ -48,7 +44,6 @@ CS = {
         "llllll",
         "llllll",
         " llll ",
-        "      ",
     },
     {
         "   r  ",
@@ -57,7 +52,6 @@ CS = {
         "llllll",
         "llllll",
         "  ll  ",
-        "      ",
     },
     {
         "    r ",
@@ -66,7 +60,6 @@ CS = {
         "ll l l",
         "ll l l",
         " llll ",
-        "      ",
     },
     {
         "   r  ",
@@ -75,7 +68,6 @@ CS = {
         "ll l l",
         "ll l l",
         " llll ",
-        "      ",
     }
 };
 static int charactersCount = 8;
