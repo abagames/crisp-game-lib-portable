@@ -46,7 +46,7 @@ static int checkErasingUp(void);
 static int drawGrid(void);
 
 static void update() {
-    const int cgp = floor(GRID_SIZE / 2);
+    const int cgp = floor((float)GRID_SIZE / 2.0f);
     
     if (!ticks) {
         // Initialize grids to -1
@@ -65,13 +65,13 @@ static void update() {
 
     // Calculate input grid position
     Vector ip;
-    ip.x = floor((input.pos.x - 50) / 6 + GRID_SIZE / 2);
-    ip.y = floor((input.pos.y - 53) / 6 + GRID_SIZE / 2);
+    ip.x = floor((input.pos.x - 50) / 6 + (float)GRID_SIZE / 2);
+    ip.y = floor((input.pos.y - 53) / 6 + (float)GRID_SIZE / 2);
 
     // Draw input highlight
     if (ip.x >= 0 && ip.x < GRID_SIZE && ip.y >= 0 && ip.y < GRID_SIZE) {
         color = LIGHT_BLACK;
-        box((ip.x - GRID_SIZE / 2) * 6 + 53, (ip.y - GRID_SIZE / 2) * 6 + 56, 7, 7);
+        box((ip.x - (float)GRID_SIZE / 2) * 6 + 53, (ip.y - (float)GRID_SIZE / 2) * 6 + 56, 7, 7);
     }
 
     erasingTicks--;
@@ -178,7 +178,7 @@ static int drawGrid() {
                     case 2: color = BLUE; break;
                     case 3: color = YELLOW; break;
                 }
-                box(53 + (x - (GRID_SIZE / 2.0f)) * 6, 56 + (y - (GRID_SIZE / 2.0f)) * 6, 5, 5);
+                box(53 + (x - ((float)GRID_SIZE / 2.0f)) * 6, 56 + (y - ((float)GRID_SIZE / 2.0f)) * 6, 5, 5);
                 gc++;
             }
         }
@@ -207,7 +207,7 @@ static void addGrid() {
 }
 
 static void addHorizontal() {
-    const int cx = floor(GRID_SIZE / 2);
+    const int cx = floor((float)GRID_SIZE / 2.0f);
     
     // Move left side
     for (int x = 0; x < cx - 1; x++) {
@@ -237,7 +237,7 @@ static void addHorizontal() {
 }
 
 static void addVertical() {
-    const int cy = floor(GRID_SIZE / 2);
+    const int cy = floor((float)GRID_SIZE / 2.0f);
     
     // Move top side
     for (int y = 0; y < cy - 1; y++) {
@@ -268,7 +268,7 @@ static void addVertical() {
 
 static int downHorizontal() {
     int dc = 0;
-    const int cx = floor(GRID_SIZE / 2);
+    const int cx = floor((float)GRID_SIZE / 2.0f);
 
     // Move from left to center
     for (int x = cx; x >= 1; x--) {
@@ -297,7 +297,7 @@ static int downHorizontal() {
 
 static int downVertical() {
     int dc = 0;
-    const int cy = floor(GRID_SIZE / 2);
+    const int cy = floor((float)GRID_SIZE / 2.0f);
 
     // Move from top to center
     for (int y = cy; y > -1; y--) {
