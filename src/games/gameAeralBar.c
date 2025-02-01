@@ -154,7 +154,7 @@ static void update() {
     while (nextBarDist < 0) {
         float length = rnd(20, 50);
         addBar(110, length, M_PI / 2 - rnd(0, M_PI / 4), 
-          (rnd(0, 1) * 2 - 1) * rnd(0.02, 0.04), false); //rnds(0.02, 0.04)
+          rnd(0.02, 0.04)*RNDPM(), false); 
         nextBarDist = length + rnd(0, 20); //rnd(20)
     }
 

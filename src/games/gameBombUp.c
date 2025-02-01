@@ -168,7 +168,7 @@ static void update() {
 
     // Update rocks
     nextRockTicks--;
-    nextRockVelX += (rnd(0, 1) * 2 - 1) * 0.1f * sqrt(difficulty);
+    nextRockVelX += rnd(-0.1f, 0.1f) * sqrt(difficulty); // Simplified rnds(0.1)
     nextRockVelX *= 0.99f;
     nextRockX += nextRockVelX;
     if ((nextRockX < 7 && nextRockVelX < 0) ||

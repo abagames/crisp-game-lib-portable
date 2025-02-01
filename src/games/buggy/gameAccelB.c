@@ -312,8 +312,7 @@ static void update() {
         ASSIGN_ARRAY_ITEM(enemies, enemyIndex, Enemy, e);
         vectorSet(&e->pos, 203, rnd(0, 1) < 0.5f ? rnd(5, 35) : rnd(55, 85));
         e->vx = rnd(0, sqrt(difficulty)) * 0.5f;
-        float randomSign = rnd(0, 1) < 0.5f ? 1 : -1;  // Match JS rnds behavior
-        e->ma = M_PI + randomSign * rnd(0.2f, M_PI / 5);
+        e->ma = M_PI + rnd(0.2, M_PI / 5) * RNDPM(),
         e->fireTicks = ceil(rnd(10, 30) / sqrt(difficulty));
         e->isAlive = true;
         enemyIndex = wrap(enemyIndex + 1, 0, MAX_ENEMIES);
