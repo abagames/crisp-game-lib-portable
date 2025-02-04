@@ -5,27 +5,27 @@ static char *description = "[Hold] Speed up";
 
 static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1] = {
     {   // Fish 'a'
+        "      ",
+        "      ",
         "  rrr ",
         "rrbrrr",
         " rrr r",
         "      ",
-        "      ",
-        "      ",
     },
     {   // Bird frame 1 'b'
+        "      ",
         " ll   ",
         "  ll  ",
         "llllly",
-        "      ",
         "      ",
         "      ",
     },
     {   // Bird frame 2 'c'
         "      ",
+        "      ",
         "llllly",
         "  ll  ",
         " ll   ",
-        "      ",
         "      ",
     }
 };
@@ -58,36 +58,79 @@ typedef struct {
     bool isAlive;
 } Fish;
 
-static void drawCharacterScaled(char* chr, float x, float y, float scaleX, float scaleY) {
-    // Get character index
+Collision characterScaled(char* chr, float x, float y, float scaleX, float scaleY) {
+    // Get character index from the input character (a, b, c, etc.)
     int charIndex = chr[0] - 'a';
-    if (charIndex < 0 || charIndex >= charactersCount) return;
+    if (charIndex < 0 || charIndex >= charactersCount) {
+        Collision empty = {0};
+        return empty;
+    }
 
-    // Calculate scaled size (each 'block' in the character is scaled)
-    float blockSize = 1 * scaleX;  // Base size multiplied by scale
-
-    // Draw each non-empty block of the character scaled
-    for(int origY = 0; origY < CHARACTER_HEIGHT; origY++) {
-        for(int origX = 0; origX < CHARACTER_WIDTH; origX++) {
-            char pixel = characters[charIndex][origY][origX];
-            if(pixel != ' ') {
-                float drawX = x + (origX - CHARACTER_WIDTH/2.0f) * scaleX;
-                float drawY = y + (origY - CHARACTER_HEIGHT/2.0f) * scaleY;
-                box(drawX, drawY, blockSize, blockSize);
+    // Calculate the offset to center the character
+    float offsetX = (CHARACTER_WIDTH * scaleX) / 2.0f;
+    float offsetY = (CHARACTER_HEIGHT * scaleY) / 2.0f;
+    
+    // Initialize aggregate collision result
+    Collision aggregateCollision = {0};
+    
+    // For each pixel in the character grid
+    for (int gridY = 0; gridY < CHARACTER_HEIGHT; gridY++) {
+        for (int gridX = 0; gridX < CHARACTER_WIDTH; gridX++) {
+            char pixel = characters[charIndex][gridY][gridX];
+            
+            // Skip empty spaces
+            if (pixel == ' ') continue;
+            
+            // Store current color
+            int prevColor = color;
+            
+            // Determine the color to use
+            if (color == BLACK) {
+                // Use the original character's color based on the pixel value
+                switch (pixel) {
+                    case 'w': color = WHITE; break;
+                    case 'r': color = RED; break;
+                    case 'g': color = GREEN; break;
+                    case 'y': color = YELLOW; break;
+                    case 'b': color = BLUE; break;
+                    case 'p': color = PURPLE; break;
+                    case 'c': color = CYAN; break;
+                    case 'l': color = BLACK; break;
+                    case 'R': color = LIGHT_RED; break;
+                    case 'G': color = LIGHT_GREEN; break;
+                    case 'Y': color = LIGHT_YELLOW; break;
+                    case 'B': color = LIGHT_BLUE; break;
+                    case 'P': color = LIGHT_PURPLE; break;
+                    case 'C': color = LIGHT_CYAN; break;
+                    case 'L': color = LIGHT_BLACK; break;
+                    default: color = BLACK; break;
+                }
             }
+            // else: use the current color value
+            
+            // Calculate scaled pixel position
+            float pixelX = x + (gridX * scaleX) - offsetX;
+            float pixelY = y + (gridY * scaleY) - offsetY;
+            
+            // Draw the scaled pixel and get its collision
+            Collision pixelCollision = box(pixelX, pixelY, scaleX, scaleY);
+            
+            // Merge collision information with aggregate
+            for (int i = 0; i < COLOR_COUNT; i++) {
+                aggregateCollision.isColliding.rect[i] |= pixelCollision.isColliding.rect[i];
+            }
+            for (int i = 0; i < ASCII_CHARACTER_COUNT; i++) {
+                aggregateCollision.isColliding.text[i] |= pixelCollision.isColliding.text[i];
+                aggregateCollision.isColliding.character[i] |= pixelCollision.isColliding.character[i];
+            }
+            
+            // Restore previous color
+            color = prevColor;
         }
     }
-}
-
-static Collision characterScaled(char* chr, float x, float y, float scaleX, float scaleY) {
-    drawCharacterScaled(chr, x, y, scaleX, scaleY);
     
-    float scaledWidth = CHARACTER_WIDTH * scaleX;
-    float scaledHeight = CHARACTER_HEIGHT * scaleY;
-    return box(x, y, scaledWidth, scaledHeight);
+    return aggregateCollision;
 }
-
-
 
 #define MAX_FISHES 100
 static Bird bird;
@@ -97,12 +140,14 @@ static float nextFishTicks;
 static int nextBigFishCount;
 static float scrX;
 static int multiplier;
+static int isGameOver;
 
 static void update() {
     if (!ticks) {
         vectorSet(&bird.pos, 20, 20);
         bird.vx = 1;
         bird.ticks = 0;
+        isGameOver = 0;
 
         INIT_UNALIVED_ARRAY(fishes);
         fishIndex = 0;
@@ -175,9 +220,9 @@ static void update() {
             if (f->type == FAKE) {
                 const int eyeX = 2, eyeY = 1;
                 static const int points[][2] = {
-                    {2,0}, {3,0}, {4,0},
+                                  {2,0}, {3,0}, {4,0},
                     {0,1}, {1,1}, {2,1}, {3,1}, {4,1}, {5,1},
-                    {1,2}, {2,2}, {3,2}, {5,2}
+                           {1,2}, {2,2}, {3,2},              {5,2}
                 };
 
                 for (int p = 0; p < 13; p++) {
@@ -194,32 +239,15 @@ static void update() {
                 continue;
             }
 
-             if (f->type == BIG) {
-                color = WHITE;
-                line(f->pos.x, f->pos.y - 3, f->pos.x - 10, f->pos.y);
-                line(f->pos.x, f->pos.y - 5, f->pos.x + 16, f->pos.y);
-                line(f->pos.x, f->pos.y + 5, f->pos.x - 16, f->pos.y);
-                line(f->pos.x, f->pos.y + 5, f->pos.x + 16, f->pos.y);
-            }
-            
             color = (f->type == EYE) ? BLUE : BLACK;
-            
-            // Draw fish at appropriate scale
-            if (f->type == BIG || f->type == FAKE) {
-                characterScaled("a", f->pos.x, f->pos.y, sc, sc);
-            } else {
-                character("a", f->pos.x, f->pos.y);
-            }
         }
 
-        // Use scaled character drawing
-        Collision c;
-        if (f->type == BIG || f->type == FAKE) {
-            c = characterScaled("a", f->pos.x, f->pos.y, sc, sc);
-        } else {
-            c = character("a", f->pos.x, f->pos.y);
+        Collision c = characterScaled("a", f->pos.x, f->pos.y, sc, sc);
+        if((c.isColliding.character['b'] || c.isColliding.character['c']) && (f->type == BIG))
+        {
+            isGameOver = true;
         }
-
+        
         if (f->type != BIG && distanceTo(&f->pos, bird.pos.x, bird.pos.y) < 6) {
             addScore(multiplier, f->pos.x, f->pos.y);
             if (f->type == NORMAL) {
@@ -246,8 +274,8 @@ static void update() {
         }
     }
 
-    color = BLACK;
-    if (character(birdChar, bird.pos.x, bird.pos.y).isColliding.rect[WHITE]) {
+    if(isGameOver)
+    {
         play(EXPLOSION);
         gameOver();
     }
