@@ -300,7 +300,7 @@ static int downVertical() {
     const int cy = floor((float)GRID_SIZE / 2.0f);
 
     // Move from top to center
-    for (int y = cy; y > -1; y--) {
+    for (int y = cy; y >= 1; y--) {
         for (int x = 0; x < GRID_SIZE; x++) {
             if (grid[x][y] == -1 && grid[x][y - 1] >= 0) {
                 grid[x][y] = grid[x][y - 1];
