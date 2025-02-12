@@ -157,7 +157,7 @@ static void update() {
     // Update explosion
     if (explosion.exists) {
         explosion.ticks++;
-        float r = sin(explosion.ticks * 0.15f) * 25;
+        float r = sinf(explosion.ticks * 0.15f) * 25;
         if (r < 0) {
             explosion.exists = false;
         } else {
