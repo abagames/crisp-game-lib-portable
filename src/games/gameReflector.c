@@ -173,7 +173,7 @@ static void update() {
       t->angle += t->angleVel;
     }
     bar(VEC_XY(t->pos), 3, t->angle);
-    char tc[2] = {'c' + (int)(ticks / 25) % 2, '\n'};
+    char tc[2] = {'c' + (int)(ticks / 25) % 2, '\0'};
     characterOptions.isMirrorX = t->vx < 0;
     if (character(tc, VEC_XY(t->pos)).isColliding.rect[LIGHT_RED]) {
       play(POWER_UP);
