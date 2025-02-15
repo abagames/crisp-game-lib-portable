@@ -9,8 +9,8 @@ CS = {{
           "ll l l",
           "ll l l",
           "llllll",
-          " l  l",
-          " l  l",
+          " l  l ",
+          " l  l ",
       },
       {
           "      ",
