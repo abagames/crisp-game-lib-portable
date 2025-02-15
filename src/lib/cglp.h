@@ -86,6 +86,7 @@ typedef struct {
   bool isPressed;
   bool isJustPressed;
   bool isJustReleased;
+  Vector pos;
 } Input;
 
 typedef struct {
