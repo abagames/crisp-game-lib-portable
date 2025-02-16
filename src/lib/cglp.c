@@ -140,6 +140,14 @@ static void addRect(bool isAlignCenter, float x, float y, float w, float h,
     x -= w / 2;
     y -= h / 2;
   }
+  if (w < 0) {
+    x += w;
+    w = -w;
+  }
+  if (h < 0) {
+    y += h;
+    h = -h;
+  } 
   if (hasCollision) {
     HitBox hb;
     hb.rectIndex = color;
@@ -157,14 +165,6 @@ static void addRect(bool isAlignCenter, float x, float y, float w, float h,
   }
   if (color == TRANSPARENT) {
     return;
-  }
-  if (w < 0) {
-    x -= w;
-    w = -w;
-  }
-  if (h < 0) {
-    y -= h;
-    h = -h;
   }
   if (x >= viewSizeX || y >= viewSizeY) {
     return;
