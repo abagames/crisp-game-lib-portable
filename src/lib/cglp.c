@@ -136,18 +136,18 @@ static void beginAddingRects() { drawingHitBoxesIndex = 0; }
 
 static void addRect(bool isAlignCenter, float x, float y, float w, float h,
                     Collision *hitCollision) {
-  if (w < 0) {
-    w = -w;
-    x -= w;
-  }
-  if (h < 0) {
-    h = -h;
-    y -= h;
-  } 
   if (isAlignCenter) {
     x -= w / 2;
     y -= h / 2;
   }
+  if (w < 0) {
+    x += w;
+    w = -w;
+  }
+  if (h < 0) {
+    y += h;
+    h = -h;
+  } 
   if (hasCollision) {
     HitBox hb;
     hb.rectIndex = color;
