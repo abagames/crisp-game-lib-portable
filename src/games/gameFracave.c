@@ -4,16 +4,14 @@ static char* title = "FRACAVE";
 static char* description = "[Hold]\n Accelerate";
 
 #define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
-CS = {
-    {
-        "      ",
-        "      ",
-        "      ",
-        "      ",
-        "      ",
-        "      ",
-    },
-};
+CS = {{
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+}};
 static int charactersCount = 1;
 
 static Options options = {

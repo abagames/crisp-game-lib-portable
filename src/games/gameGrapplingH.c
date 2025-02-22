@@ -4,7 +4,14 @@ static char *title = "GRAPPLING H";
 static char *description = "\n[Tap]\n Release hook\n Hold anchor";
 
 #define CS static char characters[][CHARACTER_HEIGHT][CHARACTER_WIDTH + 1]
-CS = {{}};
+CS = {{
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+    "      ",
+}};
 static int charactersCount = 0;
 
 static Options options = {
