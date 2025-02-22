@@ -91,6 +91,10 @@ Note: Some features are limited due to device resource limitations.
 
 - [cglpESPboy](https://github.com/ESPboy-edu/ESPboy_crisp-game-lib-portable/tree/main/cglpESPboy) (ported by [ESPboy](https://github.com/ESPboy-edu))
 
+### SDL
+
+- [crisp-game-lib-portable-sdl](https://github.com/joyrider3774/crisp-game-lib-portable-sdl) (ported by [Willems Davy](https://github.com/joyrider3774))
+
 ### Browser
 
 1. Install [Emscripten](https://emscripten.org/)
