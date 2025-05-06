@@ -91,9 +91,15 @@ Note: Some features are limited due to device resource limitations.
 
 - [cglpESPboy](https://github.com/ESPboy-edu/ESPboy_crisp-game-lib-portable/tree/main/cglpESPboy) (ported by [ESPboy](https://github.com/ESPboy-edu))
 
+### 32blit
+
+- [crisp-game-lib-portable-32blit](https://github.com/joyrider3774/crisp-game-lib-portable-32blit) (ported by [Willems Davy](https://github.com/joyrider3774))
+
 ### SDL
 
 - [crisp-game-lib-portable-sdl](https://github.com/joyrider3774/crisp-game-lib-portable-sdl) (ported by [Willems Davy](https://github.com/joyrider3774))
+
+- [crisp-game-lib-portable-sdl-with-duktape](https://github.com/rohfle/crisp-game-lib-portable-sdl-with-duktape) (ported by [Rohan Fletcher](https://github.com/rohfle))
 
 ### Browser
 
